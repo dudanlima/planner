@@ -2,61 +2,169 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu Planner 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background-color: #f9f9f9; }
-        h1 { text-align: center; font-weight: 300; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
-        .tracker-container { overflow-x: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; min-width: 30px; }
-        th { background-color: #f2f2f2; font-size: 12px; }
-        .habit-name { text-align: left; min-width: 150px; font-weight: bold; }
-        input[type="checkbox"] { cursor: pointer; }
+        :root {
+            --rosa-claro: #fff0f5; /* Lavanda/Rosa bem clarinho */
+            --rosa-destaque: #ffb6c1; /* Rosa pastel para detalhes */
+            --texto: #555;
+            --borda: #fce4ec;
+        }
+
+        body { 
+            font-family: 'Quicksand', sans-serif; 
+            padding: 20px; 
+            background-color: #fff9fb; 
+            color: var(--texto);
+            line-height: 1.6;
+        }
+
+        .container { 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.15); 
+        }
+
+        h1 { 
+            text-align: center; 
+            font-weight: 300; 
+            color: var(--rosa-destaque);
+            text-transform: lowercase;
+            letter-spacing: 3px;
+            margin-bottom: 40px;
+        }
+
+        h2 { 
+            font-size: 1.1rem; 
+            color: var(--rosa-destaque); 
+            margin-top: 40px; 
+            border-left: 4px solid var(--rosa-claro);
+            padding-left: 10px;
+            text-transform: lowercase;
+        }
+
+        /* --- Estilo da Agenda/Calendário --- */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .day-header { 
+            background-color: var(--rosa-claro); 
+            font-weight: 500; 
+            padding: 10px; 
+            border-radius: 8px; 
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        .calendar-day {
+            padding: 10px;
+            border: 1px solid var(--rosa-claro);
+            border-radius: 8px;
+            min-height: 50px;
+            background: #fff;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        .calendar-day:hover { background: var(--rosa-claro); }
+
+        /* --- Estilo do Habit Tracker --- */
+        .tracker-wrapper { 
+            overflow-x: auto; 
+            margin-top: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--borda);
+        }
+        table { border-collapse: collapse; width: 100%; background: white; }
+        
+        th { 
+            background-color: var(--rosa-claro); 
+            color: var(--texto);
+            font-weight: 500;
+            border: 1px solid var(--borda);
+            padding: 12px 5px;
+            font-size: 10px;
+        }
+
+        td { border: 1px solid var(--borda); padding: 8px; text-align: center; }
+        
+        .habit-name { 
+            text-align: left; 
+            min-width: 180px; 
+            font-weight: 500; 
+            background: #fff;
+            padding-left: 15px;
+            outline: none; /* remove borda ao clicar */
+            cursor: text;
+        }
+        .habit-name:focus { background-color: var(--rosa-claro); }
+
+        input[type="checkbox"] { 
+            accent-color: var(--rosa-destaque); 
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+
+        /* --- Estilo das Finanças --- */
+        .finance-section { 
+            margin-top: 15px; 
+            display: flex; 
+            gap: 20px; 
+            flex-wrap: wrap; 
+        }
+        .card { 
+            flex: 1; 
+            min-width: 200px; 
+            border: 1px solid var(--rosa-claro); 
+            padding: 20px; 
+            border-radius: 15px;
+            background: #fff;
+        }
+        .card strong { color: var(--rosa-destaque); display: block; margin-bottom: 10px; }
+        .finance-input {
+            width: 100%;
+            border: none;
+            border-bottom: 1px dashed var(--rosa-destaque);
+            padding: 5px 0;
+            font-family: inherit;
+            color: var(--texto);
+            outline: none;
+        }
     </style>
 </head>
 <body>
 
-    <h1>planner 2026</h1>
+    <div class="container">
+        <h1>planner 2026</h1>
 
-    <div class="tracker-container">
-        <h2>habit tracker</h2>
-        <table>
-            <thead>
-                <tr id="header-days">
-                    <th class="habit-name">HABIT</th>
+        <h2>📅 agenda / março</h2>
+        <div class="calendar-grid">
+            <div class="day-header">dom</div><div class="day-header">seg</div><div class="day-header">ter</div>
+            <div class="day-header">qua</div><div class="day-header">qui</div><div class="day-header">sex</div><div class="day-header">sáb</div>
+            
+            <div class="calendar-day">1</div><div class="calendar-day">2</div><div class="calendar-day">3</div>
+            <div class="calendar-day">4</div><div class="calendar-day">5</div><div class="calendar-day">6</div><div class="calendar-day">7</div>
+            <div class="calendar-day">8</div><div class="calendar-day">9</div><div class="calendar-day">10</div>
+            <div class="calendar-day">11</div><div class="calendar-day">12</div><div class="calendar-day">13</div><div class="calendar-day">14</div>
+            <div class="calendar-day">15</div><div class="calendar-day">16</div><div class="calendar-day">17</div>
+            <div class="calendar-day">18</div><div class="calendar-day">19</div><div class="calendar-day">20</div><div class="calendar-day">21</div>
+            <div class="calendar-day">22</div><div class="calendar-day">23</div><div class="calendar-day">24</div>
+            <div class="calendar-day">25</div><div class="calendar-day">26</div><div class="calendar-day">27</div><div class="calendar-day">28</div>
+            <div class="calendar-day">29</div><div class="calendar-day">30</div><div class="calendar-day">31</div>
+        </div>
+
+        <h2>✨ habit tracker (clique no nome para editar)</h2>
+        <div class="tracker-wrapper">
+            <table>
+                <thead>
+                    <tr id="header-days">
+                        <th class="habit-name">HABIT</th>
                     </tr>
-            </thead>
-            <tbody id="habit-body">
-                <tr><td class="habit-name">Beber 2L de Água</td></tr>
-                <tr><td class="habit-name">Treino</td></tr>
-                <tr><td class="habit-name">Estudar Italiano</td></tr>
-                <tr><td class="habit-name">TCC Nutrição</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <script>
-        // Cria os números de 1 a 31 automaticamente
-        const header = document.getElementById('header-days');
-        const bodyRows = document.querySelectorAll('#habit-body tr');
-
-        for (let i = 1; i <= 31; i++) {
-            let th = document.createElement('th');
-            th.innerText = i;
-            header.appendChild(th);
-
-            bodyRows.forEach(row => {
-                let td = document.createElement('td');
-                let cb = document.createElement('input');
-                cb.type = 'checkbox';
-                // Salvar o estado no navegador para não perder ao fechar
-                cb.id = row.firstElementChild.innerText + '-' + i;
-                cb.onclick = () => localStorage.setItem(cb.id, cb.checked);
-                cb.checked = localStorage.getItem(cb.id) === 'true';
-                td.appendChild(cb);
-                row.appendChild(td);
-            });
-        }
-    </script>
-</body>
-</html>
+                </thead>
