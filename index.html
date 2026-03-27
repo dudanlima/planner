@@ -168,3 +168,73 @@
                         <th class="habit-name">HABIT</th>
                     </tr>
                 </thead>
+                <tbody id="habit-body">
+                    <tr><td class="habit-name" contenteditable="true" data-id="h1">beber 2l de água</td></tr>
+                    <tr><td class="habit-name" contenteditable="true" data-id="h2">treino membros superiores</td></tr>
+                    <tr><td class="habit-name" contenteditable="true" data-id="h3">estudar italiano</td></tr>
+                    <tr><td class="habit-name" contenteditable="true" data-id="h4">avançar no tcc</td></tr>
+                    <tr><td class="habit-name" contenteditable="true" data-id="h5">cuidar do doguinho</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>💰 finanças</h2>
+        <div class="finance-section">
+            <div class="card">
+                <strong>entradas</strong>
+                <input type="text" class="finance-input" placeholder="salário: R$ 0,00" id="fin-in">
+            </div>
+            <div class="card">
+                <strong>saídas fixas</strong>
+                <input type="text" class="finance-input" placeholder="faculdade: R$ 0,00" id="fin-out">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const header = document.getElementById('header-days');
+        const bodyRows = document.querySelectorAll('#habit-body tr');
+
+        // 1. Gera as colunas de 1 a 31
+        for (let i = 1; i <= 31; i++) {
+            let th = document.createElement('th');
+            th.innerText = i;
+            header.appendChild(th);
+
+            bodyRows.forEach((row) => {
+                let td = document.createElement('td');
+                let cb = document.createElement('input');
+                cb.type = 'checkbox';
+                
+                // Salva o check usando o ID fixo da linha + o dia
+                let checkId = row.firstElementChild.getAttribute('data-id') + '-day-' + i;
+                cb.id = checkId;
+                cb.onclick = () => localStorage.setItem(checkId, cb.checked);
+                cb.checked = localStorage.getItem(checkId) === 'true';
+                
+                td.appendChild(cb);
+                row.appendChild(td);
+            });
+        }
+
+        // 2. Salva e Carrega os nomes dos hábitos que você digita
+        bodyRows.forEach((row) => {
+            const cell = row.firstElementChild;
+            const textId = cell.getAttribute('data-id') + '-text';
+
+            const savedText = localStorage.getItem(textId);
+            if (savedText) cell.innerText = savedText;
+
+            cell.onblur = () => localStorage.setItem(textId, cell.innerText);
+        });
+
+        // 3. Salva os campos de finanças
+        const finInputs = ['fin-in', 'fin-out'];
+        finInputs.forEach(id => {
+            const input = document.getElementById(id);
+            input.value = localStorage.getItem(id) || "";
+            input.oninput = () => localStorage.setItem(id, input.value);
+        });
+    </script>
+</body>
+</html>
