@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Planner 2026</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background-color: #f9f9f9; }
+        h1 { text-align: center; font-weight: 300; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .tracker-container { overflow-x: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; min-width: 30px; }
+        th { background-color: #f2f2f2; font-size: 12px; }
+        .habit-name { text-align: left; min-width: 150px; font-weight: bold; }
+        input[type="checkbox"] { cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1>planner 2026</h1>
+
+    <div class="tracker-container">
+        <h2>habit tracker</h2>
+        <table>
+            <thead>
+                <tr id="header-days">
+                    <th class="habit-name">HABIT</th>
+                    </tr>
+            </thead>
+            <tbody id="habit-body">
+                <tr><td class="habit-name">Beber 2L de Água</td></tr>
+                <tr><td class="habit-name">Treino</td></tr>
+                <tr><td class="habit-name">Estudar Italiano</td></tr>
+                <tr><td class="habit-name">TCC Nutrição</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Cria os números de 1 a 31 automaticamente
+        const header = document.getElementById('header-days');
+        const bodyRows = document.querySelectorAll('#habit-body tr');
+
+        for (let i = 1; i <= 31; i++) {
+            let th = document.createElement('th');
+            th.innerText = i;
+            header.appendChild(th);
+
+            bodyRows.forEach(row => {
+                let td = document.createElement('td');
+                let cb = document.createElement('input');
+                cb.type = 'checkbox';
+                // Salvar o estado no navegador para não perder ao fechar
+                cb.id = row.firstElementChild.innerText + '-' + i;
+                cb.onclick = () => localStorage.setItem(cb.id, cb.checked);
+                cb.checked = localStorage.getItem(cb.id) === 'true';
+                td.appendChild(cb);
+                row.appendChild(td);
+            });
+        }
+    </script>
+</body>
+</html>
