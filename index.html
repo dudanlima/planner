@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Planner 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500&display=swap" rel="stylesheet">
+    <title>Planner 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -12,165 +12,194 @@
             --rosa-destaque: #ffb6c1;
             --texto: #555;
             --borda: #fce4ec;
-            --verde-suave: #e8f5e9;
-            --vermelho-suave: #ffebee;
         }
 
-        body { 
-            font-family: 'Quicksand', sans-serif; 
-            padding: 20px; 
-            background-color: #fff9fb; 
-            color: var(--texto);
-        }
+        body { font-family: 'Quicksand', sans-serif; padding: 20px; background-color: #fff9fb; color: var(--texto); }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(255, 182, 193, 0.15); }
 
-        .container { 
-            max-width: 1100px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 30px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.15); 
-        }
-
-        h1 { text-align: center; font-weight: 300; color: var(--rosa-destaque); letter-spacing: 3px; }
+        /* Lettering no Título */
+        h1 { text-align: center; font-family: 'Dancing Script', cursive; font-size: 3rem; color: var(--rosa-destaque); margin-bottom: 20px; }
         h2 { font-size: 1.1rem; color: var(--rosa-destaque); margin-top: 40px; border-left: 4px solid var(--rosa-claro); padding-left: 10px; text-transform: lowercase; }
 
+        /* Calendário Dinâmico */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .cal-btn { background: var(--rosa-claro); border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; color: var(--texto); }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .day-name { text-align: center; font-weight: bold; font-size: 0.8rem; background: var(--rosa-claro); padding: 5px; border-radius: 5px; }
+        .day-cell { border: 1px solid var(--borda); min-height: 80px; padding: 5px; border-radius: 5px; background: #fff; font-size: 0.7rem; position: relative; }
+        .day-cell span { font-weight: bold; display: block; margin-bottom: 3px; }
+        .day-cell textarea { width: 100%; border: none; height: 50px; resize: none; font-family: inherit; font-size: 0.7rem; outline: none; background: transparent; }
+
         /* Habit Tracker */
-        .tracker-wrapper { overflow-x: auto; margin-top: 15px; border-radius: 10px; border: 1px solid var(--borda); }
-        table { border-collapse: collapse; width: 100%; background: white; }
-        th { background-color: var(--rosa-claro); padding: 10px; font-size: 10px; border: 1px solid var(--borda); }
-        td { border: 1px solid var(--borda); padding: 8px; text-align: center; }
-        .habit-name { text-align: left; min-width: 180px; padding-left: 15px; outline: none; }
+        .tracker-wrapper { overflow-x: auto; margin-top: 15px; border: 1px solid var(--borda); border-radius: 10px; }
+        table { border-collapse: collapse; width: 100%; font-size: 0.8rem; }
+        th, td { border: 1px solid var(--borda); padding: 5px; text-align: center; }
+        .habit-name { text-align: left; min-width: 150px; padding-left: 10px; outline: none; }
 
-        /* Finanças Estilo Planilha */
-        .finance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px; }
-        @media (max-width: 768px) { .finance-grid { grid-template-columns: 1fr; } }
+        /* Treino da Semana */
+        .workout-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 15px; }
+        .workout-card { border: 1px solid var(--borda); padding: 10px; border-radius: 10px; background: #fffafb; }
+        .workout-card input { width: 100%; border: none; border-bottom: 1px solid var(--rosa-claro); font-weight: bold; margin-bottom: 5px; outline: none; background: transparent; }
+        .workout-card textarea { width: 100%; border: none; height: 100px; resize: none; font-family: inherit; outline: none; background: transparent; }
 
-        .finance-table { width: 100%; margin-top: 10px; font-size: 0.9rem; }
-        .finance-table th { font-size: 12px; padding: 10px; }
-        .finance-table td { padding: 5px; }
-        
-        .editable-finance { width: 100%; border: none; outline: none; font-family: inherit; color: var(--texto); text-align: center; }
-        .entry-row { background-color: var(--verde-suave); }
-        .exit-row { background-color: var(--vermelho-suave); }
+        /* Finanças Atualizada */
+        .fin-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .fin-table th { background: var(--rosa-claro); font-size: 0.7rem; }
+        .fin-table input { width: 100%; border: none; padding: 5px; outline: none; text-align: center; font-family: inherit; }
 
-        .summary-box { display: flex; justify-content: space-around; background: var(--rosa-claro); padding: 15px; border-radius: 12px; margin-top: 20px; text-align: center; }
-        .summary-item span { display: block; font-size: 0.8rem; text-transform: uppercase; }
-        .summary-item strong { font-size: 1.2rem; color: var(--rosa-destaque); }
-
-        input[type="checkbox"] { accent-color: var(--rosa-destaque); transform: scale(1.1); }
+        /* Wishlist e Moodboard */
+        .extra-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
+        .wishlist { border: 1px solid var(--borda); padding: 15px; border-radius: 15px; }
+        .moodboard { border: 1px solid var(--borda); padding: 15px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; }
+        .moodboard-container { width: 100%; min-height: 200px; border: 2px dashed var(--rosa-claro); border-radius: 10px; display: flex; flex-wrap: wrap; gap: 5px; padding: 10px; }
+        .mood-img { width: 80px; height: 80px; object-fit: cover; border-radius: 5px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>planner 2026</h1>
+<div class="container">
+    <h1>Planner 2026</h1>
 
-        <h2>✨ habit tracker</h2>
-        <div class="tracker-wrapper">
-            <table>
-                <thead><tr id="header-days"><th class="habit-name">HABIT</th></tr></thead>
-                <tbody id="habit-body">
-                    <tr><td class="habit-name" contenteditable="true" data-id="h1">beber 2l de água</td></tr>
-                    <tr><td class="habit-name" contenteditable="true" data-id="h2">treino membros superiores</td></tr>
-                    <tr><td class="habit-name" contenteditable="true" data-id="h3">estudar italiano</td></tr>
-                    <tr><td class="habit-name" contenteditable="true" data-id="h4">avançar no tcc</td></tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="cal-header">
+        <button class="cal-btn" onclick="moveMonth(-1)">❮ anterior</button>
+        <h2 id="month-display" style="margin:0; border:none;">mês</h2>
+        <button class="cal-btn" onclick="moveMonth(1)">próximo ❯</button>
+    </div>
+    <div class="calendar-grid" id="calendar-grid"></div>
 
-        <h2>💰 controle financeiro - março</h2>
-        
-        <div class="summary-box">
-            <div class="summary-item"><span>entradas</span><strong id="total-in">R$ 0,00</strong></div>
-            <div class="summary-item"><span>saídas</span><strong id="total-out">R$ 0,00</strong></div>
-            <div class="summary-item"><span>saldo</span><strong id="total-balance">R$ 0,00</strong></div>
-        </div>
-
-        <div class="finance-grid">
-            <div>
-                <h3>entradas</h3>
-                <table class="finance-table">
-                    <thead><tr><th>descrição</th><th>valor (R$)</th></tr></thead>
-                    <tbody id="entries-body">
-                        <tr class="entry-row">
-                            <td><input class="editable-finance" placeholder="ex: salário" data-fin="desc-in-1"></td>
-                            <td><input class="editable-finance val-in" type="number" placeholder="0.00" data-fin="val-in-1"></td>
-                        </tr>
-                        <tr class="entry-row">
-                            <td><input class="editable-finance" placeholder="ex: extra" data-fin="desc-in-2"></td>
-                            <td><input class="editable-finance val-in" type="number" placeholder="0.00" data-fin="val-in-2"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div>
-                <h3>saídas</h3>
-                <table class="finance-table">
-                    <thead><tr><th>descrição</th><th>valor (R$)</th></tr></thead>
-                    <tbody id="exits-body">
-                        <tr class="exit-row">
-                            <td><input class="editable-finance" placeholder="ex: faculdade" data-fin="desc-out-1"></td>
-                            <td><input class="editable-finance val-out" type="number" placeholder="0.00" data-fin="val-out-1"></td>
-                        </tr>
-                        <tr class="exit-row">
-                            <td><input class="editable-finance" placeholder="ex: aluguel" data-fin="desc-out-2"></td>
-                            <td><input class="editable-finance val-out" type="number" placeholder="0.00" data-fin="val-out-2"></td>
-                        </tr>
-                        <tr class="exit-row">
-                            <td><input class="editable-finance" placeholder="ex: lazer" data-fin="desc-out-3"></td>
-                            <td><input class="editable-finance val-out" type="number" placeholder="0.00" data-fin="val-out-3"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <h2>✨ habit tracker</h2>
+    <div class="tracker-wrapper">
+        <table>
+            <thead><tr id="habit-header"><th>HABIT</th></tr></thead>
+            <tbody id="habit-body">
+                <tr><td class="habit-name" contenteditable="true" data-id="h1">beber 2l de água</td></tr>
+                <tr><td class="habit-name" contenteditable="true" data-id="h2">treino do dia</td></tr>
+                <tr><td class="habit-name" contenteditable="true" data-id="h3">estudar italiano</td></tr>
+            </tbody>
+        </table>
     </div>
 
-    <script>
-        // --- Lógica do Habit Tracker ---
-        const header = document.getElementById('header-days');
-        const bodyRows = document.querySelectorAll('#habit-body tr');
-        for (let i = 1; i <= 31; i++) {
-            let th = document.createElement('th'); th.innerText = i; header.appendChild(th);
-            bodyRows.forEach((row) => {
-                let td = document.createElement('td'); let cb = document.createElement('input');
-                cb.type = 'checkbox'; let id = row.firstElementChild.getAttribute('data-id') + '-d' + i;
-                cb.id = id; cb.onclick = () => localStorage.setItem(id, cb.checked);
-                cb.checked = localStorage.getItem(id) === 'true';
-                td.appendChild(cb); row.appendChild(td);
-            });
-        }
-        bodyRows.forEach((row) => {
-            const cell = row.firstElementChild; const id = cell.getAttribute('data-id') + '-t';
-            cell.innerText = localStorage.getItem(id) || cell.innerText;
-            cell.onblur = () => localStorage.setItem(id, cell.innerText);
-        });
+    <h2>💪 treinos da semana</h2>
+    <div class="workout-grid">
+        <div class="workout-card"><input placeholder="segunda" data-id="w1"><textarea data-id="wt1" placeholder="exercícios..."></textarea></div>
+        <div class="workout-card"><input placeholder="terça" data-id="w2"><textarea data-id="wt2" placeholder="exercícios..."></textarea></div>
+        <div class="workout-card"><input placeholder="quarta" data-id="w3"><textarea data-id="wt3" placeholder="exercícios..."></textarea></div>
+        <div class="workout-card"><input placeholder="quinta" data-id="w4"><textarea data-id="wt4" placeholder="exercícios..."></textarea></div>
+        <div class="workout-card"><input placeholder="sexta" data-id="w5"><textarea data-id="wt5" placeholder="exercícios..."></textarea></div>
+        <div class="workout-card"><input placeholder="sábado" data-id="w6"><textarea data-id="wt6" placeholder="exercícios..."></textarea></div>
+    </div>
 
-        // --- Lógica das Finanças ---
-        const finInputs = document.querySelectorAll('.editable-finance');
+    <h2>💰 controle financeiro</h2>
+    <table class="fin-table">
+        <thead>
+            <tr><th>descrição</th><th>valor</th><th>vencimento</th><th>parcela</th></tr>
+        </thead>
+        <tbody id="fin-body">
+            </tbody>
+    </table>
+
+    <div class="extra-grid">
+        <div class="wishlist">
+            <h2>🛍️ wishlist</h2>
+            <textarea style="width:100%; height:150px; border:none; outline:none; font-family:inherit;" placeholder="o que eu quero comprar..." data-id="wish-list"></textarea>
+        </div>
+        <div class="moodboard">
+            <h2>🖼️ moodboard</h2>
+            <input type="text" id="img-url" placeholder="cole o link de uma imagem aqui..." style="width:100%; border:1px solid var(--borda); margin-bottom:5px; border-radius:5px; outline:none;">
+            <button class="cal-btn" onclick="addImg()">adicionar imagem</button>
+            <div class="moodboard-container" id="mood-container"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Configurações Iniciais ---
+    let currentDate = new Date();
+
+    // --- Lógica do Calendário ---
+    function renderCalendar() {
+        const grid = document.getElementById('calendar-grid');
+        grid.innerHTML = '';
+        const month = currentDate.getMonth();
+        const year = currentDate.getFullYear();
         
-        function calculate() {
-            let totalIn = 0; let totalOut = 0;
-            document.querySelectorAll('.val-in').forEach(i => totalIn += Number(i.value) || 0);
-            document.querySelectorAll('.val-out').forEach(i => totalOut += Number(i.value) || 0);
-            
-            document.getElementById('total-in').innerText = `R$ ${totalIn.toFixed(2)}`;
-            document.getElementById('total-out').innerText = `R$ ${totalOut.toFixed(2)}`;
-            document.getElementById('total-balance').innerText = `R$ ${(totalIn - totalOut).toFixed(2)}`;
-        }
-
-        finInputs.forEach(input => {
-            const id = input.getAttribute('data-fin');
-            input.value = localStorage.getItem(id) || "";
-            input.oninput = () => {
-                localStorage.setItem(id, input.value);
-                calculate();
-            };
+        document.getElementById('month-display').innerText = `${currentDate.toLocaleString('pt-br', { month: 'long' })} ${year}`;
+        
+        ['dom','seg','ter','qua','qui','sex','sáb'].forEach(d => {
+            let div = document.createElement('div'); div.className = 'day-name'; div.innerText = d; grid.appendChild(div);
         });
 
-        calculate(); // Inicializa os cálculos
-    </script>
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        for(let i=0; i < firstDay; i++) { grid.appendChild(document.createElement('div')); }
+
+        for(let d=1; d <= daysInMonth; d++) {
+            let cell = document.createElement('div'); cell.className = 'day-cell';
+            let key = `cal-${year}-${month}-${d}`;
+            cell.innerHTML = `<span>${d}</span><textarea data-id="${key}">${localStorage.getItem(key) || ''}</textarea>`;
+            grid.appendChild(cell);
+        }
+        saveOnBlur();
+    }
+
+    function moveMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
+
+    // --- Lógica de Habits (31 dias) ---
+    const hHeader = document.getElementById('habit-header');
+    const hBody = document.getElementById('habit-body');
+    for(let i=1; i<=31; i++) {
+        let th = document.createElement('th'); th.innerText = i; hHeader.appendChild(th);
+        [...hBody.rows].forEach(row => {
+            let td = document.createElement('td'); let cb = document.createElement('input'); cb.type = 'checkbox';
+            let id = `${row.cells[0].dataset.id}-d${i}`; cb.id = id;
+            cb.checked = localStorage.getItem(id) === 'true';
+            cb.onclick = () => localStorage.setItem(id, cb.checked);
+            td.appendChild(cb); row.appendChild(td);
+        });
+    }
+
+    // --- Lógica de Finanças (5 linhas exemplo) ---
+    const finBody = document.getElementById('fin-body');
+    for(let i=1; i<=5; i++) {
+        let tr = document.createElement('tr');
+        tr.innerHTML = `<td><input data-id="f-d-${i}"></td><td><input data-id="f-v-${i}"></td><td><input data-id="f-ven-${i}" placeholder="dd/mm"></td><td><input data-id="f-p-${i}" placeholder="1/10"></td>`;
+        finBody.appendChild(tr);
+    }
+
+    // --- Salvamento Geral ---
+    function saveOnBlur() {
+        document.querySelectorAll('input, textarea').forEach(el => {
+            if(el.dataset.id) {
+                el.value = localStorage.getItem(el.dataset.id) || el.value;
+                el.onblur = () => localStorage.setItem(el.dataset.id, el.value);
+            }
+        });
+    }
+
+    // --- Moodboard ---
+    function addImg() {
+        const url = document.getElementById('img-url').value;
+        if(url) {
+            let imgs = JSON.parse(localStorage.getItem('mood-imgs') || '[]');
+            imgs.push(url);
+            localStorage.setItem('mood-imgs', JSON.stringify(imgs));
+            renderMood();
+            document.getElementById('img-url').value = '';
+        }
+    }
+    function renderMood() {
+        const cont = document.getElementById('mood-container');
+        cont.innerHTML = '';
+        JSON.parse(localStorage.getItem('mood-imgs') || '[]').forEach(url => {
+            cont.innerHTML += `<img src="${url}" class="mood-img">`;
+        });
+    }
+
+    // Inicialização
+    renderCalendar();
+    renderMood();
+    saveOnBlur();
+</script>
 </body>
 </html>
