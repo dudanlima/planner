@@ -7,38 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
-        /* ============================================================
-           REGISTRO DAS FONTES (DENTRO DA PASTA /fonts)
-           ============================================================ */
-        @font-face { font-family: 'BetterTogether'; src: url('fonts/Better Together.otf') format('opentype'); }
-        @font-face { font-family: 'BetterTogetherScript'; src: url('fonts/Better Together Script.ttf') format('truetype'); }
-        @font-face { font-family: 'GoodMood'; src: url('fonts/Good Mood.otf') format('opentype'); }
-        @font-face { font-family: 'Hanging'; src: url('fonts/Hanging.otf') format('opentype'); }
-        @font-face { font-family: 'Kathen'; src: url('fonts/Kathen Font by Situjuh (7NTypes).otf') format('opentype'); }
-        @font-face { font-family: 'MagicalFeather'; src: url('fonts/Magical Feather.ttf') format('truetype'); }
-        @font-face { font-family: 'SimpleHandmade'; src: url('fonts/SimpleHandmade.otf') format('opentype'); }
-        @font-face { font-family: 'SimpleMandala'; src: url('fonts/Simple Mandala.otf') format('opentype'); }
-        @font-face { font-family: 'Skyhigh'; src: url('fonts/Skyhigh.ttf') format('truetype'); }
-        @font-face { font-family: 'Windsol'; src: url('fonts/Windsol-Regular.ttf') format('truetype'); }
-        @font-face { font-family: 'AutumnInSeptember'; src: url('fonts/Autumn in September.ttf') format('truetype'); }
-        @font-face { font-family: 'Brownist'; src: url('fonts/Brownist.otf') format('opentype'); }
-        @font-face { font-family: 'Farmhouse'; src: url('fonts/Farmhouse.otf') format('opentype'); }
-        @font-face { font-family: 'FBCaramelApple'; src: url('fonts/FBCaramelApple.otf') format('opentype'); }
-        @font-face { font-family: 'Handmade'; src: url('fonts/Handmade.otf') format('opentype'); }
-        @font-face { font-family: 'KGSimplyTheBest'; src: url('fonts/KGSimplytheBest.otf') format('opentype'); }
-        @font-face { font-family: 'MilkyMatcha'; src: url('fonts/Milky Matcha.otf') format('opentype'); }
-        @font-face { font-family: 'PleaseWriteMeASong'; src: url('fonts/Please write me a song.ttf') format('truetype'); }
-        @font-face { font-family: 'ChettaVissto'; src: url('fonts/ChettaVissto.otf') format('opentype'); }
-        @font-face { font-family: 'HappyNight'; src: url('fonts/Happy Night.otf') format('opentype'); }
-        @font-face { font-family: 'BubbbleGum'; src: url('fonts/BubbbleGum.otf') format('opentype'); }
-        @font-face { font-family: 'Muthiara'; src: url('fonts/Muthiara demo version.otf') format('opentype'); }
-        @font-face { font-family: 'HelloHoney'; src: url('fonts/hello honey.otf') format('opentype'); }
-        @font-face { font-family: 'Hello'; src: url('fonts/Hello.otf') format('opentype'); }
-        @font-face { font-family: 'HelloValentina'; src: url('fonts/Hello Valentina.ttf') format('truetype'); }
-        @font-face { font-family: 'GameBubble'; src: url('fonts/Game Bubble.otf') format('opentype'); }
-        @font-face { font-family: 'Bubbleboddy'; src: url('fonts/Bubbleboddy-FatTrial.ttf') format('truetype'); }
-        @font-face { font-family: 'WarungKopi'; src: url('fonts/Warung Kopi.otf') format('opentype'); }
-
         :root {
             --rosa-claro: #fff0f5;
             --rosa-destaque: #ffb6c1;
@@ -50,10 +18,19 @@
         * { box-sizing: border-box; }
         body { font-family: 'Poppins', sans-serif; margin: 0; display: flex; height: 100vh; background-color: #fff9fb; color: var(--texto); overflow: hidden; }
 
+        /* Estilos para Impressão */
+        @media print {
+            .sidebar, .notes-panel, .toolbar, #save-status, .nav-back, .btn-add { display: none !important; }
+            body { background: white; overflow: visible; }
+            .main-content { margin: 0; padding: 0; box-shadow: none; border-radius: 0; overflow: visible; }
+            .editor-container { border: none; box-shadow: none; margin: 0; overflow: visible; }
+            .editor-content { padding: 0; overflow: visible; }
+            #editor-title { padding-left: 0; color: black; }
+        }
+
         /* SIDEBAR */
         .sidebar { width: 250px; background: white; border-right: 1px solid var(--borda); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
         .sidebar h1 { font-family: 'Dancing Script', cursive; font-size: 2rem; color: var(--rosa-destaque); text-align: center; margin-bottom: 15px; }
-
         .subject-list { list-style: none; padding: 0; flex-grow: 1; overflow-y: auto; }
         .subject-item { padding: 12px 15px; margin-bottom: 8px; border-radius: 12px; cursor: pointer; transition: 0.3s; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; }
         .subject-item:hover { background: var(--rosa-claro); }
@@ -62,7 +39,6 @@
         /* PAINEL DE NOTAS */
         .notes-panel { width: 220px; background: #fffafa; border-right: 1px solid var(--borda); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
         .notes-panel h3 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--rosa-destaque); margin-bottom: 15px; }
-        
         .note-list { list-style: none; padding: 0; flex-grow: 1; overflow-y: auto; }
         .note-list-item { padding: 10px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; border-bottom: 1px solid #f0f0f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .note-list-item.active { background: white; font-weight: 600; border-left: 3px solid var(--pink-vibrante); }
@@ -70,21 +46,15 @@
         /* EDITOR */
         .editor-container { flex-grow: 1; display: flex; flex-direction: column; background: white; margin: 15px; border-radius: 25px; box-shadow: 0 5px 20px rgba(255,182,193,0.1); overflow: hidden; }
         .toolbar { padding: 10px 20px; border-bottom: 1px solid var(--borda); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; background: #fffafb; }
-        .toolbar button, .toolbar select, .toolbar input[type="color"] { background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 5px; cursor: pointer; font-family: inherit; font-size: 0.75rem; color: var(--texto); outline: none; height: 32px; }
-        .toolbar button:hover, .toolbar select:hover { background: var(--rosa-claro); }
+        .toolbar button, .toolbar select, .toolbar input[type="color"] { background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 5px 8px; cursor: pointer; font-family: inherit; font-size: 0.75rem; color: var(--texto); outline: none; height: 32px; display: flex; align-items: center; justify-content: center; }
+        .toolbar button:hover { background: var(--rosa-claro); }
         
-        .color-picker-wrapper { display: flex; align-items: center; gap: 5px; font-size: 0.7rem; color: #888; }
-
         .editor-content { flex-grow: 1; padding: 30px; overflow-y: auto; outline: none; line-height: 1.6; }
-        .editor-content img { max-width: 100%; border-radius: 10px; margin: 10px 0; }
         #editor-title { font-size: 1.8rem; border: none; outline: none; color: var(--rosa-destaque); font-weight: 600; width: 100%; padding: 20px 30px 0; font-family: 'Poppins', sans-serif; }
 
         .btn-add { background: var(--rosa-destaque); color: white; border: none; padding: 10px; border-radius: 12px; cursor: pointer; font-family: inherit; font-weight: 600; font-size: 0.8rem; margin-top: 10px; }
-        .btn-add-note { background: transparent; border: 1px dashed var(--rosa-destaque); color: var(--rosa-destaque); margin-bottom: 15px; }
         .nav-back { text-decoration: none; color: var(--rosa-destaque); font-size: 0.7rem; font-weight: 600; text-align: center; margin-bottom: 20px; display: block; }
-        .delete-icon { font-size: 0.7rem; opacity: 0.3; cursor: pointer; }
-        .delete-icon:hover { opacity: 1; color: #ff4d4d; }
-
+        
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: var(--rosa-claro); border-radius: 10px; }
     </style>
@@ -100,7 +70,7 @@
 
     <div class="notes-panel">
         <h3 id="current-subject-name">Matéria</h3>
-        <button class="btn-add btn-add-note" onclick="addNote()">+ nova página</button>
+        <button class="btn-add" style="background: transparent; border: 1px dashed var(--rosa-destaque); color: var(--rosa-destaque); margin-bottom: 15px;" onclick="addNote()">+ nova página</button>
         <ul class="note-list" id="note-list"></ul>
     </div>
 
@@ -113,42 +83,10 @@
             <button onclick="format('underline')" title="Sublinhado"><u>U</u></button>
 
             <button onclick="format('justifyLeft')" title="Esquerda">⬅</button>
-            <button onclick="format('justifyCenter')" title="Centralizado">↔</button>
+            <button onclick="format('justifyCenter')" title="Central">↔</button>
             <button onclick="format('justifyRight')" title="Direita">➡</button>
-            <button onclick="format('justifyFull')" title="Justificado">≡</button>
 
-            <select id="font-selector" onchange="format('fontName', this.value)" style="width: 120px;">
-                <option value="Poppins">Fonte Padrão</option>
-                <option value="BetterTogether">Better Together</option>
-                <option value="BetterTogetherScript">Better Together Script</option>
-                <option value="GoodMood">Good Mood</option>
-                <option value="Hanging">Hanging</option>
-                <option value="Kathen">Kathen</option>
-                <option value="MagicalFeather">Magical Feather</option>
-                <option value="SimpleHandmade">Simple Handmade</option>
-                <option value="SimpleMandala">Simple Mandala</option>
-                <option value="Skyhigh">Skyhigh</option>
-                <option value="Windsol">Windsol</option>
-                <option value="AutumnInSeptember">Autumn in September</option>
-                <option value="Brownist">Brownist</option>
-                <option value="Farmhouse">Farmhouse</option>
-                <option value="FBCaramelApple">Caramel Apple</option>
-                <option value="Handmade">Handmade</option>
-                <option value="KGSimplyTheBest">Simply the Best</option>
-                <option value="MilkyMatcha">Milky Matcha</option>
-                <option value="PleaseWriteMeASong">Write me a Song</option>
-                <option value="ChettaVissto">Chetta Vissto</option>
-                <option value="HappyNight">Happy Night</option>
-                <option value="BubbbleGum">Bubble Gum</option>
-                <option value="Muthiara">Muthiara</option>
-                <option value="HelloHoney">Hello Honey</option>
-                <option value="Hello">Hello</option>
-                <option value="HelloValentina">Hello Valentina</option>
-                <option value="GameBubble">Game Bubble</option>
-                <option value="Bubbleboddy">Bubbleboddy</option>
-                <option value="WarungKopi">Warung Kopi</option>
-            </select>
-
+            <select id="font-selector" onchange="applyFont(this.value)" style="width: 140px;"></select>
             <select id="size-selector" onchange="format('fontSize', this.value)">
                 <option value="3">14px</option>
                 <option value="1">10px</option>
@@ -159,14 +97,10 @@
                 <option value="7">32px</option>
             </select>
 
-            <div class="color-picker-wrapper">
-                <label for="color-input">Cor:</label>
-                <input type="color" id="color-input" onchange="format('foreColor', this.value)" title="Escolher cor do texto">
-            </div>
-
-            <button onclick="format('insertUnorderedList')">• Lista</button>
-            <button onclick="document.getElementById('img-input').click()">🖼️ Imagem</button>
-            <input type="file" id="img-input" style="display:none" accept="image/*" onchange="handleImg(this)">
+            <input type="color" onchange="format('foreColor', this.value)" title="Cor do texto" style="width: 40px; padding: 2px;">
+            
+            <button onclick="format('insertUnorderedList')" title="Lista">• Lista</button>
+            <button onclick="window.print()" title="Imprimir ou Salvar PDF">🖨️ Imprimir / PDF</button>
         </div>
 
         <div id="editor-body" class="editor-content" contenteditable="true" oninput="saveCurrentData()"></div>
@@ -174,107 +108,93 @@
     </div>
 
     <script>
-        let notebookData = JSON.parse(localStorage.getItem('notebook-data-v3')) || {
-            "Geral": [{ title: "Nova Nota", body: "" }]
-        };
+        // LISTA DE FONTES (Mantenha atualizado conforme subir arquivos na pasta /fonts)
+        const fontesDisponiveis = [
+            'Better Together.otf', 'Better Together Script.ttf', 'Good Mood.otf', 
+            'Hanging.otf', 'Kathen Font by Situjuh (7NTypes).otf', 'Magical Feather.ttf',
+            'SimpleHandmade.otf', 'Simple Mandala.otf', 'Skyhigh.ttf', 'Windsol-Regular.ttf',
+            'Autumn in September.ttf', 'Brownist.otf', 'Farmhouse.otf', 'FBCaramelApple.otf',
+            'Handmade.otf', 'KGSimplytheBest.otf', 'Milky Matcha.otf', 'Please write me a song.ttf',
+            'ChettaVissto.otf', 'Happy Night.otf', 'BubbbleGum.otf', 'Muthiara demo version.otf',
+            'hello honey.otf', 'Hello.otf', 'Hello Valentina.ttf', 'Game Bubble.otf', 
+            'Bubbleboddy-FatTrial.ttf', 'Warung Kopi.otf'
+        ];
 
+        function carregarMenuFontes() {
+            const selector = document.getElementById('font-selector');
+            const padrao = document.createElement('option');
+            padrao.value = "Poppins"; padrao.innerText = "Fonte Padrão";
+            selector.appendChild(padrao);
+
+            fontesDisponiveis.forEach(arquivo => {
+                const nomeFonte = arquivo.split('.')[0];
+                const novaFonte = new FontFace(nomeFonte, `url(fonts/${arquivo})`);
+                novaFonte.load().then(loadedFace => {
+                    document.fonts.add(loadedFace);
+                    const option = document.createElement('option');
+                    option.value = nomeFonte; option.innerText = nomeFonte;
+                    selector.appendChild(option);
+                }).catch(err => console.log("Erro:", arquivo));
+            });
+        }
+
+        function applyFont(fontName) { document.execCommand('fontName', false, fontName); saveCurrentData(); }
+        function format(cmd, val = null) { document.execCommand(cmd, false, val); saveCurrentData(); }
+
+        // Lógica do Caderno
+        let notebookData = JSON.parse(localStorage.getItem('notebook-data-v3')) || { "Geral": [{ title: "Nova Nota", body: "" }] };
         let currentSubject = localStorage.getItem('last-subject') || "Geral";
-        let currentNoteIdx = parseInt(localStorage.getItem('last-note-idx')) || 0;
+        let currentNoteIdx = 0;
 
         function renderSubjects() {
-            const list = document.getElementById('subject-list');
-            list.innerHTML = '';
-            Object.keys(notebookData).forEach(subject => {
+            const list = document.getElementById('subject-list'); list.innerHTML = '';
+            Object.keys(notebookData).forEach(s => {
                 const li = document.createElement('li');
-                li.className = `subject-item ${subject === currentSubject ? 'active' : ''}`;
-                li.innerHTML = `<span>${subject}</span> <span class="delete-icon" onclick="deleteSubject(event, '${subject}')">✕</span>`;
-                li.onclick = () => switchSubject(subject);
+                li.className = `subject-item ${s === currentSubject ? 'active' : ''}`;
+                li.innerText = s;
+                li.onclick = () => { currentSubject = s; currentNoteIdx = 0; renderSubjects(); };
                 list.appendChild(li);
             });
             renderNotes();
         }
 
         function renderNotes() {
-            const list = document.getElementById('note-list');
+            const list = document.getElementById('note-list'); list.innerHTML = '';
             document.getElementById('current-subject-name').innerText = currentSubject;
-            list.innerHTML = '';
-            const notes = notebookData[currentSubject] || [];
-            notes.forEach((note, idx) => {
+            (notebookData[currentSubject] || []).forEach((n, i) => {
                 const li = document.createElement('li');
-                li.className = `note-list-item ${idx === currentNoteIdx ? 'active' : ''}`;
-                li.innerText = note.title || "(sem título)";
-                li.onclick = () => switchNote(idx);
+                li.className = `note-list-item ${i === currentNoteIdx ? 'active' : ''}`;
+                li.innerText = n.title || "Sem título";
+                li.onclick = () => { currentNoteIdx = i; loadEditor(); renderNotes(); };
                 list.appendChild(li);
             });
             loadEditor();
         }
 
-        function format(cmd, val = null) {
-            document.execCommand(cmd, false, val);
-            saveCurrentData();
-        }
-
-        function handleImg(input) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = `<img src="${e.target.result}">`;
-                    document.execCommand('insertHTML', false, img);
-                    saveCurrentData();
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function addSubject() {
-            const name = prompt("Nome da Matéria:");
-            if (name && !notebookData[name]) {
-                notebookData[name] = [{ title: "Nova Nota", body: "" }];
-                currentSubject = name; currentNoteIdx = 0; saveAndRefresh();
-            }
-        }
-
-        function addNote() {
-            notebookData[currentSubject].push({ title: "Sem título", body: "" });
-            currentNoteIdx = notebookData[currentSubject].length - 1; saveAndRefresh();
-        }
-
-        function switchSubject(s) { currentSubject = s; currentNoteIdx = 0; saveAndRefresh(); }
-        function switchNote(idx) { currentNoteIdx = idx; saveAndRefresh(); }
-
         function saveCurrentData() {
-            const title = document.getElementById('editor-title').value;
-            const body = document.getElementById('editor-body').innerHTML;
             if(!notebookData[currentSubject]) return;
-            notebookData[currentSubject][currentNoteIdx].title = title;
-            notebookData[currentSubject][currentNoteIdx].body = body;
+            notebookData[currentSubject][currentNoteIdx].title = document.getElementById('editor-title').value;
+            notebookData[currentSubject][currentNoteIdx].body = document.getElementById('editor-body').innerHTML;
             localStorage.setItem('notebook-data-v3', JSON.stringify(notebookData));
-            const active = document.querySelector('.note-list-item.active');
-            if(active) active.innerText = title || "(sem título)";
         }
 
         function loadEditor() {
-            const note = notebookData[currentSubject][currentNoteIdx] || { title: "", body: "" };
-            document.getElementById('editor-title').value = note.title;
-            document.getElementById('editor-body').innerHTML = note.body;
+            const n = notebookData[currentSubject][currentNoteIdx] || { title: "", body: "" };
+            document.getElementById('editor-title').value = n.title;
+            document.getElementById('editor-body').innerHTML = n.body;
         }
 
-        function deleteSubject(e, s) {
-            e.stopPropagation();
-            if (Object.keys(notebookData).length > 1 && confirm(`Excluir matéria "${s}"?`)) {
-                delete notebookData[s];
-                currentSubject = Object.keys(notebookData)[0]; currentNoteIdx = 0; saveAndRefresh();
-            }
+        function addSubject() {
+            const n = prompt("Nome da matéria:");
+            if(n) { notebookData[n] = [{title: "Nova Nota", body: ""}]; currentSubject = n; renderSubjects(); }
         }
 
-        function saveAndRefresh() {
-            localStorage.setItem('notebook-data-v3', JSON.stringify(notebookData));
-            localStorage.setItem('last-subject', currentSubject);
-            localStorage.setItem('last-note-idx', currentNoteIdx);
-            renderSubjects();
+        function addNote() {
+            notebookData[currentSubject].push({title: "Sem título", body: ""});
+            currentNoteIdx = notebookData[currentSubject].length -1; renderNotes();
         }
 
+        carregarMenuFontes();
         renderSubjects();
     </script>
 </body>
