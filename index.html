@@ -1,65 +1,275 @@
-<section id="habitos" class="page-section">
-    <div class="water-container">
-        <p class="water-title">beba água 💧</p>
-        <div class="cups-grid" id="water-cups">
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planner 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@300;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --rosa-claro: #fff0f5;
+            --rosa-destaque: #ffb6c1;
+            --pink-vibrante: #ff69b4;
+            --azul-agua: #b3e5fc;
+            --azul-deep: #03a9f4;
+            --texto: #555;
+            --borda: #fce4ec;
+        }
+
+        * { box-sizing: border-box; }
+        body { font-family: 'Quicksand', sans-serif; margin: 0; display: flex; height: 100vh; background-color: #fff9fb; color: var(--texto); overflow: hidden; }
+
+        /* SIDEBAR */
+        .sidebar { width: 260px; background: white; border-right: 1px solid var(--borda); display: flex; flex-direction: column; padding: 25px; flex-shrink: 0; }
+        .sidebar h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: var(--rosa-destaque); text-align: center; margin-bottom: 30px; margin-top: 0; }
+        .menu-item { padding: 15px; margin-bottom: 10px; border-radius: 15px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 12px; font-size: 0.95rem; border: 1px solid transparent; }
+        .menu-item:hover { background: var(--rosa-claro); }
+        .menu-item.active { background: var(--rosa-claro); border-color: var(--rosa-destaque); font-weight: bold; color: var(--pink-vibrante); }
+        .sidebar-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--borda); text-align: center; }
+        .link-caderno { text-decoration: none; color: var(--rosa-destaque); font-size: 0.8rem; font-weight: bold; }
+
+        /* CONTEÚDO PRINCIPAL */
+        .main-content { flex-grow: 1; overflow-y: auto; padding: 40px; background: white; margin: 20px; border-radius: 30px; box-shadow: 0 10px 40px rgba(255, 182, 193, 0.1); }
+        .page-section { display: none; }
+        .page-section.active { display: block; animation: fadeIn 0.5s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* CALENDÁRIO */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .cal-btn { background: var(--rosa-claro); border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-family: inherit; font-weight: bold; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        .day-name { text-align: center; font-weight: bold; font-size: 0.8rem; background: var(--rosa-claro); padding: 10px; border-radius: 8px; }
+        .day-cell { border: 1px solid var(--borda); min-height: 110px; padding: 8px; border-radius: 10px; background: #fff; position: relative; transition: 0.2s; }
+        .day-cell textarea { width: 100%; border: none; height: 65px; resize: none; font-family: inherit; font-size: 0.75rem; outline: none; background: transparent; }
+        .today-circle { background: var(--pink-vibrante); color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 5px; font-weight: bold; }
+
+        /* WATER TRACKER */
+        .water-container { background: #f0faff; padding: 20px; border-radius: 20px; margin-bottom: 30px; border: 1px solid #e1f5fe; text-align: center; }
+        .water-title { font-family: 'Dancing Script', cursive; font-size: 1.8rem; color: var(--azul-deep); margin-bottom: 10px; margin-top: 0; }
+        .cups-grid { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .cup { width: 30px; height: 40px; border: 2.5px solid var(--azul-deep); border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; cursor: pointer; position: relative; transition: 0.2s; background: white; }
+        .cup.filled { background: var(--azul-agua); }
+        .cup.filled::after { content: '💧'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 10px; }
+
+        /* HABIT TRACKER */
+        .habit-table-container { overflow-x: auto; background: white; border-radius: 15px; border: 1px solid var(--borda); margin-top: 15px; }
+        .habit-table { border-collapse: collapse; width: 100%; font-size: 0.8rem; }
+        .habit-table th, .habit-table td { border: 1px solid var(--borda); padding: 8px; text-align: center; }
+        .habit-table th { background: var(--rosa-claro); color: var(--pink-vibrante); }
+        .habit-input { border: none; font-family: inherit; width: 130px; outline: none; background: transparent; }
+        .check-habit { cursor: pointer; accent-color: var(--pink-vibrante); transform: scale(1.2); }
+        .btn-add { background: var(--rosa-destaque); color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-family: inherit; font-weight: bold; }
+
+        /* COLOR PICKER & COUNTDOWN */
+        .color-menu { position: fixed; background: white; border: 1px solid var(--borda); border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; z-index: 1000; padding: 10px; }
+        .color-option { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; margin: 5px; display: inline-block; border: 1px solid rgba(0,0,0,0.05); }
+        .countdown-bar { padding: 12px 20px; border-radius: 15px; font-size: 0.85rem; display: flex; justify-content: space-between; border-left: 6px solid var(--pink-vibrante); margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h1>Planner</h1>
+        <div class="menu-item active" onclick="showPage('inicio', this)">🏠 início</div>
+        <div class="menu-item" onclick="showPage('habitos', this)">✨ hábitos</div>
+        <div class="menu-item" onclick="showPage('treinos', this)">💪 treinos</div>
+        <div class="menu-item" onclick="showPage('financas', this)">💰 finanças</div>
+        <div class="menu-item" onclick="showPage('extras', this)">🖼️ extras</div>
+        <div class="sidebar-footer"><a href="caderno.html" class="link-caderno">📖 abrir caderno virtual</a></div>
+    </div>
+
+    <div class="main-content">
+        <section id="inicio" class="page-section active">
+            <div class="cal-header">
+                <button class="cal-btn" onclick="moveMonth(-1)">❮ anterior</button>
+                <h2 id="month-display" style="margin:0; text-transform: lowercase; color: var(--rosa-destaque);">mês</h2>
+                <button class="cal-btn" onclick="moveMonth(1)">próximo ❯</button>
             </div>
-        <p id="water-stats" style="font-size: 0.8rem; color: var(--azul-deep); margin-top: 10px; font-weight: bold;"></p>
-        <p style="font-size: 0.65rem; color: var(--azul-deep); text-transform: lowercase; opacity: 0.8;">meta: 12 copos de 180ml (2.16L)</p>
+            <div class="calendar-grid" id="calendar-grid"></div>
+            <h2 style="font-size: 1rem; color: var(--rosa-destaque); margin-top: 40px;">⏳ contagem regressiva</h2>
+            <div id="countdown-area"></div>
+        </section>
+
+        <section id="habitos" class="page-section">
+            <div class="water-container">
+                <p class="water-title">beba água 💧</p>
+                <div class="cups-grid" id="water-cups"></div>
+                <p id="water-stats" style="font-size: 0.8rem; color: var(--azul-deep); margin-top: 10px; font-weight: bold;"></p>
+                <p style="font-size: 0.65rem; color: var(--azul-deep); opacity: 0.7;">meta: 12 copos de 180ml (2.16L)</p>
+            </div>
+
+            <h2 style="color: var(--rosa-destaque); font-family: 'Dancing Script'; font-size: 2rem;">✨ habit tracker</h2>
+            <button class="btn-add" onclick="addHabitRow()">+ novo hábito</button>
+            <div class="habit-table-container">
+                <table class="habit-table">
+                    <thead><tr id="habit-days-header"><th>Hábito</th></tr></thead>
+                    <tbody id="habit-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="treinos" class="page-section"><h2>💪 treinos</h2></section>
+        <section id="financas" class="page-section"><h2>💰 finanças</h2></section>
+        <section id="extras" class="page-section"><h2>🖼️ extras</h2></section>
     </div>
 
-    <h2 style="color: var(--rosa-destaque); font-family: 'Dancing Script'; font-size: 2rem;">✨ habit tracker</h2>
-    <div class="habit-controls">
-        <button class="btn-add" onclick="addHabitRow()">+ novo hábito</button>
+    <div id="color-picker" class="color-menu">
+        <div class="color-option" style="background:#ffffff;" onclick="setDayColor('#ffffff')"></div>
+        <div class="color-option" style="background:#c8e6c9;" onclick="setDayColor('#c8e6c9')"></div>
+        <div class="color-option" style="background:#bbdefb;" onclick="setDayColor('#bbdefb')"></div>
+        <div class="color-option" style="background:#fff9c4;" onclick="setDayColor('#fff9c4')"></div>
+        <div class="color-option" style="background:#ffccbc;" onclick="setDayColor('#ffccbc')"></div>
+        <div class="color-option" style="background:#f8bbd0;" onclick="setDayColor('#f8bbd0')"></div>
     </div>
-    <div class="habit-table-container">
-        <table class="habit-table">
-            <thead><tr id="habit-days-header"><th>Hábito</th></tr></thead>
-            <tbody id="habit-body"></tbody>
-        </table>
-    </div>
-</section>
 
-<script>
-    // ... (mantenha o restante do script anterior) ...
+    <script>
+        let currentDate = new Date();
+        const realToday = new Date();
+        realToday.setHours(0,0,0,0);
+        let selectedDayKey = null;
 
-    // --- LÓGICA DO WATER TRACKER ATUALIZADA ---
-    const CUP_VOLUME = 180; // ml
-    const TOTAL_CUPS = 12;
+        function showPage(pageId, element) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            element.classList.add('active');
+        }
 
-    function renderWater() {
-        const container = document.getElementById('water-cups');
-        const stats = document.getElementById('water-stats');
-        container.innerHTML = '';
-        
-        const todayStr = realToday.toDateString();
-        // Criar array de 12 posições se não existir
-        const savedWater = JSON.parse(localStorage.getItem(`water-${todayStr}`)) || Array(TOTAL_CUPS).fill(0);
+        // CALENDÁRIO
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+            const month = currentDate.getMonth();
+            const year = currentDate.getFullYear();
+            document.getElementById('month-display').innerText = `${currentDate.toLocaleString('pt-br', { month: 'long' })} ${year}`;
 
-        let totalDrank = 0;
+            ['dom','seg','ter','qua','qui','sex','sáb'].forEach(d => {
+                let div = document.createElement('div'); div.className = 'day-name'; div.innerText = d; grid.appendChild(div);
+            });
 
-        savedWater.forEach((filled, index) => {
-            let cup = document.createElement('div');
-            cup.className = `cup ${filled ? 'filled' : ''}`;
-            // Estilo menor para caber 12 copos na tela
-            cup.style.width = '30px';
-            cup.style.height = '40px';
-            
-            if(filled) totalDrank += CUP_VOLUME;
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            for(let i=0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
 
-            cup.onclick = () => toggleCup(index, savedWater, todayStr);
-            container.appendChild(cup);
-        });
+            for(let d=1; d <= daysInMonth; d++) {
+                let cell = document.createElement('div');
+                cell.className = 'day-cell';
+                let key = `cal-${year}-${month}-${d}`;
+                cell.style.backgroundColor = localStorage.getItem(`color-${key}`) || '#ffffff';
 
-        stats.innerText = `total: ${totalDrank}ml tomados`;
-    }
+                let isToday = (realToday.getDate() === d && realToday.getMonth() === month && realToday.getFullYear() === year);
+                cell.innerHTML = `<span class="${isToday ? 'today-circle' : ''}">${d}</span><textarea oninput="saveText('${key}', this.value)">${localStorage.getItem(key) || ''}</textarea>`;
+                
+                cell.oncontextmenu = (e) => {
+                    e.preventDefault();
+                    selectedDayKey = key;
+                    const menu = document.getElementById('color-picker');
+                    menu.style.display = 'block'; menu.style.left = e.pageX + 'px'; menu.style.top = e.pageY + 'px';
+                };
+                grid.appendChild(cell);
+            }
+            updateCountdowns();
+        }
 
-    function toggleCup(index, savedWater, todayStr) {
-        savedWater[index] = savedWater[index] ? 0 : 1;
-        localStorage.setItem(`water-${todayStr}`, JSON.stringify(savedWater));
+        function saveText(key, val) { localStorage.setItem(key, val); updateCountdowns(); }
+        function setDayColor(color) { localStorage.setItem(`color-${selectedDayKey}`, color); document.getElementById('color-picker').style.display = 'none'; renderCalendar(); }
+
+        function updateCountdowns() {
+            const area = document.getElementById('countdown-area'); area.innerHTML = '';
+            const month = currentDate.getMonth(); const year = currentDate.getFullYear();
+            let events = [];
+            for(let d=1; d <= 31; d++) {
+                let k = `cal-${year}-${month}-${d}`;
+                let text = localStorage.getItem(k);
+                if(text && text.trim() !== "") {
+                    let evDate = new Date(year, month, d);
+                    let diff = Math.ceil((evDate - realToday) / (1000 * 60 * 60 * 24));
+                    if(diff >= 0) events.push({ days: diff, text: text.split('\n')[0], date: d, color: localStorage.getItem(`color-${k}`) || '#fff0f5' });
+                }
+            }
+            events.sort((a,b) => a.days - b.days).forEach(ev => {
+                let label = ev.days === 0 ? "hoje!" : (ev.days === 1 ? "amanhã" : `${ev.days} dias`);
+                area.innerHTML += `<div class="countdown-bar" style="background: ${ev.color};"><span><strong>${label}</strong>: ${ev.text}</span><small>dia ${ev.date}</small></div>`;
+            });
+        }
+
+        function moveMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
+
+        // WATER TRACKER (180ml)
+        const CUP_VOLUME = 180;
+        const TOTAL_CUPS = 12;
+
+        function renderWater() {
+            const container = document.getElementById('water-cups');
+            const stats = document.getElementById('water-stats');
+            container.innerHTML = '';
+            const todayStr = realToday.toDateString();
+            const savedWater = JSON.parse(localStorage.getItem(`water-${todayStr}`)) || Array(TOTAL_CUPS).fill(0);
+
+            let totalDrank = 0;
+            savedWater.forEach((filled, index) => {
+                let cup = document.createElement('div');
+                cup.className = `cup ${filled ? 'filled' : ''}`;
+                if(filled) totalDrank += CUP_VOLUME;
+                cup.onclick = () => {
+                    savedWater[index] = savedWater[index] ? 0 : 1;
+                    localStorage.setItem(`water-${todayStr}`, JSON.stringify(savedWater));
+                    renderWater();
+                };
+                container.appendChild(cup);
+            });
+            stats.innerText = `total: ${totalDrank}ml tomados`;
+        }
+
+        // HABIT TRACKER
+        function initHabitTracker() {
+            const header = document.getElementById('habit-days-header');
+            if(header.cells.length <= 1) {
+                for(let i=1; i<=31; i++) { let th = document.createElement('th'); th.innerText = i; header.appendChild(th); }
+            }
+            loadHabits();
+        }
+
+        function addHabitRow(name = "") {
+            const tbody = document.getElementById('habit-body');
+            const tr = document.createElement('tr');
+            let html = `<td><input type="text" class="habit-input" placeholder="Novo hábito..." value="${name}" onchange="saveHabits()"></td>`;
+            for(let i=1; i<=31; i++) { html += `<td><input type="checkbox" class="check-habit" onchange="saveHabits()"></td>`; }
+            tr.innerHTML = html;
+            tbody.appendChild(tr);
+            saveHabits();
+        }
+
+        function saveHabits() {
+            const rows = document.querySelectorAll('#habit-body tr');
+            const habitsData = Array.from(rows).map(row => ({
+                name: row.querySelector('.habit-input').value,
+                checks: Array.from(row.querySelectorAll('.check-habit')).map(cb => cb.checked)
+            }));
+            localStorage.setItem('habits-2026', JSON.stringify(habitsData));
+        }
+
+        function loadHabits() {
+            const data = JSON.parse(localStorage.getItem('habits-2026')) || [];
+            const tbody = document.getElementById('habit-body');
+            tbody.innerHTML = '';
+            if(data.length === 0) addHabitRow("Beber Água");
+            else data.forEach(h => {
+                const tr = document.createElement('tr');
+                let html = `<td><input type="text" class="habit-input" value="${h.name}" onchange="saveHabits()"></td>`;
+                h.checks.forEach(checked => { html += `<td><input type="checkbox" class="check-habit" ${checked ? 'checked' : ''} onchange="saveHabits()"></td>`; });
+                tr.innerHTML = html;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.onclick = () => document.getElementById('color-picker').style.display = 'none';
+
+        renderCalendar();
+        initHabitTracker();
         renderWater();
-    }
-
-    // Chame o renderWater no final do seu script original
-    renderWater();
-    // ... (restante das funções: initHabitTracker, renderCalendar, etc.) ...
-</script>
+    </script>
+</body>
+</html>
