@@ -15,272 +15,233 @@
             --borda: #fce4ec;
         }
 
-        body { font-family: 'Quicksand', sans-serif; padding: 20px; background-color: #fff9fb; color: var(--texto); }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(255, 182, 193, 0.15); }
-
-        h1 { text-align: center; font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: var(--rosa-destaque); margin-bottom: 10px; }
+        * { box-sizing: border-box; }
         
-        .nav-menu { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
-        .nav-link { text-decoration: none; color: var(--rosa-destaque); font-weight: bold; font-size: 0.85rem; padding: 8px 20px; border: 1.5px solid var(--rosa-claro); border-radius: 25px; transition: 0.3s; }
-        .nav-link:hover { background: var(--rosa-claro); }
-        .nav-active { background: var(--rosa-claro); border-color: var(--rosa-destaque); }
+        body { 
+            font-family: 'Quicksand', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            background-color: #fff9fb; 
+            color: var(--texto); 
+            overflow: hidden; 
+        }
 
-        h2 { font-size: 1.1rem; color: var(--rosa-destaque); margin-top: 40px; border-left: 4px solid var(--rosa-claro); padding-left: 10px; text-transform: lowercase; }
+        /* --- MENU LATERAL --- */
+        .sidebar { 
+            width: 260px; 
+            background: white; 
+            border-right: 1px solid var(--borda); 
+            display: flex; 
+            flex-direction: column; 
+            padding: 25px; 
+            flex-shrink: 0; 
+        }
 
-        /* Contador de Dias / Tarja de Alerta */
-        .countdown-container { margin: 20px 0; display: flex; flex-direction: column; gap: 10px; }
-        .countdown-bar { background: var(--rosa-claro); color: var(--texto); padding: 12px 20px; border-radius: 15px; font-size: 0.9rem; border-left: 5px solid var(--pink-vibrante); display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.5s ease; }
-        .countdown-bar strong { color: var(--pink-vibrante); }
+        .sidebar h1 { 
+            font-family: 'Dancing Script', cursive; 
+            font-size: 2.5rem; 
+            color: var(--rosa-destaque); 
+            text-align: center; 
+            margin-bottom: 30px; 
+            margin-top: 0;
+        }
 
-        /* Calendário */
-        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .cal-btn { background: var(--rosa-claro); border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; color: var(--texto); font-family: inherit; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-        .day-name { text-align: center; font-weight: bold; font-size: 0.8rem; background: var(--rosa-claro); padding: 8px; border-radius: 5px; }
-        .day-cell { border: 1px solid var(--borda); min-height: 90px; padding: 5px; border-radius: 5px; background: #fff; font-size: 0.7rem; position: relative; }
-        
-        .today-circle { background: var(--pink-vibrante) !important; color: white; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 3px; }
-        .day-cell span { font-weight: bold; display: block; margin-bottom: 3px; width: 22px; text-align: center; }
+        .menu-item { 
+            padding: 15px; 
+            margin-bottom: 10px; 
+            border-radius: 15px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            font-size: 0.95rem; 
+            color: var(--texto);
+            border: 1px solid transparent;
+        }
+
+        .menu-item:hover { background: var(--rosa-claro); }
+        .menu-item.active { 
+            background: var(--rosa-claro); 
+            border-color: var(--rosa-destaque); 
+            font-weight: bold; 
+            color: var(--pink-vibrante);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--borda);
+            text-align: center;
+        }
+
+        .link-caderno {
+            text-decoration: none;
+            color: var(--rosa-destaque);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* --- ÁREA DE CONTEÚDO --- */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 40px; 
+            background: white; 
+            margin: 20px; 
+            border-radius: 30px; 
+            box-shadow: 0 10px 40px rgba(255, 182, 193, 0.1); 
+        }
+
+        .page-section { display: none; }
+        .page-section.active { display: block; animation: fadeIn 0.5s ease; }
+
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        /* --- ESTILOS DO CALENDÁRIO --- */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .cal-btn { background: var(--rosa-claro); border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-family: inherit; font-weight: bold; color: var(--texto); }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        .day-name { text-align: center; font-weight: bold; font-size: 0.8rem; background: var(--rosa-claro); padding: 10px; border-radius: 8px; }
+        .day-cell { border: 1px solid var(--borda); min-height: 100px; padding: 8px; border-radius: 10px; background: #fff; font-size: 0.8rem; position: relative; }
+        .today-circle { background: var(--pink-vibrante); color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 5px; }
+        .day-cell span { font-weight: bold; display: block; margin-bottom: 5px; width: 24px; text-align: center; }
         .day-cell textarea { width: 100%; border: none; height: 60px; resize: none; font-family: inherit; font-size: 0.75rem; outline: none; background: transparent; }
 
-        /* Restante do layout mantido */
-        .tracker-wrapper { overflow-x: auto; margin-top: 15px; border: 1px solid var(--borda); border-radius: 10px; }
-        table { border-collapse: collapse; width: 100%; font-size: 0.8rem; }
-        th, td { border: 1px solid var(--borda); padding: 5px; text-align: center; }
-        .habit-name { text-align: left; min-width: 160px; padding-left: 10px; outline: none; }
-        .add-btn { margin-top: 10px; background: none; border: 1px dashed var(--rosa-destaque); color: var(--rosa-destaque); padding: 5px 15px; border-radius: 5px; cursor: pointer; }
-        .workout-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; }
-        .workout-card { border: 1px solid var(--borda); padding: 12px; border-radius: 12px; background: #fffafb; }
-        .workout-card input { width: 100%; border: none; border-bottom: 1px solid var(--rosa-claro); font-weight: bold; margin-bottom: 8px; outline: none; background: transparent; font-family: inherit; color: var(--rosa-destaque); }
-        .workout-card textarea { width: 100%; border: none; height: 110px; resize: none; font-family: inherit; outline: none; background: transparent; font-size: 0.8rem; }
-        .fin-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .fin-table th { background: var(--rosa-claro); font-size: 0.75rem; padding: 10px; }
-        .fin-table input { width: 100%; border: none; padding: 8px; outline: none; text-align: center; font-family: inherit; color: var(--texto); }
-        .extra-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
-        .wishlist { border: 1px solid var(--borda); padding: 20px; border-radius: 15px; }
-        .moodboard { border: 1px solid var(--borda); padding: 20px; border-radius: 15px; }
-        .moodboard-container { width: 100%; min-height: 150px; border: 2px dashed var(--rosa-claro); border-radius: 10px; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; margin-top: 10px; }
-        .mood-img { width: 90px; height: 90px; object-fit: cover; border-radius: 8px; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .countdown-bar { background: var(--rosa-claro); padding: 12px; border-radius: 15px; margin-top: 10px; border-left: 5px solid var(--pink-vibrante); font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Planner 2026</h1>
-
-    <div class="nav-menu">
-        <a href="#" class="nav-link nav-active">📅 meu planner</a>
-        <a href="https://dudanlima.github.io/meu-caderno/" class="nav-link">📖 meu caderno</a>
-    </div>
-
-    <div class="cal-header">
-        <button class="cal-btn" onclick="moveMonth(-1)">❮ anterior</button>
-        <h2 id="month-display" style="margin:0; border:none;">mês</h2>
-        <button class="cal-btn" onclick="moveMonth(1)">próximo ❯</button>
-    </div>
-    
-    <div class="calendar-grid" id="calendar-grid"></div>
-
-    <div id="countdown-area" class="countdown-container"></div>
-
-    <h2>✨ habit tracker</h2>
-    <div class="tracker-wrapper">
-        <table>
-            <thead><tr id="habit-header"><th>HABIT</th></tr></thead>
-            <tbody id="habit-body"></tbody>
-        </table>
-    </div>
-    <button class="add-btn" onclick="addHabitRow()">+ adicionar novo hábito</button>
-
-    <h2>💪 treinos da semana</h2>
-    <div class="workout-grid">
-        <div class="workout-card"><input placeholder="segunda" data-id="w1"><textarea data-id="wt1" placeholder="treino de hoje..."></textarea></div>
-        <div class="workout-card"><input placeholder="terça" data-id="w2"><textarea data-id="wt2" placeholder="treino de hoje..."></textarea></div>
-        <div class="workout-card"><input placeholder="quarta" data-id="w3"><textarea data-id="wt3" placeholder="treino de hoje..."></textarea></div>
-        <div class="workout-card"><input placeholder="quinta" data-id="w4"><textarea data-id="wt4" placeholder="treino de hoje..."></textarea></div>
-        <div class="workout-card"><input placeholder="sexta" data-id="w5"><textarea data-id="wt5" placeholder="treino de hoje..."></textarea></div>
-        <div class="workout-card"><input placeholder="sábado" data-id="w6"><textarea data-id="wt6" placeholder="treino de hoje..."></textarea></div>
-    </div>
-
-    <h2>💰 controle financeiro</h2>
-    <table class="fin-table">
-        <thead><tr><th>descrição</th><th>valor</th><th>vencimento</th><th>parcela</th></tr></thead>
-        <tbody id="fin-body"></tbody>
-    </table>
-
-    <div class="extra-grid">
-        <div class="wishlist">
-            <h2>🛍️ wishlist</h2>
-            <textarea style="width:100%; height:180px; border:none; outline:none; font-family:inherit; font-size:0.9rem;" placeholder="itens desejados..." data-id="wish-list"></textarea>
+    <div class="sidebar">
+        <h1>Planner</h1>
+        <div class="menu-item active" onclick="showPage('inicio', this)">🏠 início</div>
+        <div class="menu-item" onclick="showPage('habitos', this)">✨ hábitos</div>
+        <div class="menu-item" onclick="showPage('treinos', this)">💪 treinos</div>
+        <div class="menu-item" onclick="showPage('financas', this)">💰 finanças</div>
+        <div class="menu-item" onclick="showPage('extras', this)">🖼️ extras</div>
+        
+        <div class="sidebar-footer">
+            <a href="caderno.html" class="link-caderno">📖 abrir caderno virtual</a>
         </div>
-        <div class="moodboard">
-            <h2>🖼️ moodboard</h2>
-            <div style="display:flex; gap:5px;">
-                <input type="text" id="img-url" placeholder="link da imagem..." style="flex:1; border:1px solid var(--borda); border-radius:5px; padding:5px; outline:none;">
-                <button class="cal-btn" onclick="addImg()">add</button>
+    </div>
+
+    <div class="main-content">
+        
+        <section id="inicio" class="page-section active">
+            <div class="cal-header">
+                <button class="cal-btn" onclick="moveMonth(-1)">❮ anterior</button>
+                <h2 id="month-display" style="margin:0; color: var(--rosa-destaque); text-transform: lowercase;">mês</h2>
+                <button class="cal-btn" onclick="moveMonth(1)">próximo ❯</button>
             </div>
-            <div class="moodboard-container" id="mood-container"></div>
-            <button onclick="localStorage.removeItem('mood-imgs'); renderMood();" style="font-size:10px; background:none; border:none; color:#ccc; cursor:pointer; margin-top:5px;">limpar moodboard</button>
-        </div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+            <div id="countdown-area" style="margin-top:20px;"></div>
+        </section>
+
+        <section id="habitos" class="page-section">
+            <h2 style="color: var(--rosa-destaque);">✨ habit tracker</h2>
+            <p>Em breve: Sua grade de hábitos aqui.</p>
+        </section>
+
+        <section id="treinos" class="page-section">
+            <h2 style="color: var(--rosa-destaque);">💪 treinos da semana</h2>
+            <p>Em breve: Seu planner de treinos aqui.</p>
+        </section>
+
+        <section id="financas" class="page-section">
+            <h2 style="color: var(--rosa-destaque);">💰 controle financeiro</h2>
+            <p>Em breve: Sua tabela de finanças aqui.</p>
+        </section>
+
+        <section id="extras" class="page-section">
+            <h2 style="color: var(--rosa-destaque);">🖼️ moodboard & wishlist</h2>
+            <p>Em breve: Seus quadros aqui.</p>
+        </section>
+
     </div>
-</div>
 
-<script>
-    let currentDate = new Date();
-    const realToday = new Date();
-    realToday.setHours(0,0,0,0);
-
-    // CALENDÁRIO
-    function renderCalendar() {
-        const grid = document.getElementById('calendar-grid');
-        grid.innerHTML = '';
-        const month = currentDate.getMonth();
-        const year = currentDate.getFullYear();
-        
-        document.getElementById('month-display').innerText = `${currentDate.toLocaleString('pt-br', { month: 'long' })} ${year}`;
-        
-        ['dom','seg','ter','qua','qui','sex','sáb'].forEach(d => {
-            let div = document.createElement('div'); div.className = 'day-name'; div.innerText = d; grid.appendChild(div);
-        });
-
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-        for(let i=0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
-
-        for(let d=1; d <= daysInMonth; d++) {
-            let cell = document.createElement('div'); cell.className = 'day-cell';
-            let key = `cal-${year}-${month}-${d}`;
-            let daySpanClass = (realToday.getDate() === d && realToday.getMonth() === month && realToday.getFullYear() === year) ? 'today-circle' : '';
+    <script>
+        // --- NAVEGAÇÃO ENTRE PÁGINAS ---
+        function showPage(pageId, element) {
+            // Esconde todas as seções
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // Remove 'active' de todos os itens do menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
             
-            cell.innerHTML = `<span class="${daySpanClass}">${d}</span><textarea data-id="${key}" oninput="updateCountdowns()">${localStorage.getItem(key) || ''}</textarea>`;
-            grid.appendChild(cell);
+            // Mostra a seção clicada e ativa o item do menu
+            document.getElementById(pageId).classList.add('active');
+            element.classList.add('active');
         }
-        setupSync();
-        updateCountdowns();
-    }
 
-    // LÓGICA DO CONTADOR DE DIAS
-    function updateCountdowns() {
-        const area = document.getElementById('countdown-area');
-        area.innerHTML = '';
-        const month = currentDate.getMonth();
-        const year = currentDate.getFullYear();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        // --- LÓGICA DO CALENDÁRIO ---
+        let currentDate = new Date();
+        const realToday = new Date();
+        realToday.setHours(0,0,0,0);
 
-        let events = [];
-
-        for(let d=1; d <= daysInMonth; d++) {
-            let key = `cal-${year}-${month}-${d}`;
-            let text = localStorage.getItem(key);
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+            const month = currentDate.getMonth();
+            const year = currentDate.getFullYear();
             
-            if(text && text.trim() !== "") {
-                let eventDate = new Date(year, month, d);
-                let diffTime = eventDate - realToday;
-                let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('month-display').innerText = `${currentDate.toLocaleString('pt-br', { month: 'long' })} ${year}`;
+            
+            ['dom','seg','ter','qua','qui','sex','sáb'].forEach(d => {
+                let div = document.createElement('div'); div.className = 'day-name'; div.innerText = d; grid.appendChild(div);
+            });
 
-                // Só mostra se for hoje ou no futuro
-                if(diffDays >= 0) {
-                    events.push({ days: diffDays, text: text.split('\n')[0], date: d });
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            for(let i=0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
+
+            for(let d=1; d <= daysInMonth; d++) {
+                let cell = document.createElement('div'); cell.className = 'day-cell';
+                let key = `cal-${year}-${month}-${d}`;
+                let daySpanClass = (realToday.getDate() === d && realToday.getMonth() === month && realToday.getFullYear() === year) ? 'today-circle' : '';
+                
+                cell.innerHTML = `<span class="${daySpanClass}">${d}</span><textarea data-id="${key}" oninput="updateCountdowns('${key}', this.value)">${localStorage.getItem(key) || ''}</textarea>`;
+                grid.appendChild(cell);
+            }
+            updateCountdowns();
+        }
+
+        function moveMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
+
+        function updateCountdowns(key, val) {
+            if(key) localStorage.setItem(key, val);
+            const area = document.getElementById('countdown-area');
+            area.innerHTML = '';
+            const month = currentDate.getMonth();
+            const year = currentDate.getFullYear();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            let events = [];
+            for(let d=1; d <= daysInMonth; d++) {
+                let k = `cal-${year}-${month}-${d}`;
+                let text = localStorage.getItem(k);
+                if(text && text.trim() !== "") {
+                    let evDate = new Date(year, month, d);
+                    let diff = Math.ceil((evDate - realToday) / (1000 * 60 * 60 * 24));
+                    if(diff >= 0) events.push({ days: diff, text: text.split('\n')[0], date: d });
                 }
             }
+            events.sort((a,b) => a.days - b.days).forEach(ev => {
+                let label = ev.days === 0 ? "hoje!" : (ev.days === 1 ? "amanhã" : `${ev.days} dias`);
+                area.innerHTML += `<div class="countdown-bar"><strong>${label}</strong>: ${ev.text} (dia ${ev.date})</div>`;
+            });
         }
 
-        // Ordena pelos dias mais próximos
-        events.sort((a, b) => a.days - b.days);
-
-        events.forEach(ev => {
-            let label = ev.days === 0 ? "é hoje! ⚡" : (ev.days === 1 ? "é amanhã! ⏳" : `${ev.days} dias até`);
-            area.innerHTML += `
-                <div class="countdown-bar">
-                    <span><strong>${label}</strong>: ${ev.text}</span>
-                    <small style="font-size:0.7rem; opacity:0.6;">dia ${ev.date}</small>
-                </div>`;
-        });
-    }
-
-    function moveMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
-
-    function renderHabits() {
-        const hHeader = document.getElementById('habit-header');
-        const hBody = document.getElementById('habit-body');
-        hHeader.innerHTML = '<th>HABIT</th>';
-        for(let i=1; i<=31; i++) hHeader.innerHTML += `<th>${i}</th>`;
-        hBody.innerHTML = '';
-        let habitCount = parseInt(localStorage.getItem('habit-count') || '5');
-        for(let i=1; i<=habitCount; i++) {
-            let tr = document.createElement('tr');
-            let hId = `habit-row-${i}`;
-            let savedName = localStorage.getItem(`${hId}-name`) || `Hábito ${i}`;
-            let html = `<td class="habit-name" contenteditable="true" data-habit-save="${hId}">${savedName}</td>`;
-            for(let d=1; d<=31; d++) {
-                let checkId = `${hId}-d${d}`;
-                let checked = localStorage.getItem(checkId) === 'true' ? 'checked' : '';
-                html += `<td><input type="checkbox" id="${checkId}" ${checked} onclick="localStorage.setItem('${checkId}', this.checked)"></td>`;
-            }
-            tr.innerHTML = html;
-            hBody.appendChild(tr);
-        }
-        setupHabitNames();
-    }
-
-    function addHabitRow() {
-        let count = parseInt(localStorage.getItem('habit-count') || '5');
-        localStorage.setItem('habit-count', count + 1);
-        renderHabits();
-    }
-
-    function setupHabitNames() {
-        document.querySelectorAll('[data-habit-save]').forEach(cell => {
-            cell.onblur = () => localStorage.setItem(`${cell.dataset.habitSave}-name`, cell.innerText);
-        });
-    }
-
-    const finBody = document.getElementById('fin-body');
-    for(let i=1; i<=8; i++) {
-        let tr = document.createElement('tr');
-        tr.innerHTML = `<td><input data-id="f-d-${i}"></td><td><input data-id="f-v-${i}"></td><td><input data-id="f-ven-${i}"></td><td><input data-id="f-p-${i}"></td>`;
-        finBody.appendChild(tr);
-    }
-
-    function setupSync() {
-        document.querySelectorAll('input, textarea').forEach(el => {
-            if(el.dataset.id) {
-                el.value = localStorage.getItem(el.dataset.id) || el.value;
-                el.oninput = () => {
-                    localStorage.setItem(el.dataset.id, el.value);
-                    if(el.tagName === 'TEXTAREA' && el.dataset.id.startsWith('cal-')) {
-                        updateCountdowns();
-                    }
-                };
-            }
-        });
-    }
-
-    function addImg() {
-        const url = document.getElementById('img-url').value;
-        if(url) {
-            let imgs = JSON.parse(localStorage.getItem('mood-imgs') || '[]');
-            imgs.push(url);
-            localStorage.setItem('mood-imgs', JSON.stringify(imgs));
-            renderMood();
-            document.getElementById('img-url').value = '';
-        }
-    }
-    function renderMood() {
-        const cont = document.getElementById('mood-container');
-        cont.innerHTML = '';
-        JSON.parse(localStorage.getItem('mood-imgs') || '[]').forEach(url => {
-            cont.innerHTML += `<img src="${url}" class="mood-img">`;
-        });
-    }
-
-    renderCalendar();
-    renderHabits();
-    renderMood();
-    setupSync();
-</script>
+        // Iniciar
+        renderCalendar();
+    </script>
 </body>
 </html>
