@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
-        /* FONTE HELLO PARA OS TÍTULOS */
         @font-face { 
             font-family: 'Hello'; 
             src: url('fonts/Hello.otf') format('opentype'); 
@@ -26,64 +25,36 @@
         * { box-sizing: border-box; }
         body { font-family: 'Poppins', sans-serif; margin: 0; display: flex; height: 100vh; background-color: #fff9fb; color: var(--texto); overflow: hidden; }
 
-        /* Estilos para Impressão / PDF */
         @media print {
-            .sidebar, .notes-panel, .toolbar, #save-status, .nav-back, .btn-add { display: none !important; }
+            .sidebar, .notes-panel, .toolbar, #save-status { display: none !important; }
             body { background: white; overflow: visible; }
             .editor-container { border: none; box-shadow: none; margin: 0; overflow: visible; }
-            .editor-content { padding: 0; overflow: visible; }
             #editor-title { padding-left: 0; color: black; font-family: 'Hello', serif !important; }
         }
 
-        /* SIDEBAR */
         .sidebar { width: 250px; background: white; border-right: 1px solid var(--borda); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
-        
-        /* Título Sidebar com a fonte Hello */
-        .sidebar h1 { 
-            font-family: 'Hello', cursive; 
-            font-size: 3rem; 
-            color: var(--rosa-destaque); 
-            text-align: center; 
-            margin-bottom: 15px; 
-            font-weight: normal;
-        }
+        .sidebar h1 { font-family: 'Hello', cursive; font-size: 3rem; color: var(--rosa-destaque); text-align: center; margin-bottom: 15px; font-weight: normal; }
 
         .subject-list { list-style: none; padding: 0; flex-grow: 1; overflow-y: auto; }
         .subject-item { padding: 12px 15px; margin-bottom: 8px; border-radius: 12px; cursor: pointer; transition: 0.3s; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; }
         .subject-item:hover { background: var(--rosa-claro); }
         .subject-item.active { background: var(--rosa-claro); font-weight: 600; color: var(--pink-vibrante); border: 1px solid var(--rosa-destaque); }
 
-        /* PAINEL DE NOTAS */
         .notes-panel { width: 220px; background: #fffafa; border-right: 1px solid var(--borda); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
-        .notes-panel h3 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--rosa-destaque); margin-bottom: 15px; }
-        .note-list { list-style: none; padding: 0; flex-grow: 1; overflow-y: auto; }
         .note-list-item { padding: 10px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; border-bottom: 1px solid #f0f0f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .note-list-item.active { background: white; font-weight: 600; border-left: 3px solid var(--pink-vibrante); }
 
-        /* EDITOR */
         .editor-container { flex-grow: 1; display: flex; flex-direction: column; background: white; margin: 15px; border-radius: 25px; box-shadow: 0 5px 20px rgba(255,182,193,0.1); overflow: hidden; }
         .toolbar { padding: 10px 20px; border-bottom: 1px solid var(--borda); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; background: #fffafb; }
         .toolbar button, .toolbar select, .toolbar input[type="color"] { background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 5px 8px; cursor: pointer; font-family: inherit; font-size: 0.75rem; color: var(--texto); outline: none; height: 32px; display: flex; align-items: center; justify-content: center; }
-        .toolbar button:hover, .toolbar select:hover { background: var(--rosa-claro); }
-        
-        .editor-content { flex-grow: 1; padding: 30px; overflow-y: auto; outline: none; line-height: 1.6; }
-        
-        /* Título da Nota com a fonte Hello */
-        #editor-title { 
-            font-family: 'Hello', sans-serif; 
-            font-size: 2.8rem; 
-            border: none; 
-            outline: none; 
-            color: var(--rosa-destaque); 
-            font-weight: normal; 
-            width: 100%; 
-            padding: 20px 30px 0; 
-            background: transparent;
-        }
+        .toolbar button:hover { background: var(--rosa-claro); }
+        .btn-recording { background: #ffeb3b !important; animation: pulse 1.5s infinite; }
 
-        .btn-add { background: var(--rosa-destaque); color: white; border: none; padding: 10px; border-radius: 12px; cursor: pointer; font-family: inherit; font-weight: 600; font-size: 0.8rem; margin-top: 10px; }
-        .nav-back { text-decoration: none; color: var(--rosa-destaque); font-size: 0.7rem; font-weight: 600; text-align: center; margin-bottom: 20px; display: block; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
         
+        #editor-title { font-family: 'Hello', sans-serif; font-size: 2.8rem; border: none; outline: none; color: var(--rosa-destaque); font-weight: normal; width: 100%; padding: 20px 30px 0; background: transparent; }
+        .editor-content { flex-grow: 1; padding: 30px; overflow-y: auto; outline: none; line-height: 1.6; }
+
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: var(--rosa-claro); border-radius: 10px; }
     </style>
@@ -92,91 +63,97 @@
 
     <div class="sidebar">
         <h1>Caderno</h1>
-        <a href="index.html" class="nav-back">📅 voltar ao planner</a>
+        <a href="index.html" style="text-decoration:none; color:var(--rosa-destaque); font-size:0.7rem; font-weight:600; text-align:center; margin-bottom:20px; display:block;">📅 voltar ao planner</a>
         <ul class="subject-list" id="subject-list"></ul>
-        <button class="btn-add" onclick="addSubject()">+ nova matéria</button>
+        <button onclick="addSubject()" style="background:var(--rosa-destaque); color:white; border:none; padding:10px; border-radius:12px; cursor:pointer; font-weight:600; font-size:0.8rem;">+ nova matéria</button>
     </div>
 
     <div class="notes-panel">
-        <h3 id="current-subject-name">Matéria</h3>
-        <button class="btn-add" style="background: transparent; border: 1px dashed var(--rosa-destaque); color: var(--rosa-destaque); margin-bottom: 15px;" onclick="addNote()">+ nova página</button>
+        <h3 style="font-size:0.7rem; color:var(--rosa-destaque); text-transform:uppercase;">Notas</h3>
+        <button onclick="addNote()" style="background:transparent; border:1px dashed var(--rosa-destaque); color:var(--rosa-destaque); padding:10px; border-radius:12px; cursor:pointer; margin-bottom:15px;">+ nova página</button>
         <ul class="note-list" id="note-list"></ul>
     </div>
 
     <div class="editor-container">
-        <input type="text" id="editor-title" placeholder="Título da nota..." oninput="saveCurrentData()">
+        <input type="text" id="editor-title" placeholder="Título..." oninput="saveCurrentData()">
         
         <div class="toolbar">
-            <button onclick="format('bold')" title="Negrito"><b>B</b></button>
-            <button onclick="format('italic')" title="Itálico"><i>I</i></button>
-            <button onclick="format('underline')" title="Sublinhado"><u>U</u></button>
-
-            <button onclick="format('justifyLeft')" title="Esquerda">⬅</button>
-            <button onclick="format('justifyCenter')" title="Central">↔</button>
-            <button onclick="format('justifyRight')" title="Direita">➡</button>
-
-            <select id="font-selector" onchange="applyFont(this.value)" style="width: 150px;"></select>
-
-            <select id="size-selector" onchange="format('fontSize', this.value)">
-                <option value="3">14px</option>
-                <option value="1">10px</option>
-                <option value="2">12px</option>
-                <option value="4">16px</option>
-                <option value="5">18px</option>
-                <option value="6">24px</option>
-                <option value="7">32px</option>
+            <button onclick="format('bold')"><b>B</b></button>
+            <button onclick="format('justifyCenter')">↔</button>
+            <select id="font-selector" onchange="applyFont(this.value)" style="width:140px;"></select>
+            <select onchange="format('fontSize', this.value)">
+                <option value="3">14px</option><option value="5">18px</option><option value="7">32px</option>
             </select>
-
-            <input type="color" onchange="format('foreColor', this.value)" title="Cor do texto" style="width: 40px; padding: 2px; border: 1px solid #eee;">
+            <input type="color" onchange="format('foreColor', this.value)">
             
-            <button onclick="format('insertUnorderedList')" title="Lista">• Lista</button>
-            <button onclick="window.print()" title="Imprimir ou Salvar PDF">🖨️ PDF/Imprimir</button>
+            <button id="btn-speech" onclick="toggleTranscription()" title="Transcrever voz para texto">🎤 Transcrever</button>
+            
+            <button onclick="window.print()">🖨️ PDF</button>
         </div>
 
         <div id="editor-body" class="editor-content" contenteditable="true" oninput="saveCurrentData()"></div>
-        <div id="save-status" style="font-size: 0.6rem; color: #ccc; text-align: right; padding: 10px 20px;">alterações salvas</div>
+        <div id="save-status" style="font-size:0.6rem; color:#ccc; text-align:right; padding:10px 20px;">salvo</div>
     </div>
 
     <script>
-        // LISTA DINÂMICA DE FONTES (Verifique se os nomes batem com os arquivos na pasta fonts/)
-        const fontesDisponiveis = [
-            'Better Together.otf', 'Better Together Script.ttf', 'Good Mood.otf', 
-            'Hanging.otf', 'Kathen Font by Situjuh (7NTypes).otf', 'Magical Feather.ttf',
-            'SimpleHandmade.otf', 'Simple Mandala.otf', 'Skyhigh.ttf', 'Windsol-Regular.ttf',
-            'Autumn in September.ttf', 'Brownist.otf', 'Farmhouse.otf', 'FBCaramelApple.otf',
-            'Handmade.otf', 'KGSimplytheBest.otf', 'Milky Matcha.otf', 'Please write me a song.ttf',
-            'ChettaVissto.otf', 'Happy Night.otf', 'BubbbleGum.otf', 'Muthiara demo version.otf',
-            'hello honey.otf', 'Hello.otf', 'Hello Valentina.ttf', 'Game Bubble.otf', 
-            'Bubbleboddy-FatTrial.ttf', 'Warung Kopi.otf'
-        ];
+        const fontesDisponiveis = ['Better Together.otf', 'Good Mood.otf', 'Hanging.otf', 'Hello.otf', 'Warung Kopi.otf']; // Exemplo: Adicione as suas aqui
 
         function carregarMenuFontes() {
             const selector = document.getElementById('font-selector');
-            
-            // Adiciona a padrão primeiro
-            const padrao = document.createElement('option');
-            padrao.value = "Poppins"; padrao.innerText = "Poppins (Padrão)";
-            selector.appendChild(padrao);
-
-            fontesDisponiveis.forEach(arquivo => {
-                const nomeFonte = arquivo.split('.')[0];
-                
-                // Carregamento dinâmico do FontFace
-                const novaFonte = new FontFace(nomeFonte, `url(fonts/${arquivo})`);
-                novaFonte.load().then(loadedFace => {
-                    document.fonts.add(loadedFace);
-                    const option = document.createElement('option');
-                    option.value = nomeFonte;
-                    option.innerText = nomeFonte;
-                    selector.appendChild(option);
-                }).catch(err => console.log("Não foi possível carregar:", arquivo));
+            const p = document.createElement('option'); p.value="Poppins"; p.innerText="Poppins"; selector.appendChild(p);
+            fontesDisponiveis.forEach(f => {
+                const n = f.split('.')[0];
+                const face = new FontFace(n, `url(fonts/${f})`);
+                face.load().then(l => { document.fonts.add(l); const o=document.createElement('option'); o.value=n; o.innerText=n; selector.appendChild(o); });
             });
         }
 
-        function applyFont(fontName) { document.execCommand('fontName', false, fontName); saveCurrentData(); }
-        function format(cmd, val = null) { document.execCommand(cmd, false, val); saveCurrentData(); }
+        // LÓGICA DO TRANSCRITOR
+        let recognition;
+        let isRecording = false;
 
-        // Lógica do Caderno
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'pt-BR';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            recognition.onresult = (event) => {
+                let finalTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    }
+                }
+                if (finalTranscript) {
+                    document.execCommand('insertText', false, finalTranscript + ' ');
+                }
+            };
+
+            recognition.onend = () => { if(isRecording) recognition.start(); };
+        }
+
+        function toggleTranscription() {
+            const btn = document.getElementById('btn-speech');
+            if (!recognition) return alert("Seu navegador não suporta transcrição.");
+
+            if (!isRecording) {
+                recognition.start();
+                isRecording = true;
+                btn.classList.add('btn-recording');
+                btn.innerText = "🛑 Parar";
+            } else {
+                recognition.stop();
+                isRecording = false;
+                btn.classList.remove('btn-recording');
+                btn.innerText = "🎤 Transcrever";
+            }
+        }
+
+        function format(cmd, val=null) { document.execCommand(cmd, false, val); saveCurrentData(); }
+        function applyFont(f) { document.execCommand('fontName', false, f); saveCurrentData(); }
+
         let notebookData = JSON.parse(localStorage.getItem('notebook-data-v3')) || { "Geral": [{ title: "Nova Nota", body: "" }] };
         let currentSubject = localStorage.getItem('last-subject') || "Geral";
         let currentNoteIdx = 0;
@@ -195,7 +172,6 @@
 
         function renderNotes() {
             const list = document.getElementById('note-list'); list.innerHTML = '';
-            document.getElementById('current-subject-name').innerText = currentSubject;
             (notebookData[currentSubject] || []).forEach((n, i) => {
                 const li = document.createElement('li');
                 li.className = `note-list-item ${i === currentNoteIdx ? 'active' : ''}`;
@@ -207,14 +183,11 @@
         }
 
         function saveCurrentData() {
-            if(!notebookData[currentSubject]) return;
             notebookData[currentSubject][currentNoteIdx].title = document.getElementById('editor-title').value;
             notebookData[currentSubject][currentNoteIdx].body = document.getElementById('editor-body').innerHTML;
             localStorage.setItem('notebook-data-v3', JSON.stringify(notebookData));
-            
-            // Atualiza o nome na lista lateral enquanto digita
-            const activeNote = document.querySelector('.note-list-item.active');
-            if(activeNote) activeNote.innerText = document.getElementById('editor-title').value || "Sem título";
+            const active = document.querySelector('.note-list-item.active');
+            if(active) active.innerText = document.getElementById('editor-title').value || "Sem título";
         }
 
         function loadEditor() {
@@ -224,17 +197,15 @@
         }
 
         function addSubject() {
-            const n = prompt("Nome da nova matéria:");
-            if(n && !notebookData[n]) { notebookData[n] = [{title: "Nova Nota", body: ""}]; currentSubject = n; currentNoteIdx = 0; renderSubjects(); }
+            const n = prompt("Nome da matéria:");
+            if(n) { notebookData[n] = [{title: "Nova Nota", body: ""}]; currentSubject = n; renderSubjects(); }
         }
 
         function addNote() {
-            if(!notebookData[currentSubject]) return;
             notebookData[currentSubject].push({title: "Sem título", body: ""});
             currentNoteIdx = notebookData[currentSubject].length -1; renderNotes();
         }
 
-        // Inicialização
         carregarMenuFontes();
         renderSubjects();
     </script>
