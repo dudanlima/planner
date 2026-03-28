@@ -40,33 +40,42 @@
 
         h2.section-title { color: var(--rosa-destaque); font-weight: 600; font-size: 1.4rem; border-left: 4px solid var(--rosa-claro); padding-left: 10px; text-transform: lowercase; margin-top: 40px; }
 
-        /* FINANÇAS */
-        .finance-summary { display: flex; gap: 15px; margin-bottom: 25px; }
-        .sum-card { flex: 1; padding: 15px; border-radius: 15px; text-align: center; font-size: 0.85rem; font-weight: 600; }
-        .sum-entradas { background: var(--verde-suave); color: #2e7d32; }
-        .sum-saidas { background: var(--vermelho-suave); color: #c62828; }
-        .sum-saldo { background: var(--rosa-claro); color: var(--pink-vibrante); }
-
-        .fin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .fin-box { border: 1px solid var(--borda); border-radius: 20px; padding: 20px; background: #fffafb; }
-        .fin-box h3 { font-size: 0.9rem; color: var(--rosa-destaque); margin-top: 0; text-transform: uppercase; letter-spacing: 1px; }
-        
-        .fin-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
-        .fin-table th { text-align: left; padding: 8px; border-bottom: 1px solid var(--borda); color: #888; font-weight: 500; }
-        .fin-table td { padding: 5px; vertical-align: middle; }
-        .fin-table input, .fin-table select { width: 100%; border: none; background: transparent; font-family: 'Poppins', sans-serif; font-size: 0.75rem; outline: none; padding: 4px; color: var(--texto); }
-        .fin-table input[type="checkbox"] { width: auto; transform: scale(1.1); accent-color: var(--pink-vibrante); }
-        .val-input { text-align: right; font-weight: 500; }
-
         /* CALENDÁRIO */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .cal-btn { background: var(--rosa-claro); border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.8rem; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-        .day-cell { border: 1px solid var(--borda); min-height: 110px; padding: 8px; border-radius: 10px; position: relative; }
+        .day-name { text-align: center; font-weight: 600; font-size: 0.75rem; background: var(--rosa-claro); padding: 10px; border-radius: 8px; text-transform: uppercase; }
+        .day-cell { border: 1px solid var(--borda); min-height: 110px; padding: 8px; border-radius: 10px; background: #fff; position: relative; }
         .day-cell textarea { width: 100%; border: none; height: 65px; resize: none; font-family: 'Poppins', sans-serif; font-size: 0.75rem; outline: none; background: transparent; }
         .today-circle { background: var(--pink-vibrante); color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 5px; font-weight: 600; }
+
+        /* TREINOS (ESTRUTURA ORIGINAL) */
+        .stats-container { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
+        .stat-card { flex: 1; min-width: 200px; padding: 20px; border-radius: 20px; text-align: center; border: 1px solid var(--borda); }
+        .stat-card.goal-met { background: var(--verde-suave); border-color: #a5d6a7; }
+        .stat-card p { margin: 10px 0 0; font-size: 1.8rem; font-weight: 600; color: var(--pink-vibrante); }
         
-        .water-container { background: #f0faff; padding: 20px; border-radius: 20px; margin-bottom: 30px; text-align: center; }
-        .cup { width: 30px; height: 40px; border: 2.5px solid var(--azul-deep); border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; cursor: pointer; display: inline-block; margin: 5px; position: relative; }
+        .workout-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+        .workout-day { border: 1px solid var(--borda); padding: 15px; border-radius: 15px; background: #fffafb; }
+        .workout-day h4 { margin: 0 0 10px; color: var(--rosa-destaque); font-size: 0.9rem; font-weight: 600; text-align: center; }
+        .workout-day input[type="text"] { width: 100%; border: none; border-bottom: 1px solid var(--rosa-claro); background: transparent; outline: none; font-family: 'Poppins', sans-serif; text-align: center; font-weight: 600; margin-bottom: 10px; }
+        .workout-day textarea { width: 100%; border: none; height: 100px; resize: none; font-family: 'Poppins', sans-serif; font-size: 0.8rem; outline: none; background: transparent; }
+        .workout-footer { display: flex; justify-content: center; margin-top: 10px; border-top: 1px solid var(--borda); padding-top: 10px; }
+
+        /* WATER & FINANÇAS */
+        .water-container { background: #f0faff; padding: 20px; border-radius: 20px; margin-bottom: 30px; border: 1px solid #e1f5fe; text-align: center; }
+        .cup { width: 30px; height: 40px; border: 2.5px solid var(--azul-deep); border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; cursor: pointer; display: inline-block; margin: 5px; position: relative; background: white; }
         .cup.filled { background: var(--azul-agua); }
+        .cup.filled::after { content: '💧'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 10px; }
+        
+        .fin-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+        .fin-table th { text-align: left; padding: 8px; border-bottom: 1px solid var(--borda); color: #888; }
+        .fin-table input, .fin-table select { width: 100%; border: none; background: transparent; font-family: 'Poppins', sans-serif; font-size: 0.75rem; outline: none; }
+        .sum-card { flex: 1; padding: 15px; border-radius: 15px; text-align: center; font-size: 0.85rem; font-weight: 600; }
+
+        /* UTILS */
+        .color-menu { position: fixed; background: white; border: 1px solid var(--borda); border-radius: 10px; display: none; z-index: 1000; padding: 10px; }
+        .color-option { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; margin: 5px; display: inline-block; border: 1px solid rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
@@ -83,7 +92,7 @@
 
     <div class="main-content">
         <section id="inicio" class="page-section active">
-            <div class="cal-header" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div class="cal-header">
                 <button class="cal-btn" onclick="moveMonth(-1)">❮ anterior</button>
                 <h2 id="month-display" style="margin:0; text-transform: lowercase; color: var(--rosa-destaque); font-weight: 600;">mês</h2>
                 <button class="cal-btn" onclick="moveMonth(1)">próximo ❯</button>
@@ -101,221 +110,134 @@
             </div>
             <h2 class="section-title">✨ habit tracker</h2>
             <button class="cal-btn" style="background:var(--rosa-destaque); color:white; margin-bottom:15px;" onclick="addHabitRow()">+ novo hábito</button>
-            <div id="habit-container">
-                <div class="habit-table-container">
-                    <table class="habit-table">
-                        <thead><tr id="habit-days-header"><th>Hábito</th></tr></thead>
-                        <tbody id="habit-body"></tbody>
-                    </table>
-                </div>
+            <div style="overflow-x: auto; border: 1px solid var(--borda); border-radius: 15px;">
+                <table style="width:100%; border-collapse: collapse; font-size: 0.75rem;">
+                    <thead><tr id="habit-days-header" style="background: var(--rosa-claro); color: var(--pink-vibrante);"><th>Hábito</th></tr></thead>
+                    <tbody id="habit-body"></tbody>
+                </table>
             </div>
         </section>
 
         <section id="treinos" class="page-section">
-            <h2 class="section-title">💪 treinos do mês</h2>
-            <div id="treinos-stats" style="display:flex; gap:20px; margin-bottom:20px;">
-                <div class="sum-card" id="card-weekly" style="background:var(--rosa-claro)">Meta Semanal: <span id="week-count">0</span> / 4</div>
-                <div class="sum-card" style="background:var(--azul-agua)">Total no Mês: <span id="month-count">0</span></div>
+            <h2 class="section-title">💪 foco no treino</h2>
+            <div class="stats-container">
+                <div id="card-weekly" class="stat-card">
+                    <h3>meta semanal (min 4x)</h3>
+                    <p id="week-count">0 / 4</p>
+                </div>
+                <div class="stat-card">
+                    <h3>total de treinos no mês</h3>
+                    <p id="month-count">0</p>
+                </div>
             </div>
             <div class="workout-grid" id="workout-days-container"></div>
         </section>
 
         <section id="financas" class="page-section">
             <h2 class="section-title">💰 controle financeiro</h2>
-            
-            <div class="finance-summary">
-                <div class="sum-card sum-entradas">Entradas: <span id="total-entradas">R$ 0,00</span></div>
-                <div class="sum-card sum-saidas">Saídas: <span id="total-saidas">R$ 0,00</span></div>
-                <div class="sum-card sum-saldo">Saldo: <span id="total-saldo">R$ 0,00</span></div>
+            <div style="display:flex; gap:15px; margin-bottom:25px;">
+                <div class="sum-card" style="background:var(--verde-suave)">Entradas: <span id="total-entradas">R$ 0,00</span></div>
+                <div class="sum-card" style="background:var(--vermelho-suave)">Saídas: <span id="total-saidas">R$ 0,00</span></div>
+                <div class="sum-card" style="background:var(--rosa-claro)">Saldo: <span id="total-saldo">R$ 0,00</span></div>
             </div>
-
-            <div class="fin-grid">
-                <div class="fin-box">
-                    <h3>Entradas</h3>
-                    <table class="fin-table">
-                        <thead><tr><th>Nome</th><th style="text-align:right">Valor</th></tr></thead>
-                        <tbody id="table-entradas"></tbody>
-                    </table>
-                    <button class="cal-btn" style="font-size:0.6rem; margin-top:10px" onclick="addFinRow('entradas')">+ entrada</button>
-                </div>
-
-                <div class="fin-box">
-                    <h3>Fixos</h3>
-                    <table class="fin-table">
-                        <thead><tr><th>Pago?</th><th>Nome</th><th>Venc.</th><th style="text-align:right">Valor</th></tr></thead>
-                        <tbody id="table-fixos"></tbody>
-                    </table>
-                    <button class="cal-btn" style="font-size:0.6rem; margin-top:10px" onclick="addFinRow('fixos')">+ fixo</button>
-                </div>
-
-                <div class="fin-box" style="grid-column: span 2">
-                    <h3>Gastos do Mês (Variáveis)</h3>
-                    <table class="fin-table">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Data</th>
-                                <th>Categoria</th>
-                                <th style="text-align:center">Parcela</th>
-                                <th style="text-align:right">Valor</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-variaveis"></tbody>
-                    </table>
-                    <button class="cal-btn" style="font-size:0.6rem; margin-top:10px" onclick="addFinRow('variaveis')">+ gasto</button>
-                </div>
-            </div>
+            <div id="fin-tables-container"></div>
         </section>
 
         <section id="extras" class="page-section"><h2>🖼️ extras</h2></section>
+    </div>
+
+    <div id="color-picker" class="color-menu">
+        <div class="color-option" style="background:#ffffff;" onclick="setDayColor('#ffffff')"></div>
+        <div class="color-option" style="background:#c8e6c9;" onclick="setDayColor('#c8e6c9')"></div>
+        <div class="color-option" style="background:#bbdefb;" onclick="setDayColor('#bbdefb')"></div>
+        <div class="color-option" style="background:#fff9c4;" onclick="setDayColor('#fff9c4')"></div>
+        <div class="color-option" style="background:#ffccbc;" onclick="setDayColor('#ffccbc')"></div>
+        <div class="color-option" style="background:#f8bbd0;" onclick="setDayColor('#f8bbd0')"></div>
     </div>
 
     <script>
         let currentDate = new Date();
         const realToday = new Date();
         realToday.setHours(0,0,0,0);
+        let selectedDayKey = null;
 
         function showPage(pageId, element) {
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             element.classList.add('active');
-            if(pageId === 'financas') renderFinance();
             if(pageId === 'treinos') renderWorkouts();
         }
 
-        // --- CALENDÁRIO ---
+        // CALENDÁRIO
         function renderCalendar() {
-            const grid = document.getElementById('calendar-grid');
-            grid.innerHTML = '';
-            const month = currentDate.getMonth();
-            const year = currentDate.getFullYear();
-            document.getElementById('month-display').innerText = `${currentDate.toLocaleString('pt-br', { month: 'long' })} ${year}`;
-
+            const grid = document.getElementById('calendar-grid'); grid.innerHTML = '';
+            const m = currentDate.getMonth(); const y = currentDate.getFullYear();
+            document.getElementById('month-display').innerText = `${currentDate.toLocaleString('pt-br', { month: 'long' })} ${y}`;
             ['dom','seg','ter','qua','qui','sex','sáb'].forEach(d => {
-                let div = document.createElement('div'); div.style="text-align:center; font-weight:600; font-size:0.7rem; background:var(--rosa-claro); padding:8px; border-radius:5px"; div.innerText = d; grid.appendChild(div);
+                let div = document.createElement('div'); div.className = 'day-name'; div.innerText = d; grid.appendChild(div);
             });
-
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            for(let i=0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
-
-            for(let d=1; d <= daysInMonth; d++) {
-                let cell = document.createElement('div');
-                cell.className = 'day-cell';
-                let key = `cal-${year}-${month}-${d}`;
-                let isToday = (realToday.getDate() === d && realToday.getMonth() === month && realToday.getFullYear() === year);
-                cell.innerHTML = `<span class="${isToday ? 'today-circle' : ''}">${d}</span><textarea oninput="localStorage.setItem('${key}', this.value); updateCountdowns()">${localStorage.getItem(key) || ''}</textarea>`;
+            const first = new Date(y, m, 1).getDay();
+            for(let i=0; i < first; i++) grid.appendChild(document.createElement('div'));
+            for(let d=1; d <= new Date(y, m+1, 0).getDate(); d++) {
+                let cell = document.createElement('div'); cell.className = 'day-cell';
+                let key = `cal-${y}-${m}-${d}`;
+                cell.style.backgroundColor = localStorage.getItem(`color-${key}`) || '#ffffff';
+                let isT = (realToday.getDate() === d && realToday.getMonth() === m && realToday.getFullYear() === y);
+                cell.innerHTML = `<span class="${isT ? 'today-circle' : ''}">${d}</span><textarea oninput="localStorage.setItem('${key}', this.value); updateCountdowns()">${localStorage.getItem(key) || ''}</textarea>`;
+                cell.oncontextmenu = (e) => { e.preventDefault(); selectedDayKey = key; const menu = document.getElementById('color-picker'); menu.style.display = 'block'; menu.style.left = e.pageX + 'px'; menu.style.top = e.pageY + 'px'; };
                 grid.appendChild(cell);
             }
             updateCountdowns();
         }
 
+        function setDayColor(c) { localStorage.setItem(`color-${selectedDayKey}`, c); document.getElementById('color-picker').style.display = 'none'; renderCalendar(); }
+
         function updateCountdowns() {
             const area = document.getElementById('countdown-area'); area.innerHTML = '';
-            const month = currentDate.getMonth(); const year = currentDate.getFullYear();
+            const m = currentDate.getMonth(); const y = currentDate.getFullYear();
             let events = [];
             for(let d=1; d <= 31; d++) {
-                let k = `cal-${year}-${month}-${d}`;
-                let text = localStorage.getItem(k);
-                if(text && text.trim() !== "") {
-                    let evDate = new Date(year, month, d);
-                    let diff = Math.ceil((evDate - realToday) / (1000 * 60 * 60 * 24));
-                    if(diff >= 0) events.push({ days: diff, text: text.split('\n')[0], date: d });
+                let k = `cal-${y}-${m}-${d}`; let t = localStorage.getItem(k);
+                if(t && t.trim() !== "") {
+                    let evD = new Date(y, m, d); let diff = Math.ceil((evD - realToday) / (86400000));
+                    if(diff >= 0) events.push({ days: diff, text: t.split('\n')[0], date: d, color: localStorage.getItem(`color-${k}`) || '#fff0f5' });
                 }
             }
             events.sort((a,b) => a.days - b.days).forEach(ev => {
-                let label = ev.days === 0 ? "hoje!" : (ev.days === 1 ? "amanhã" : `${ev.days} dias`);
-                area.innerHTML += `<div style="padding:10px; background:var(--rosa-claro); border-radius:10px; margin-bottom:5px; font-size:0.8rem"><strong>${label}</strong>: ${ev.text} (dia ${ev.date})</div>`;
+                area.innerHTML += `<div style="padding:12px; border-radius:15px; background:${ev.color}; border-left:6px solid var(--pink-vibrante); margin-bottom:10px; font-size:0.8rem"><strong>${ev.days === 0 ? "hoje!" : ev.days + " dias"}</strong>: ${ev.text}</div>`;
             });
         }
 
-        // --- FINANÇAS ATUALIZADO ---
-        const CATEGORIAS = ["Mercado", "Necessidades", "Eletrônicos", "Assinaturas", "Roupa", "Beleza", "Presentes", "Saúde", "Despesas eventuais", "Desenvolvimento", "Uber/transporte", "IFood/restaurante", "Lazer", "Aluguel", "Contas"];
-
-        function renderFinance() {
-            const types = ['entradas', 'fixos', 'variaveis'];
-            let totalIn = 0; let totalOut = 0;
-
-            types.forEach(type => {
-                const tbody = document.getElementById(`table-${type}`);
-                tbody.innerHTML = '';
-                let data = JSON.parse(localStorage.getItem(`fin-${type}`)) || [{}, {}, {}];
-                
-                data.forEach((item, idx) => {
-                    const tr = document.createElement('tr');
-                    if(type === 'entradas') {
-                        tr.innerHTML = `<td><input value="${item.n || ''}" onblur="saveFin('${type}', ${idx}, 'n', this.value)"></td>
-                                        <td><input class="val-input" placeholder="0.00" value="${item.v || ''}" onblur="saveFin('${type}', ${idx}, 'v', this.value)"></td>`;
-                        totalIn += parseFloat(item.v || 0);
-                    } else if(type === 'fixos') {
-                        tr.innerHTML = `<td><input type="checkbox" ${item.p ? 'checked' : ''} onchange="saveFin('${type}', ${idx}, 'p', this.checked)"></td>
-                                        <td><input value="${item.n || ''}" onblur="saveFin('${type}', ${idx}, 'n', this.value)"></td>
-                                        <td><input style="text-align:center" value="${item.d || ''}" onblur="saveFin('${type}', ${idx}, 'd', this.value)"></td>
-                                        <td><input class="val-input" placeholder="0.00" value="${item.v || ''}" onblur="saveFin('${type}', ${idx}, 'v', this.value)"></td>`;
-                        totalOut += parseFloat(item.v || 0);
-                    } else {
-                        let catOptions = CATEGORIAS.map(c => `<option value="${c}" ${item.c === c ? 'selected' : ''}>${c}</option>`).join('');
-                        tr.innerHTML = `<td><input value="${item.n || ''}" onblur="saveFin('${type}', ${idx}, 'n', this.value)"></td>
-                                        <td><input style="text-align:center" value="${item.d || ''}" onblur="saveFin('${type}', ${idx}, 'd', this.value)"></td>
-                                        <td><select onchange="saveFin('${type}', ${idx}, 'c', this.value)"><option value="">Selecione</option>${catOptions}</select></td>
-                                        <td><input style="text-align:center" placeholder="1/1" value="${item.parc || ''}" onblur="saveFin('${type}', ${idx}, 'parc', this.value)"></td>
-                                        <td><input class="val-input" placeholder="0.00" value="${item.v || ''}" onblur="saveFin('${type}', ${idx}, 'v', this.value)"></td>`;
-                        totalOut += parseFloat(item.v || 0);
-                    }
-                    tbody.appendChild(tr);
-                });
-            });
-
-            document.getElementById('total-entradas').innerText = `R$ ${totalIn.toFixed(2)}`;
-            document.getElementById('total-saidas').innerText = `R$ ${totalOut.toFixed(2)}`;
-            document.getElementById('total-saldo').innerText = `R$ ${(totalIn - totalOut).toFixed(2)}`;
-        }
-
-        function saveFin(type, idx, field, val) {
-            let data = JSON.parse(localStorage.getItem(`fin-${type}`)) || [{}, {}, {}];
-            data[idx][field] = val;
-            localStorage.setItem(`fin-${type}`, JSON.stringify(data));
-            renderFinance();
-        }
-
-        function addFinRow(type) {
-            let data = JSON.parse(localStorage.getItem(`fin-${type}`)) || [{}, {}, {}];
-            data.push({});
-            localStorage.setItem(`fin-${type}`, JSON.stringify(data));
-            renderFinance();
-        }
-
-        // --- WATER, HÁBITOS & TREINOS (MANTIDOS) ---
+        // WATER
         function renderWater() {
-            const container = document.getElementById('water-cups'); container.innerHTML = '';
-            const todayStr = realToday.toDateString();
-            const saved = JSON.parse(localStorage.getItem(`water-${todayStr}`)) || Array(12).fill(0);
-            let total = 0;
+            const container = document.getElementById('water-cups');
+            const saved = JSON.parse(localStorage.getItem(`water-${realToday.toDateString()}`)) || Array(12).fill(0);
+            container.innerHTML = ''; let total = 0;
             saved.forEach((f, i) => {
                 let c = document.createElement('div'); c.className = `cup ${f ? 'filled' : ''}`;
                 if(f) total += 180;
-                c.onclick = () => { saved[i] = saved[i] ? 0 : 1; localStorage.setItem(`water-${todayStr}`, JSON.stringify(saved)); renderWater(); };
+                c.onclick = () => { saved[i] = saved[i] ? 0 : 1; localStorage.setItem(`water-${realToday.toDateString()}`, JSON.stringify(saved)); renderWater(); };
                 container.appendChild(c);
             });
             document.getElementById('water-stats').innerText = `total: ${total}ml tomados`;
         }
 
+        // HABITS
         function initHabitTracker() {
             const h = document.getElementById('habit-days-header');
-            if(h.cells.length <= 1) { for(let i=1; i<=31; i++) { let th = document.createElement('th'); th.innerText = i; h.appendChild(th); } }
+            if(h.cells.length <= 1) for(let i=1; i<=31; i++) { let th = document.createElement('th'); th.innerText = i; h.appendChild(th); }
             loadHabits();
         }
         function addHabitRow() {
-            const b = document.getElementById('habit-body');
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td><input type="text" class="habit-input" placeholder="Hábito..." onchange="saveHabits()"></td>` + Array(31).fill('<td><input type="checkbox" class="check-habit" onchange="saveHabits()"></td>').join('');
+            const b = document.getElementById('habit-body'); const tr = document.createElement('tr');
+            tr.innerHTML = `<td><input type="text" style="border:none; outline:none; font-family:inherit; width:130px;" placeholder="Hábito..." onchange="saveHabits()"></td>` + Array(31).fill('<td><input type="checkbox" onchange="saveHabits()"></td>').join('');
             b.appendChild(tr); saveHabits();
         }
         function saveHabits() {
             const data = Array.from(document.querySelectorAll('#habit-body tr')).map(row => ({
-                name: row.querySelector('.habit-input').value,
-                checks: Array.from(row.querySelectorAll('.check-habit')).map(cb => cb.checked)
+                name: row.cells[0].querySelector('input').value,
+                checks: Array.from(row.querySelectorAll('input[type="checkbox"]')).map(cb => cb.checked)
             }));
             localStorage.setItem('habits-2026', JSON.stringify(data));
         }
@@ -324,34 +246,75 @@
             const b = document.getElementById('habit-body'); b.innerHTML = '';
             data.forEach(h => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td><input type="text" class="habit-input" value="${h.name}" onchange="saveHabits()"></td>` + h.checks.map(c => `<td><input type="checkbox" class="check-habit" ${c ? 'checked' : ''} onchange="saveHabits()"></td>`).join('');
+                tr.innerHTML = `<td><input type="text" style="border:none; outline:none; font-family:inherit; width:130px;" value="${h.name}" onchange="saveHabits()"></td>` + h.checks.map(c => `<td><input type="checkbox" ${c ? 'checked' : ''} onchange="saveHabits()"></td>`).join('');
                 b.appendChild(tr);
             });
         }
 
+        // TREINOS (RESTAURADO E CORRIGIDO)
         function renderWorkouts() {
-            const container = document.getElementById('workout-days-container'); container.innerHTML = '';
+            const container = document.getElementById('workout-days-container');
+            container.innerHTML = '';
             const days = ['segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado', 'domingo'];
-            const now = new Date(); let start = new Date(now); start.setDate(now.getDate() - now.getDay());
-            let w = 0; let m = 0;
-            const daysInM = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-            for(let d=1; d <= daysInM; d++) { if(localStorage.getItem(`workout-log-${now.getFullYear()}-${now.getMonth()}-${d}`) === 'true') m++; }
-            days.forEach((day, i) => {
-                let dDate = new Date(start); dDate.setDate(start.getDate() + i);
-                let k = `workout-log-${dDate.getFullYear()}-${dDate.getMonth()}-${dDate.getDate()}`;
-                let chk = localStorage.getItem(k) === 'true'; if(chk) w++;
-                let div = document.createElement('div'); div.className = 'workout-day';
-                div.innerHTML = `<h4>${day}</h4><input type="text" value="${localStorage.getItem('text-'+k)||''}" onchange="localStorage.setItem('text-'+k, this.value)">
-                                 <br><input type="checkbox" class="check-workout" ${chk?'checked':''} onclick="localStorage.setItem('${k}', this.checked); renderWorkouts()">`;
+            const now = new Date();
+            const month = now.getMonth();
+            const year = now.getFullYear();
+
+            let startOfWeek = new Date(now);
+            startOfWeek.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1)); // Ajuste para segunda ser o dia 1
+
+            let weeklyCount = 0;
+            let monthlyCount = 0;
+
+            // Contador Mensal: conta todos os dias marcados no mês
+            const daysInM = new Date(year, month + 1, 0).getDate();
+            for(let d=1; d <= daysInM; d++) {
+                if(localStorage.getItem(`workout-log-${year}-${month}-${d}`) === 'true') monthlyCount++;
+            }
+
+            days.forEach((day, index) => {
+                let dayDate = new Date(startOfWeek);
+                dayDate.setDate(startOfWeek.getDate() + index);
+                
+                const dKey = `workout-log-${dayDate.getFullYear()}-${dayDate.getMonth()}-${dayDate.getDate()}`;
+                const textKey = `workout-text-${dKey}`;
+                const detailKey = `workout-detail-${dKey}`;
+                const isChecked = localStorage.getItem(dKey) === 'true';
+
+                if(isChecked && dayDate.getMonth() === month) {
+                    // Contagem semanal apenas se estiver no mês certo para evitar confusão
+                }
+                
+                // Contagem semanal baseada nos botões marcados na tela
+                if(isChecked) weeklyCount++;
+
+                const div = document.createElement('div');
+                div.className = 'workout-day';
+                div.innerHTML = `
+                    <h4>${day}</h4>
+                    <input type="text" placeholder="Título do treino..." value="${localStorage.getItem(textKey) || ''}" 
+                        onchange="localStorage.setItem('${textKey}', this.value)">
+                    <textarea placeholder="Séries, repetições..." onchange="localStorage.setItem('${detailKey}', this.value)">${localStorage.getItem(detailKey) || ''}</textarea>
+                    <div class="workout-footer">
+                        <label style="font-size: 0.7rem; cursor: pointer;">
+                            <input type="checkbox" class="check-workout" ${isChecked ? 'checked' : ''} 
+                            onclick="localStorage.setItem('${dKey}', this.checked); renderWorkouts()"> Concluído
+                        </label>
+                    </div>
+                `;
                 container.appendChild(div);
             });
-            document.getElementById('week-count').innerText = w;
-            document.getElementById('month-count').innerText = m;
+
+            document.getElementById('week-count').innerText = `${weeklyCount} / 4`;
+            document.getElementById('month-count').innerText = monthlyCount;
+            const card = document.getElementById('card-weekly');
+            if(weeklyCount >= 4) card.classList.add('goal-met'); else card.classList.remove('goal-met');
         }
 
         function moveMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
+        window.onclick = () => document.getElementById('color-picker').style.display = 'none';
 
-        renderCalendar(); renderWater(); initHabitTracker();
+        renderCalendar(); renderWater(); initHabitTracker(); renderWorkouts();
     </script>
 </body>
 </html>
