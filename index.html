@@ -13,11 +13,6 @@
             --pink-vibrante: #ff69b4;
             --texto: #555;
             --borda: #fce4ec;
-            /* Cores do Color Code */
-            --cor-faculdade: #c8e6c9; /* Verde */
-            --cor-trabalho: #bbdefb;  /* Azul */
-            --cor-pessoal: #fff9c4;   /* Amarelo */
-            --cor-importante: #ffccbc; /* Laranja */
         }
 
         * { box-sizing: border-box; }
@@ -44,28 +39,32 @@
         .cal-btn { background: var(--rosa-claro); border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-family: inherit; font-weight: bold; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
         .day-name { text-align: center; font-weight: bold; font-size: 0.8rem; background: var(--rosa-claro); padding: 10px; border-radius: 8px; }
-        .day-cell { border: 1px solid var(--borda); min-height: 110px; padding: 8px; border-radius: 10px; background: #fff; font-size: 0.8rem; position: relative; transition: 0.2s; }
-        
-        .today-circle { background: var(--pink-vibrante); color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 5px; }
-        .day-cell span { font-weight: bold; display: block; margin-bottom: 5px; width: 24px; text-align: center; }
+        .day-cell { border: 1px solid var(--borda); min-height: 110px; padding: 8px; border-radius: 10px; background: #fff; position: relative; }
         .day-cell textarea { width: 100%; border: none; height: 65px; resize: none; font-family: inherit; font-size: 0.75rem; outline: none; background: transparent; }
+        .today-circle { background: var(--pink-vibrante); color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 5px; font-weight: bold; }
 
-        /* MENU DE CORES (CONTEXT MENU) */
+        /* HABIT TRACKER */
+        .habit-controls { margin-bottom: 20px; display: flex; gap: 10px; }
+        .habit-table-container { overflow-x: auto; background: white; border-radius: 15px; border: 1px solid var(--borda); }
+        .habit-table { border-collapse: collapse; width: 100%; font-size: 0.8rem; }
+        .habit-table th, .habit-table td { border: 1px solid var(--borda); padding: 8px; text-align: center; }
+        .habit-table th { background: var(--rosa-claro); color: var(--pink-vibrante); font-weight: bold; }
+        .habit-input { border: none; font-family: inherit; width: 120px; outline: none; background: transparent; color: var(--texto); }
+        .check-habit { cursor: pointer; accent-color: var(--pink-vibrante); transform: scale(1.2); }
+        .btn-add { background: var(--rosa-destaque); color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-family: inherit; font-weight: bold; }
+
+        /* COLOR PICKER & COUNTDOWN */
         .color-menu { position: fixed; background: white; border: 1px solid var(--borda); border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; z-index: 1000; padding: 10px; }
         .color-option { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; margin: 5px; display: inline-block; border: 1px solid rgba(0,0,0,0.05); }
-
-        /* COUNTDOWN */
-        .countdown-container { margin-top: 30px; display: flex; flex-direction: column; gap: 10px; }
-        .countdown-bar { padding: 12px 20px; border-radius: 15px; font-size: 0.85rem; display: flex; justify-content: space-between; border-left: 6px solid var(--pink-vibrante); box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-
+        .countdown-bar { padding: 12px 20px; border-radius: 15px; font-size: 0.85rem; display: flex; justify-content: space-between; border-left: 6px solid var(--pink-vibrante); margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
         <h1>Planner</h1>
-        <div class="menu-item active" onclick="showPage('inicio', this)">🏠 início</div>
-        <div class="menu-item" onclick="showPage('habitos', this)">✨ hábitos</div>
+        <div class="menu-item active" id="btn-inicio" onclick="showPage('inicio', this)">🏠 início</div>
+        <div class="menu-item" id="btn-habitos" onclick="showPage('habitos', this)">✨ hábitos</div>
         <div class="menu-item" onclick="showPage('treinos', this)">💪 treinos</div>
         <div class="menu-item" onclick="showPage('financas', this)">💰 finanças</div>
         <div class="menu-item" onclick="showPage('extras', this)">🖼️ extras</div>
@@ -80,19 +79,35 @@
                 <button class="cal-btn" onclick="moveMonth(1)">próximo ❯</button>
             </div>
             <div class="calendar-grid" id="calendar-grid"></div>
-            
             <h2 style="font-size: 1rem; color: var(--rosa-destaque); margin-top: 40px;">⏳ contagem regressiva</h2>
-            <div id="countdown-area" class="countdown-container"></div>
+            <div id="countdown-area"></div>
         </section>
 
-        <section id="habitos" class="page-section"><h2>✨ habit tracker</h2></section>
+        <section id="habitos" class="page-section">
+            <h2 style="color: var(--rosa-destaque); font-family: 'Dancing Script'; font-size: 2rem;">✨ habit tracker</h2>
+            <div class="habit-controls">
+                <button class="btn-add" onclick="addHabitRow()">+ novo hábito</button>
+            </div>
+            <div class="habit-table-container">
+                <table class="habit-table">
+                    <thead>
+                        <tr id="habit-days-header">
+                            <th>Hábito</th>
+                            </tr>
+                    </thead>
+                    <tbody id="habit-body">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+
         <section id="treinos" class="page-section"><h2>💪 treinos</h2></section>
         <section id="financas" class="page-section"><h2>💰 finanças</h2></section>
         <section id="extras" class="page-section"><h2>🖼️ extras</h2></section>
     </div>
 
     <div id="color-picker" class="color-menu">
-        <div class="color-option" style="background:#ffffff;" onclick="setDayColor('white')"></div>
+        <div class="color-option" style="background:#ffffff;" onclick="setDayColor('#ffffff')"></div>
         <div class="color-option" style="background:#c8e6c9;" onclick="setDayColor('#c8e6c9')"></div>
         <div class="color-option" style="background:#bbdefb;" onclick="setDayColor('#bbdefb')"></div>
         <div class="color-option" style="background:#fff9c4;" onclick="setDayColor('#fff9c4')"></div>
@@ -113,6 +128,7 @@
             element.classList.add('active');
         }
 
+        // --- LÓGICA DO CALENDÁRIO ---
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             grid.innerHTML = '';
@@ -126,85 +142,112 @@
 
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
-
             for(let i=0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
 
             for(let d=1; d <= daysInMonth; d++) {
                 let cell = document.createElement('div');
                 cell.className = 'day-cell';
                 let key = `cal-${year}-${month}-${d}`;
-                let colorKey = `color-${key}`;
-                
-                let savedColor = localStorage.getItem(colorKey) || '#ffffff';
-                cell.style.backgroundColor = savedColor;
+                let color = localStorage.getItem(`color-${key}`) || '#ffffff';
+                cell.style.backgroundColor = color;
 
                 let isToday = (realToday.getDate() === d && realToday.getMonth() === month && realToday.getFullYear() === year);
-                let daySpanClass = isToday ? 'today-circle' : '';
-
-                cell.innerHTML = `<span class="${daySpanClass}">${d}</span><textarea oninput="saveText('${key}', this.value)">${localStorage.getItem(key) || ''}</textarea>`;
+                cell.innerHTML = `<span class="${isToday ? 'today-circle' : ''}">${d}</span><textarea oninput="saveText('${key}', this.value)">${localStorage.getItem(key) || ''}</textarea>`;
                 
-                // Botão direito para abrir cores
                 cell.oncontextmenu = (e) => {
                     e.preventDefault();
                     selectedDayKey = key;
                     const menu = document.getElementById('color-picker');
-                    menu.style.display = 'block';
-                    menu.style.left = e.pageX + 'px';
-                    menu.style.top = e.pageY + 'px';
+                    menu.style.display = 'block'; menu.style.left = e.pageX + 'px'; menu.style.top = e.pageY + 'px';
                 };
-
                 grid.appendChild(cell);
             }
             updateCountdowns();
         }
 
-        function saveText(key, val) {
-            localStorage.setItem(key, val);
-            updateCountdowns();
-        }
-
-        function setDayColor(color) {
-            localStorage.setItem(`color-${selectedDayKey}`, color);
-            document.getElementById('color-picker').style.display = 'none';
-            renderCalendar();
-        }
+        function saveText(key, val) { localStorage.setItem(key, val); updateCountdowns(); }
+        function setDayColor(color) { localStorage.setItem(`color-${selectedDayKey}`, color); document.getElementById('color-picker').style.display = 'none'; renderCalendar(); }
 
         function updateCountdowns() {
-            const area = document.getElementById('countdown-area');
-            area.innerHTML = '';
-            const month = currentDate.getMonth();
-            const year = currentDate.getFullYear();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-
+            const area = document.getElementById('countdown-area'); area.innerHTML = '';
+            const month = currentDate.getMonth(); const year = currentDate.getFullYear();
             let events = [];
-            for(let d=1; d <= daysInMonth; d++) {
+            for(let d=1; d <= 31; d++) {
                 let k = `cal-${year}-${month}-${d}`;
                 let text = localStorage.getItem(k);
-                let color = localStorage.getItem(`color-${k}`) || '#fff0f5';
-
                 if(text && text.trim() !== "") {
                     let evDate = new Date(year, month, d);
                     let diff = Math.ceil((evDate - realToday) / (1000 * 60 * 60 * 24));
-                    if(diff >= 0) events.push({ days: diff, text: text.split('\n')[0], date: d, color: color });
+                    if(diff >= 0) events.push({ days: diff, text: text.split('\n')[0], date: d, color: localStorage.getItem(`color-${k}`) || '#fff0f5' });
                 }
             }
-
             events.sort((a,b) => a.days - b.days).forEach(ev => {
                 let label = ev.days === 0 ? "hoje!" : (ev.days === 1 ? "amanhã" : `${ev.days} dias`);
-                area.innerHTML += `
-                    <div class="countdown-bar" style="background: ${ev.color}; border-left-color: var(--pink-vibrante)">
-                        <span><strong>${label}</strong>: ${ev.text}</span>
-                        <small>dia ${ev.date}</small>
-                    </div>`;
+                area.innerHTML += `<div class="countdown-bar" style="background: ${ev.color};"><span><strong>${label}</strong>: ${ev.text}</span><small>dia ${ev.date}</small></div>`;
             });
         }
 
         function moveMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
 
-        // Fechar menu de cores ao clicar fora
+        // --- LÓGICA DO HABIT TRACKER ---
+        function initHabitTracker() {
+            const header = document.getElementById('habit-days-header');
+            for(let i=1; i<=31; i++) {
+                let th = document.createElement('th'); th.innerText = i; header.appendChild(th);
+            }
+            loadHabits();
+        }
+
+        function addHabitRow(name = "") {
+            const tbody = document.getElementById('habit-body');
+            const rowId = Date.now();
+            const tr = document.createElement('tr');
+            tr.id = `row-${rowId}`;
+            
+            let html = `<td><input type="text" class="habit-input" placeholder="Novo hábito..." value="${name}" onchange="saveHabits()"></td>`;
+            for(let i=1; i<=31; i++) {
+                html += `<td><input type="checkbox" class="check-habit" onchange="saveHabits()"></td>`;
+            }
+            tr.innerHTML = html;
+            tbody.appendChild(tr);
+            saveHabits();
+        }
+
+        function saveHabits() {
+            const rows = document.querySelectorAll('#habit-body tr');
+            const habitsData = Array.from(rows).map(row => {
+                const name = row.querySelector('.habit-input').value;
+                const checks = Array.from(row.querySelectorAll('.check-habit')).map(cb => cb.checked);
+                return { name, checks };
+            });
+            localStorage.setItem('habits-2026', JSON.stringify(habitsData));
+        }
+
+        function loadHabits() {
+            const data = JSON.parse(localStorage.getItem('habits-2026')) || [];
+            const tbody = document.getElementById('habit-body');
+            tbody.innerHTML = '';
+            if(data.length === 0) {
+                addHabitRow("Beber Água");
+            } else {
+                data.forEach(h => {
+                    const rowId = Math.random();
+                    const tr = document.createElement('tr');
+                    let html = `<td><input type="text" class="habit-input" value="${h.name}" onchange="saveHabits()"></td>`;
+                    h.checks.forEach(checked => {
+                        html += `<td><input type="checkbox" class="check-habit" ${checked ? 'checked' : ''} onchange="saveHabits()"></td>`;
+                    });
+                    tr.innerHTML = html;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
         window.onclick = () => document.getElementById('color-picker').style.display = 'none';
 
+        // Iniciar tudo
         renderCalendar();
+        initHabitTracker();
     </script>
 </body>
 </html>
