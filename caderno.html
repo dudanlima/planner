@@ -7,6 +7,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
+        /* ============================================================
+           REGISTRO DAS FONTES DO GITHUB
+           ============================================================ */
+        @font-face { font-family: 'BetterTogether'; src: url('Better Together.otf') format('opentype'); }
+        @font-face { font-family: 'BetterTogetherScript'; src: url('Better Together Script.ttf') format('truetype'); }
+        @font-face { font-family: 'GoodMood'; src: url('Good Mood.otf') format('opentype'); }
+        @font-face { font-family: 'Hanging'; src: url('Hanging.otf') format('opentype'); }
+        @font-face { font-family: 'Kathen'; src: url('Kathen Font by Situjuh (7NTypes).otf') format('opentype'); }
+        @font-face { font-family: 'MagicalFeather'; src: url('Magical Feather.ttf') format('truetype'); }
+        @font-face { font-family: 'SimpleHandmade'; src: url('SimpleHandmade.otf') format('opentype'); }
+        @font-face { font-family: 'SimpleMandala'; src: url('Simple Mandala.otf') format('opentype'); }
+        @font-face { font-family: 'Skyhigh'; src: url('Skyhigh.ttf') format('truetype'); }
+        @font-face { font-family: 'Windsol'; src: url('Windsol-Regular.ttf') format('truetype'); }
+        @font-face { font-family: 'AutumnInSeptember'; src: url('Autumn in September.ttf') format('truetype'); }
+        @font-face { font-family: 'Brownist'; src: url('Brownist.otf') format('opentype'); }
+        @font-face { font-family: 'Farmhouse'; src: url('Farmhouse.otf') format('opentype'); }
+        @font-face { font-family: 'FBCaramelApple'; src: url('FBCaramelApple.otf') format('opentype'); }
+        @font-face { font-family: 'Handmade'; src: url('Handmade.otf') format('opentype'); }
+        @font-face { font-family: 'KGSimplyTheBest'; src: url('KGSimplytheBest.otf') format('opentype'); }
+        @font-face { font-family: 'MilkyMatcha'; src: url('Milky Matcha.otf') format('opentype'); }
+        @font-face { font-family: 'PleaseWriteMeASong'; src: url('Please write me a song.ttf') format('truetype'); }
+        @font-face { font-family: 'ChettaVissto'; src: url('ChettaVissto.otf') format('opentype'); }
+        @font-face { font-family: 'HappyNight'; src: url('Happy Night.otf') format('opentype'); }
+        @font-face { font-family: 'BubbbleGum'; src: url('BubbbleGum.otf') format('opentype'); }
+        @font-face { font-family: 'Muthiara'; src: url('Muthiara demo version.otf') format('opentype'); }
+        @font-face { font-family: 'HelloHoney'; src: url('hello honey.otf') format('opentype'); }
+        @font-face { font-family: 'Hello'; src: url('Hello.otf') format('opentype'); }
+        @font-face { font-family: 'HelloValentina'; src: url('Hello Valentina.ttf') format('truetype'); }
+        @font-face { font-family: 'GameBubble'; src: url('Game Bubble.otf') format('opentype'); }
+        @font-face { font-family: 'Bubbleboddy'; src: url('Bubbleboddy-FatTrial.ttf') format('truetype'); }
+        @font-face { font-family: 'WarungKopi'; src: url('Warung Kopi.otf') format('opentype'); }
+
         :root {
             --rosa-claro: #fff0f5;
             --rosa-destaque: #ffb6c1;
@@ -18,7 +50,7 @@
         * { box-sizing: border-box; }
         body { font-family: 'Poppins', sans-serif; margin: 0; display: flex; height: 100vh; background-color: #fff9fb; color: var(--texto); overflow: hidden; }
 
-        /* BARRA LATERAL (MATÉRIAS) */
+        /* BARRA LATERAL */
         .sidebar { width: 250px; background: white; border-right: 1px solid var(--borda); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
         .sidebar h1 { font-family: 'Dancing Script', cursive; font-size: 2rem; color: var(--rosa-destaque); text-align: center; margin-bottom: 15px; }
 
@@ -39,9 +71,9 @@
         .editor-container { flex-grow: 1; display: flex; flex-direction: column; background: white; margin: 15px; border-radius: 25px; box-shadow: 0 5px 20px rgba(255,182,193,0.1); overflow: hidden; }
         
         /* BARRA DE FERRAMENTAS */
-        .toolbar { padding: 10px 20px; border-bottom: 1px solid var(--borda); display: flex; gap: 10px; flex-wrap: wrap; background: #fffafb; }
-        .toolbar button { background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 5px 10px; cursor: pointer; font-family: inherit; font-size: 0.75rem; color: var(--texto); }
-        .toolbar button:hover { background: var(--rosa-claro); }
+        .toolbar { padding: 10px 20px; border-bottom: 1px solid var(--borda); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; background: #fffafb; }
+        .toolbar button, .toolbar select { background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 5px 10px; cursor: pointer; font-family: inherit; font-size: 0.75rem; color: var(--texto); outline: none; }
+        .toolbar button:hover, .toolbar select:hover { background: var(--rosa-claro); }
 
         .editor-content { flex-grow: 1; padding: 30px; overflow-y: auto; outline: none; line-height: 1.6; }
         .editor-content img { max-width: 100%; border-radius: 10px; margin: 10px 0; }
@@ -80,10 +112,54 @@
         <div class="toolbar">
             <button onclick="format('bold')"><b>B</b></button>
             <button onclick="format('italic')"><i>I</i></button>
+            
+            <select id="font-selector" onchange="format('fontName', this.value)">
+                <option value="Poppins">Fonte Padrão</option>
+                <option value="BetterTogether">Better Together</option>
+                <option value="BetterTogetherScript">Better Together Script</option>
+                <option value="GoodMood">Good Mood</option>
+                <option value="Hanging">Hanging</option>
+                <option value="Kathen">Kathen</option>
+                <option value="MagicalFeather">Magical Feather</option>
+                <option value="SimpleHandmade">Simple Handmade</option>
+                <option value="SimpleMandala">Simple Mandala</option>
+                <option value="Skyhigh">Skyhigh</option>
+                <option value="Windsol">Windsol</option>
+                <option value="AutumnInSeptember">Autumn in September</option>
+                <option value="Brownist">Brownist</option>
+                <option value="Farmhouse">Farmhouse</option>
+                <option value="FBCaramelApple">Caramel Apple</option>
+                <option value="Handmade">Handmade</option>
+                <option value="KGSimplyTheBest">Simply the Best</option>
+                <option value="MilkyMatcha">Milky Matcha</option>
+                <option value="PleaseWriteMeASong">Write me a Song</option>
+                <option value="ChettaVissto">Chetta Vissto</option>
+                <option value="HappyNight">Happy Night</option>
+                <option value="BubbbleGum">Bubble Gum</option>
+                <option value="Muthiara">Muthiara</option>
+                <option value="HelloHoney">Hello Honey</option>
+                <option value="Hello">Hello</option>
+                <option value="HelloValentina">Hello Valentina</option>
+                <option value="GameBubble">Game Bubble</option>
+                <option value="Bubbleboddy">Bubbleboddy</option>
+                <option value="WarungKopi">Warung Kopi</option>
+            </select>
+
+            <select id="size-selector" onchange="format('fontSize', this.value)">
+                <option value="3">Tamanho Normal</option>
+                <option value="1">Muito Pequeno</option>
+                <option value="2">Pequeno</option>
+                <option value="4">Médio</option>
+                <option value="5">Grande</option>
+                <option value="6">Muito Grande</option>
+                <option value="7">Título</option>
+            </select>
+
             <button onclick="format('insertUnorderedList')">• Lista</button>
             <button onclick="format('justifyLeft')">⬅</button>
             <button onclick="format('justifyCenter')">↔</button>
             <button style="color: var(--rosa-destaque)" onclick="format('foreColor', 'var(--pink-vibrante)')">Rosa</button>
+            
             <button onclick="document.getElementById('img-input').click()">🖼️ Imagem</button>
             <input type="file" id="img-input" style="display:none" accept="image/*" onchange="handleImg(this)">
         </div>
@@ -147,7 +223,6 @@
             }
         }
 
-        // Detecta Colar Imagem (Ctrl+V)
         document.getElementById('editor-body').addEventListener('paste', function(e) {
             const items = (e.clipboardData || e.originalEvent.clipboardData).items;
             for (let item of items) {
@@ -179,7 +254,7 @@
         }
 
         function switchSubject(s) { currentSubject = s; currentNoteIdx = 0; saveAndRefresh(); }
-        function switchNote(i) { currentNoteIdx = i; saveAndRefresh(); }
+        function switchNote(idx) { currentNoteIdx = idx; saveAndRefresh(); }
 
         function saveCurrentData() {
             const title = document.getElementById('editor-title').value;
