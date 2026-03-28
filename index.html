@@ -13,106 +13,51 @@
             --pink-vibrante: #ff69b4;
             --texto: #555;
             --borda: #fce4ec;
+            /* Cores do Color Code */
+            --cor-faculdade: #c8e6c9; /* Verde */
+            --cor-trabalho: #bbdefb;  /* Azul */
+            --cor-pessoal: #fff9c4;   /* Amarelo */
+            --cor-importante: #ffccbc; /* Laranja */
         }
 
         * { box-sizing: border-box; }
-        
-        body { 
-            font-family: 'Quicksand', sans-serif; 
-            margin: 0; 
-            display: flex; 
-            height: 100vh; 
-            background-color: #fff9fb; 
-            color: var(--texto); 
-            overflow: hidden; 
-        }
+        body { font-family: 'Quicksand', sans-serif; margin: 0; display: flex; height: 100vh; background-color: #fff9fb; color: var(--texto); overflow: hidden; }
 
-        /* --- MENU LATERAL --- */
-        .sidebar { 
-            width: 260px; 
-            background: white; 
-            border-right: 1px solid var(--borda); 
-            display: flex; 
-            flex-direction: column; 
-            padding: 25px; 
-            flex-shrink: 0; 
-        }
-
-        .sidebar h1 { 
-            font-family: 'Dancing Script', cursive; 
-            font-size: 2.5rem; 
-            color: var(--rosa-destaque); 
-            text-align: center; 
-            margin-bottom: 30px; 
-            margin-top: 0;
-        }
-
-        .menu-item { 
-            padding: 15px; 
-            margin-bottom: 10px; 
-            border-radius: 15px; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            font-size: 0.95rem; 
-            color: var(--texto);
-            border: 1px solid transparent;
-        }
-
+        /* SIDEBAR */
+        .sidebar { width: 260px; background: white; border-right: 1px solid var(--borda); display: flex; flex-direction: column; padding: 25px; flex-shrink: 0; }
+        .sidebar h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: var(--rosa-destaque); text-align: center; margin-bottom: 30px; margin-top: 0; }
+        .menu-item { padding: 15px; margin-bottom: 10px; border-radius: 15px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 12px; font-size: 0.95rem; border: 1px solid transparent; }
         .menu-item:hover { background: var(--rosa-claro); }
-        .menu-item.active { 
-            background: var(--rosa-claro); 
-            border-color: var(--rosa-destaque); 
-            font-weight: bold; 
-            color: var(--pink-vibrante);
-        }
+        .menu-item.active { background: var(--rosa-claro); border-color: var(--rosa-destaque); font-weight: bold; color: var(--pink-vibrante); }
+        .sidebar-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--borda); text-align: center; }
+        .link-caderno { text-decoration: none; color: var(--rosa-destaque); font-size: 0.8rem; font-weight: bold; }
 
-        .sidebar-footer {
-            margin-top: auto;
-            padding-top: 20px;
-            border-top: 1px solid var(--borda);
-            text-align: center;
-        }
-
-        .link-caderno {
-            text-decoration: none;
-            color: var(--rosa-destaque);
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        /* --- ÁREA DE CONTEÚDO --- */
-        .main-content { 
-            flex-grow: 1; 
-            overflow-y: auto; 
-            padding: 40px; 
-            background: white; 
-            margin: 20px; 
-            border-radius: 30px; 
-            box-shadow: 0 10px 40px rgba(255, 182, 193, 0.1); 
-        }
-
+        /* CONTEÚDO */
+        .main-content { flex-grow: 1; overflow-y: auto; padding: 40px; background: white; margin: 20px; border-radius: 30px; box-shadow: 0 10px 40px rgba(255, 182, 193, 0.1); }
         .page-section { display: none; }
         .page-section.active { display: block; animation: fadeIn 0.5s ease; }
 
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(10px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- ESTILOS DO CALENDÁRIO --- */
+        /* CALENDÁRIO */
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .cal-btn { background: var(--rosa-claro); border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-family: inherit; font-weight: bold; color: var(--texto); }
+        .cal-btn { background: var(--rosa-claro); border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-family: inherit; font-weight: bold; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
         .day-name { text-align: center; font-weight: bold; font-size: 0.8rem; background: var(--rosa-claro); padding: 10px; border-radius: 8px; }
-        .day-cell { border: 1px solid var(--borda); min-height: 100px; padding: 8px; border-radius: 10px; background: #fff; font-size: 0.8rem; position: relative; }
+        .day-cell { border: 1px solid var(--borda); min-height: 110px; padding: 8px; border-radius: 10px; background: #fff; font-size: 0.8rem; position: relative; transition: 0.2s; }
+        
         .today-circle { background: var(--pink-vibrante); color: white; border-radius: 50%; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 5px; }
         .day-cell span { font-weight: bold; display: block; margin-bottom: 5px; width: 24px; text-align: center; }
-        .day-cell textarea { width: 100%; border: none; height: 60px; resize: none; font-family: inherit; font-size: 0.75rem; outline: none; background: transparent; }
+        .day-cell textarea { width: 100%; border: none; height: 65px; resize: none; font-family: inherit; font-size: 0.75rem; outline: none; background: transparent; }
 
-        .countdown-bar { background: var(--rosa-claro); padding: 12px; border-radius: 15px; margin-top: 10px; border-left: 5px solid var(--pink-vibrante); font-size: 0.85rem; }
+        /* MENU DE CORES (CONTEXT MENU) */
+        .color-menu { position: fixed; background: white; border: 1px solid var(--borda); border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; z-index: 1000; padding: 10px; }
+        .color-option { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; margin: 5px; display: inline-block; border: 1px solid rgba(0,0,0,0.05); }
+
+        /* COUNTDOWN */
+        .countdown-container { margin-top: 30px; display: flex; flex-direction: column; gap: 10px; }
+        .countdown-bar { padding: 12px 20px; border-radius: 15px; font-size: 0.85rem; display: flex; justify-content: space-between; border-left: 6px solid var(--pink-vibrante); box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+
     </style>
 </head>
 <body>
@@ -124,76 +69,57 @@
         <div class="menu-item" onclick="showPage('treinos', this)">💪 treinos</div>
         <div class="menu-item" onclick="showPage('financas', this)">💰 finanças</div>
         <div class="menu-item" onclick="showPage('extras', this)">🖼️ extras</div>
-        
-        <div class="sidebar-footer">
-            <a href="caderno.html" class="link-caderno">📖 abrir caderno virtual</a>
-        </div>
+        <div class="sidebar-footer"><a href="caderno.html" class="link-caderno">📖 abrir caderno virtual</a></div>
     </div>
 
     <div class="main-content">
-        
         <section id="inicio" class="page-section active">
             <div class="cal-header">
                 <button class="cal-btn" onclick="moveMonth(-1)">❮ anterior</button>
-                <h2 id="month-display" style="margin:0; color: var(--rosa-destaque); text-transform: lowercase;">mês</h2>
+                <h2 id="month-display" style="margin:0; text-transform: lowercase; color: var(--rosa-destaque);">mês</h2>
                 <button class="cal-btn" onclick="moveMonth(1)">próximo ❯</button>
             </div>
             <div class="calendar-grid" id="calendar-grid"></div>
-            <div id="countdown-area" style="margin-top:20px;"></div>
+            
+            <h2 style="font-size: 1rem; color: var(--rosa-destaque); margin-top: 40px;">⏳ contagem regressiva</h2>
+            <div id="countdown-area" class="countdown-container"></div>
         </section>
 
-        <section id="habitos" class="page-section">
-            <h2 style="color: var(--rosa-destaque);">✨ habit tracker</h2>
-            <p>Em breve: Sua grade de hábitos aqui.</p>
-        </section>
+        <section id="habitos" class="page-section"><h2>✨ habit tracker</h2></section>
+        <section id="treinos" class="page-section"><h2>💪 treinos</h2></section>
+        <section id="financas" class="page-section"><h2>💰 finanças</h2></section>
+        <section id="extras" class="page-section"><h2>🖼️ extras</h2></section>
+    </div>
 
-        <section id="treinos" class="page-section">
-            <h2 style="color: var(--rosa-destaque);">💪 treinos da semana</h2>
-            <p>Em breve: Seu planner de treinos aqui.</p>
-        </section>
-
-        <section id="financas" class="page-section">
-            <h2 style="color: var(--rosa-destaque);">💰 controle financeiro</h2>
-            <p>Em breve: Sua tabela de finanças aqui.</p>
-        </section>
-
-        <section id="extras" class="page-section">
-            <h2 style="color: var(--rosa-destaque);">🖼️ moodboard & wishlist</h2>
-            <p>Em breve: Seus quadros aqui.</p>
-        </section>
-
+    <div id="color-picker" class="color-menu">
+        <div class="color-option" style="background:#ffffff;" onclick="setDayColor('white')"></div>
+        <div class="color-option" style="background:#c8e6c9;" onclick="setDayColor('#c8e6c9')"></div>
+        <div class="color-option" style="background:#bbdefb;" onclick="setDayColor('#bbdefb')"></div>
+        <div class="color-option" style="background:#fff9c4;" onclick="setDayColor('#fff9c4')"></div>
+        <div class="color-option" style="background:#ffccbc;" onclick="setDayColor('#ffccbc')"></div>
+        <div class="color-option" style="background:#f8bbd0;" onclick="setDayColor('#f8bbd0')"></div>
     </div>
 
     <script>
-        // --- NAVEGAÇÃO ENTRE PÁGINAS ---
-        function showPage(pageId, element) {
-            // Esconde todas as seções
-            document.querySelectorAll('.page-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            // Remove 'active' de todos os itens do menu
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            // Mostra a seção clicada e ativa o item do menu
-            document.getElementById(pageId).classList.add('active');
-            element.classList.add('active');
-        }
-
-        // --- LÓGICA DO CALENDÁRIO ---
         let currentDate = new Date();
         const realToday = new Date();
         realToday.setHours(0,0,0,0);
+        let selectedDayKey = null;
+
+        function showPage(pageId, element) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            element.classList.add('active');
+        }
 
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             grid.innerHTML = '';
             const month = currentDate.getMonth();
             const year = currentDate.getFullYear();
-            
             document.getElementById('month-display').innerText = `${currentDate.toLocaleString('pt-br', { month: 'long' })} ${year}`;
-            
+
             ['dom','seg','ter','qua','qui','sex','sáb'].forEach(d => {
                 let div = document.createElement('div'); div.className = 'day-name'; div.innerText = d; grid.appendChild(div);
             });
@@ -204,20 +130,46 @@
             for(let i=0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
 
             for(let d=1; d <= daysInMonth; d++) {
-                let cell = document.createElement('div'); cell.className = 'day-cell';
+                let cell = document.createElement('div');
+                cell.className = 'day-cell';
                 let key = `cal-${year}-${month}-${d}`;
-                let daySpanClass = (realToday.getDate() === d && realToday.getMonth() === month && realToday.getFullYear() === year) ? 'today-circle' : '';
+                let colorKey = `color-${key}`;
                 
-                cell.innerHTML = `<span class="${daySpanClass}">${d}</span><textarea data-id="${key}" oninput="updateCountdowns('${key}', this.value)">${localStorage.getItem(key) || ''}</textarea>`;
+                let savedColor = localStorage.getItem(colorKey) || '#ffffff';
+                cell.style.backgroundColor = savedColor;
+
+                let isToday = (realToday.getDate() === d && realToday.getMonth() === month && realToday.getFullYear() === year);
+                let daySpanClass = isToday ? 'today-circle' : '';
+
+                cell.innerHTML = `<span class="${daySpanClass}">${d}</span><textarea oninput="saveText('${key}', this.value)">${localStorage.getItem(key) || ''}</textarea>`;
+                
+                // Botão direito para abrir cores
+                cell.oncontextmenu = (e) => {
+                    e.preventDefault();
+                    selectedDayKey = key;
+                    const menu = document.getElementById('color-picker');
+                    menu.style.display = 'block';
+                    menu.style.left = e.pageX + 'px';
+                    menu.style.top = e.pageY + 'px';
+                };
+
                 grid.appendChild(cell);
             }
             updateCountdowns();
         }
 
-        function moveMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
+        function saveText(key, val) {
+            localStorage.setItem(key, val);
+            updateCountdowns();
+        }
 
-        function updateCountdowns(key, val) {
-            if(key) localStorage.setItem(key, val);
+        function setDayColor(color) {
+            localStorage.setItem(`color-${selectedDayKey}`, color);
+            document.getElementById('color-picker').style.display = 'none';
+            renderCalendar();
+        }
+
+        function updateCountdowns() {
             const area = document.getElementById('countdown-area');
             area.innerHTML = '';
             const month = currentDate.getMonth();
@@ -228,19 +180,30 @@
             for(let d=1; d <= daysInMonth; d++) {
                 let k = `cal-${year}-${month}-${d}`;
                 let text = localStorage.getItem(k);
+                let color = localStorage.getItem(`color-${k}`) || '#fff0f5';
+
                 if(text && text.trim() !== "") {
                     let evDate = new Date(year, month, d);
                     let diff = Math.ceil((evDate - realToday) / (1000 * 60 * 60 * 24));
-                    if(diff >= 0) events.push({ days: diff, text: text.split('\n')[0], date: d });
+                    if(diff >= 0) events.push({ days: diff, text: text.split('\n')[0], date: d, color: color });
                 }
             }
+
             events.sort((a,b) => a.days - b.days).forEach(ev => {
                 let label = ev.days === 0 ? "hoje!" : (ev.days === 1 ? "amanhã" : `${ev.days} dias`);
-                area.innerHTML += `<div class="countdown-bar"><strong>${label}</strong>: ${ev.text} (dia ${ev.date})</div>`;
+                area.innerHTML += `
+                    <div class="countdown-bar" style="background: ${ev.color}; border-left-color: var(--pink-vibrante)">
+                        <span><strong>${label}</strong>: ${ev.text}</span>
+                        <small>dia ${ev.date}</small>
+                    </div>`;
             });
         }
 
-        // Iniciar
+        function moveMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
+
+        // Fechar menu de cores ao clicar fora
+        window.onclick = () => document.getElementById('color-picker').style.display = 'none';
+
         renderCalendar();
     </script>
 </body>
