@@ -50,7 +50,7 @@
         * { box-sizing: border-box; }
         body { font-family: 'Poppins', sans-serif; margin: 0; display: flex; height: 100vh; background-color: #fff9fb; color: var(--texto); overflow: hidden; }
 
-        /* BARRA LATERAL */
+        /* SIDEBAR */
         .sidebar { width: 250px; background: white; border-right: 1px solid var(--borda); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
         .sidebar h1 { font-family: 'Dancing Script', cursive; font-size: 2rem; color: var(--rosa-destaque); text-align: center; margin-bottom: 15px; }
 
@@ -69,9 +69,11 @@
 
         /* EDITOR */
         .editor-container { flex-grow: 1; display: flex; flex-direction: column; background: white; margin: 15px; border-radius: 25px; box-shadow: 0 5px 20px rgba(255,182,193,0.1); overflow: hidden; }
-        .toolbar { padding: 10px 20px; border-bottom: 1px solid var(--borda); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; background: #fffafb; }
-        .toolbar button, .toolbar select { background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 5px 10px; cursor: pointer; font-family: inherit; font-size: 0.75rem; color: var(--texto); outline: none; }
+        .toolbar { padding: 10px 20px; border-bottom: 1px solid var(--borda); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; background: #fffafb; }
+        .toolbar button, .toolbar select, .toolbar input[type="color"] { background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 5px; cursor: pointer; font-family: inherit; font-size: 0.75rem; color: var(--texto); outline: none; height: 32px; }
         .toolbar button:hover, .toolbar select:hover { background: var(--rosa-claro); }
+        
+        .color-picker-wrapper { display: flex; align-items: center; gap: 5px; font-size: 0.7rem; color: #888; }
 
         .editor-content { flex-grow: 1; padding: 30px; overflow-y: auto; outline: none; line-height: 1.6; }
         .editor-content img { max-width: 100%; border-radius: 10px; margin: 10px 0; }
@@ -106,10 +108,16 @@
         <input type="text" id="editor-title" placeholder="Título da nota..." oninput="saveCurrentData()">
         
         <div class="toolbar">
-            <button onclick="format('bold')"><b>B</b></button>
-            <button onclick="format('italic')"><i>I</i></button>
-            
-            <select id="font-selector" onchange="format('fontName', this.value)">
+            <button onclick="format('bold')" title="Negrito"><b>B</b></button>
+            <button onclick="format('italic')" title="Itálico"><i>I</i></button>
+            <button onclick="format('underline')" title="Sublinhado"><u>U</u></button>
+
+            <button onclick="format('justifyLeft')" title="Esquerda">⬅</button>
+            <button onclick="format('justifyCenter')" title="Centralizado">↔</button>
+            <button onclick="format('justifyRight')" title="Direita">➡</button>
+            <button onclick="format('justifyFull')" title="Justificado">≡</button>
+
+            <select id="font-selector" onchange="format('fontName', this.value)" style="width: 120px;">
                 <option value="Poppins">Fonte Padrão</option>
                 <option value="BetterTogether">Better Together</option>
                 <option value="BetterTogetherScript">Better Together Script</option>
@@ -142,19 +150,21 @@
             </select>
 
             <select id="size-selector" onchange="format('fontSize', this.value)">
-                <option value="3">Tamanho Normal</option>
-                <option value="1">Muito Pequeno</option>
-                <option value="2">Pequeno</option>
-                <option value="4">Médio</option>
-                <option value="5">Grande</option>
-                <option value="6">Muito Grande</option>
-                <option value="7">Título</option>
+                <option value="3">14px</option>
+                <option value="1">10px</option>
+                <option value="2">12px</option>
+                <option value="4">16px</option>
+                <option value="5">18px</option>
+                <option value="6">24px</option>
+                <option value="7">32px</option>
             </select>
 
+            <div class="color-picker-wrapper">
+                <label for="color-input">Cor:</label>
+                <input type="color" id="color-input" onchange="format('foreColor', this.value)" title="Escolher cor do texto">
+            </div>
+
             <button onclick="format('insertUnorderedList')">• Lista</button>
-            <button onclick="format('justifyLeft')">⬅</button>
-            <button onclick="format('justifyCenter')">↔</button>
-            <button style="color: var(--pink-vibrante)" onclick="format('foreColor', 'var(--pink-vibrante)')">Rosa</button>
             <button onclick="document.getElementById('img-input').click()">🖼️ Imagem</button>
             <input type="file" id="img-input" style="display:none" accept="image/*" onchange="handleImg(this)">
         </div>
@@ -165,7 +175,7 @@
 
     <script>
         let notebookData = JSON.parse(localStorage.getItem('notebook-data-v3')) || {
-            "Geral": [{ title: "Dicas de Uso", body: "Use o editor para criar suas notas!" }]
+            "Geral": [{ title: "Nova Nota", body: "" }]
         };
 
         let currentSubject = localStorage.getItem('last-subject') || "Geral";
