@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Caderno Virtual</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --rosa-claro: #fff0f5;
+            --rosa-destaque: #ffb6c1;
+            --pink-vibrante: #ff69b4;
+            --texto: #444;
+            --borda: #fce4ec;
+        }
+
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            background-color: #fff9fb; 
+            color: var(--texto); 
+            overflow: hidden; 
+        }
+
+        /* SIDEBAR DO CADERNO */
+        .sidebar { 
+            width: 280px; 
+            background: white; 
+            border-right: 1px solid var(--borda); 
+            display: flex; 
+            flex-direction: column; 
+            padding: 25px; 
+            flex-shrink: 0; 
+        }
+
+        .sidebar h1 { 
+            font-family: 'Dancing Script', cursive; 
+            font-size: 2.2rem; 
+            color: var(--rosa-destaque); 
+            text-align: center; 
+            margin-bottom: 10px; 
+            margin-top: 0;
+        }
+
+        .nav-back {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: var(--rosa-destaque);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 5px 15px;
+            border: 1px solid var(--rosa-claro);
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+
+        .btn-back:hover { background: var(--rosa-claro); }
+
+        .subject-list { 
+            list-style: none; 
+            padding: 0; 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            margin-top: 10px;
+        }
+
+        .subject-item { 
+            padding: 12px 15px; 
+            margin-bottom: 8px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            font-size: 0.9rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border: 1px solid transparent;
+        }
+
+        .subject-item:hover { background: var(--rosa-claro); }
+        .subject-item.active { 
+            background: var(--rosa-claro); 
+            border-color: var(--rosa-destaque); 
+            font-weight: 600; 
+            color: var(--pink-vibrante);
+        }
+
+        .delete-btn { 
+            opacity: 0; 
+            color: #ffafcc; 
+            font-size: 0.7rem; 
+            font-weight: bold;
+        }
+        .subject-item:hover .delete-btn { opacity: 1; }
+
+        .add-subject-btn { 
+            background: var(--rosa-destaque); 
+            color: white; 
+            border: none; 
+            padding: 12px; 
+            border-radius: 15px; 
+            cursor: pointer; 
+            font-family: 'Poppins', sans-serif; 
+            font-weight: 600; 
+            font-size: 0.85rem;
+            margin-top: 15px;
+        }
+
+        /* ÁREA DE NOTAS */
+        .main-content { 
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 40px; 
+            background: white; 
+            margin: 20px; 
+            border-radius: 30px; 
+            box-shadow: 0 10px 40px rgba(255, 182, 193, 0.1); 
+        }
+
+        #note-title { 
+            font-size: 2rem; 
+            border: none; 
+            outline: none; 
+            color: var(--rosa-destaque); 
+            margin-bottom: 10px; 
+            font-weight: 600; 
+            width: 100%; 
+            font-family: 'Poppins', sans-serif;
+        }
+
+        #note-body { 
+            flex-grow: 1; 
+            border: none; 
+            outline: none; 
+            resize: none; 
+            font-family: 'Poppins', sans-serif; 
+            font-size: 1rem; 
+            line-height: 1.8; 
+            color: var(--texto); 
+            background: transparent;
+        }
+
+        .save-status { 
+            font-size: 0.7rem; 
+            color: #d1d1d1; 
+            text-align: right; 
+            margin-top: 10px; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Scrollbar Aesthetic */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--rosa-claro); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h1>Meu Caderno</h1>
+        <div class="nav-back">
+            <a href="index.html" class="btn-back">📅 voltar ao planner</a>
+        </div>
+        
+        <ul class="subject-list" id="subject-list"></ul>
+        
+        <button class="add-subject-btn" onclick="addSubject()">+ nova matéria</button>
+    </div>
+
+    <div class="main-content">
+        <input type="text" id="note-title" placeholder="Título da aula ou matéria..." oninput="saveNote()">
+        <textarea id="note-body" placeholder="Comece a escrever seus resumos, insights do TCC ou anotações de nutrição aqui..." oninput="saveNote()"></textarea>
+        <div class="save-status" id="save-status">todas as alterações salvas</div>
+    </div>
+
+    <script>
+        let subjects = JSON.parse(localStorage.getItem('notebook-subjects')) || ["Geral", "TCC - IA", "Nutrição"];
+        let activeIdx = parseInt(localStorage.getItem('notebook-active-idx')) || 0;
+
+        function renderSubjects() {
+            const list = document.getElementById('subject-list');
+            list.innerHTML = '';
+            subjects.forEach((subj, index) => {
+                const li = document.createElement('li');
+                li.className = `subject-item ${index === activeIdx ? 'active' : ''}`;
+                li.innerHTML = `<span>${subj}</span> <span class="delete-btn" onclick="deleteSubject(event, ${index})">apagar</span>`;
+                li.onclick = () => switchSubject(index);
+                list.appendChild(li);
+            });
+            loadNote();
+        }
+
+        function addSubject() {
+            const name = prompt("Nome da nova matéria ou pasta:");
+            if (name && name.trim() !== "") {
+                subjects.push(name.trim());
+                localStorage.setItem('notebook-subjects', JSON.stringify(subjects));
+                activeIdx = subjects.length - 1;
+                localStorage.setItem('notebook-active-idx', activeIdx);
+                renderSubjects();
+            }
+        }
+
+        function deleteSubject(event, index) {
+            event.stopPropagation();
+            if (subjects.length > 1 && confirm(`Apagar a matéria "${subjects[index]}" e todo o conteúdo dela?`)) {
+                const name = subjects[index];
+                localStorage.removeItem(`note-title-${name}`);
+                localStorage.removeItem(`note-body-${name}`);
+                subjects.splice(index, 1);
+                localStorage.setItem('notebook-subjects', JSON.stringify(subjects));
+                activeIdx = 0;
+                localStorage.setItem('notebook-active-idx', 0);
+                renderSubjects();
+            }
+        }
+
+        function switchSubject(index) {
+            activeIdx = index;
+            localStorage.setItem('notebook-active-idx', activeIdx);
+            renderSubjects();
+        }
+
+        function saveNote() {
+            const subjectName = subjects[activeIdx];
+            const title = document.getElementById('note-title').value;
+            const body = document.getElementById('note-body').value;
+            
+            localStorage.setItem(`note-title-${subjectName}`, title);
+            localStorage.setItem(`note-body-${subjectName}`, body);
+            
+            const status = document.getElementById('save-status');
+            status.innerText = "salvando...";
+            setTimeout(() => status.innerText = "todas as alterações salvas", 500);
+        }
+
+        function loadNote() {
+            const subjectName = subjects[activeIdx];
+            document.getElementById('note-title').value = localStorage.getItem(`note-title-${subjectName}`) || "";
+            document.getElementById('note-body').value = localStorage.getItem(`note-body-${subjectName}`) || "";
+        }
+
+        // Inicializar
+        renderSubjects();
+    </script>
+</body>
+</html>
