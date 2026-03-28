@@ -16,150 +16,46 @@
         }
 
         * { box-sizing: border-box; }
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            margin: 0; 
-            display: flex; 
-            height: 100vh; 
-            background-color: #fff9fb; 
-            color: var(--texto); 
-            overflow: hidden; 
-        }
+        body { font-family: 'Poppins', sans-serif; margin: 0; display: flex; height: 100vh; background-color: #fff9fb; color: var(--texto); overflow: hidden; }
 
-        /* SIDEBAR DO CADERNO */
-        .sidebar { 
-            width: 280px; 
-            background: white; 
-            border-right: 1px solid var(--borda); 
-            display: flex; 
-            flex-direction: column; 
-            padding: 25px; 
-            flex-shrink: 0; 
-        }
+        /* BARRA LATERAL (MATÉRIAS) */
+        .sidebar { width: 250px; background: white; border-right: 1px solid var(--borda); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
+        .sidebar h1 { font-family: 'Dancing Script', cursive; font-size: 2rem; color: var(--rosa-destaque); text-align: center; margin-bottom: 15px; }
 
-        .sidebar h1 { 
-            font-family: 'Dancing Script', cursive; 
-            font-size: 2.2rem; 
-            color: var(--rosa-destaque); 
-            text-align: center; 
-            margin-bottom: 10px; 
-            margin-top: 0;
-        }
-
-        .nav-back {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .btn-back {
-            text-decoration: none;
-            color: var(--rosa-destaque);
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 5px 15px;
-            border: 1px solid var(--rosa-claro);
-            border-radius: 20px;
-            transition: 0.3s;
-        }
-
-        .btn-back:hover { background: var(--rosa-claro); }
-
-        .subject-list { 
-            list-style: none; 
-            padding: 0; 
-            flex-grow: 1; 
-            overflow-y: auto; 
-            margin-top: 10px;
-        }
-
-        .subject-item { 
-            padding: 12px 15px; 
-            margin-bottom: 8px; 
-            border-radius: 12px; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            font-size: 0.9rem; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            border: 1px solid transparent;
-        }
-
+        .subject-list { list-style: none; padding: 0; flex-grow: 1; overflow-y: auto; }
+        .subject-item { padding: 12px 15px; margin-bottom: 8px; border-radius: 12px; cursor: pointer; transition: 0.3s; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; }
         .subject-item:hover { background: var(--rosa-claro); }
-        .subject-item.active { 
-            background: var(--rosa-claro); 
-            border-color: var(--rosa-destaque); 
-            font-weight: 600; 
-            color: var(--pink-vibrante);
-        }
+        .subject-item.active { background: var(--rosa-claro); font-weight: 600; color: var(--pink-vibrante); border: 1px solid var(--rosa-destaque); }
 
-        .delete-btn { 
-            opacity: 0; 
-            color: #ffafcc; 
-            font-size: 0.7rem; 
-            font-weight: bold;
-        }
-        .subject-item:hover .delete-btn { opacity: 1; }
+        /* PAINEL DE NOTAS */
+        .notes-panel { width: 220px; background: #fffafa; border-right: 1px solid var(--borda); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
+        .notes-panel h3 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--rosa-destaque); margin-bottom: 15px; }
+        
+        .note-list { list-style: none; padding: 0; flex-grow: 1; overflow-y: auto; }
+        .note-list-item { padding: 10px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; border-bottom: 1px solid #f0f0f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .note-list-item.active { background: white; font-weight: 600; border-left: 3px solid var(--pink-vibrante); }
 
-        .add-subject-btn { 
-            background: var(--rosa-destaque); 
-            color: white; 
-            border: none; 
-            padding: 12px; 
-            border-radius: 15px; 
-            cursor: pointer; 
-            font-family: 'Poppins', sans-serif; 
-            font-weight: 600; 
-            font-size: 0.85rem;
-            margin-top: 15px;
-        }
+        /* ÁREA DO EDITOR */
+        .editor-container { flex-grow: 1; display: flex; flex-direction: column; background: white; margin: 15px; border-radius: 25px; box-shadow: 0 5px 20px rgba(255,182,193,0.1); overflow: hidden; }
+        
+        /* BARRA DE FERRAMENTAS */
+        .toolbar { padding: 10px 20px; border-bottom: 1px solid var(--borda); display: flex; gap: 10px; flex-wrap: wrap; background: #fffafb; }
+        .toolbar button { background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 5px 10px; cursor: pointer; font-family: inherit; font-size: 0.75rem; color: var(--texto); }
+        .toolbar button:hover { background: var(--rosa-claro); }
 
-        /* ÁREA DE NOTAS */
-        .main-content { 
-            flex-grow: 1; 
-            display: flex; 
-            flex-direction: column; 
-            padding: 40px; 
-            background: white; 
-            margin: 20px; 
-            border-radius: 30px; 
-            box-shadow: 0 10px 40px rgba(255, 182, 193, 0.1); 
-        }
+        .editor-content { flex-grow: 1; padding: 30px; overflow-y: auto; outline: none; line-height: 1.6; }
+        .editor-content img { max-width: 100%; border-radius: 10px; margin: 10px 0; }
 
-        #note-title { 
-            font-size: 2rem; 
-            border: none; 
-            outline: none; 
-            color: var(--rosa-destaque); 
-            margin-bottom: 10px; 
-            font-weight: 600; 
-            width: 100%; 
-            font-family: 'Poppins', sans-serif;
-        }
+        #editor-title { font-size: 1.8rem; border: none; outline: none; color: var(--rosa-destaque); font-weight: 600; width: 100%; padding: 20px 30px 0; font-family: 'Poppins', sans-serif; }
 
-        #note-body { 
-            flex-grow: 1; 
-            border: none; 
-            outline: none; 
-            resize: none; 
-            font-family: 'Poppins', sans-serif; 
-            font-size: 1rem; 
-            line-height: 1.8; 
-            color: var(--texto); 
-            background: transparent;
-        }
+        /* BOTÕES */
+        .btn-add { background: var(--rosa-destaque); color: white; border: none; padding: 10px; border-radius: 12px; cursor: pointer; font-family: inherit; font-weight: 600; font-size: 0.8rem; margin-top: 10px; }
+        .btn-add-note { background: transparent; border: 1px dashed var(--rosa-destaque); color: var(--rosa-destaque); margin-bottom: 15px; }
+        .nav-back { text-decoration: none; color: var(--rosa-destaque); font-size: 0.7rem; font-weight: 600; text-align: center; margin-bottom: 20px; display: block; }
+        .delete-icon { font-size: 0.7rem; opacity: 0.3; cursor: pointer; }
+        .delete-icon:hover { opacity: 1; color: #ff4d4d; }
 
-        .save-status { 
-            font-size: 0.7rem; 
-            color: #d1d1d1; 
-            text-align: right; 
-            margin-top: 10px; 
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Scrollbar Aesthetic */
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: var(--rosa-claro); border-radius: 10px; }
     </style>
 </head>
@@ -167,89 +63,156 @@
 
     <div class="sidebar">
         <h1>Meu Caderno</h1>
-        <div class="nav-back">
-            <a href="index.html" class="btn-back">📅 voltar ao planner</a>
-        </div>
-        
+        <a href="index.html" class="nav-back">📅 voltar ao planner</a>
         <ul class="subject-list" id="subject-list"></ul>
-        
-        <button class="add-subject-btn" onclick="addSubject()">+ nova matéria</button>
+        <button class="btn-add" onclick="addSubject()">+ nova matéria</button>
     </div>
 
-    <div class="main-content">
-        <input type="text" id="note-title" placeholder="Título da aula ou matéria..." oninput="saveNote()">
-        <textarea id="note-body" placeholder="Comece a escrever seus resumos, insights do TCC ou anotações de nutrição aqui..." oninput="saveNote()"></textarea>
-        <div class="save-status" id="save-status">todas as alterações salvas</div>
+    <div class="notes-panel">
+        <h3 id="current-subject-name">Matéria</h3>
+        <button class="btn-add btn-add-note" onclick="addNote()">+ nova página</button>
+        <ul class="note-list" id="note-list"></ul>
+    </div>
+
+    <div class="editor-container">
+        <input type="text" id="editor-title" placeholder="Título da nota..." oninput="saveCurrentData()">
+        
+        <div class="toolbar">
+            <button onclick="format('bold')"><b>B</b></button>
+            <button onclick="format('italic')"><i>I</i></button>
+            <button onclick="format('insertUnorderedList')">• Lista</button>
+            <button onclick="format('justifyLeft')">⬅</button>
+            <button onclick="format('justifyCenter')">↔</button>
+            <button style="color: var(--rosa-destaque)" onclick="format('foreColor', 'var(--pink-vibrante)')">Rosa</button>
+            <button onclick="document.getElementById('img-input').click()">🖼️ Imagem</button>
+            <input type="file" id="img-input" style="display:none" accept="image/*" onchange="handleImg(this)">
+        </div>
+
+        <div id="editor-body" class="editor-content" contenteditable="true" oninput="saveCurrentData()"></div>
+        
+        <div id="save-status" style="font-size: 0.6rem; color: #ccc; text-align: right; padding: 10px 20px;">alterações salvas</div>
     </div>
 
     <script>
-        let subjects = JSON.parse(localStorage.getItem('notebook-subjects')) || ["Geral", "TCC - IA", "Nutrição"];
-        let activeIdx = parseInt(localStorage.getItem('notebook-active-idx')) || 0;
+        let notebookData = JSON.parse(localStorage.getItem('notebook-data-v3')) || {
+            "Geral": [{ title: "Dicas de Uso", body: "Você pode <b>formatar texto</b> e colar imagens aqui!" }]
+        };
+
+        let currentSubject = localStorage.getItem('last-subject') || "Geral";
+        let currentNoteIdx = parseInt(localStorage.getItem('last-note-idx')) || 0;
 
         function renderSubjects() {
             const list = document.getElementById('subject-list');
             list.innerHTML = '';
-            subjects.forEach((subj, index) => {
+            Object.keys(notebookData).forEach(subject => {
                 const li = document.createElement('li');
-                li.className = `subject-item ${index === activeIdx ? 'active' : ''}`;
-                li.innerHTML = `<span>${subj}</span> <span class="delete-btn" onclick="deleteSubject(event, ${index})">apagar</span>`;
-                li.onclick = () => switchSubject(index);
+                li.className = `subject-item ${subject === currentSubject ? 'active' : ''}`;
+                li.innerHTML = `<span>${subject}</span> <span class="delete-icon" onclick="deleteSubject(event, '${subject}')">✕</span>`;
+                li.onclick = () => switchSubject(subject);
                 list.appendChild(li);
             });
-            loadNote();
+            renderNotes();
         }
+
+        function renderNotes() {
+            const list = document.getElementById('note-list');
+            document.getElementById('current-subject-name').innerText = currentSubject;
+            list.innerHTML = '';
+            const notes = notebookData[currentSubject] || [];
+            notes.forEach((note, idx) => {
+                const li = document.createElement('li');
+                li.className = `note-list-item ${idx === currentNoteIdx ? 'active' : ''}`;
+                li.innerText = note.title || "(sem título)";
+                li.onclick = () => switchNote(idx);
+                list.appendChild(li);
+            });
+            loadEditor();
+        }
+
+        function format(cmd, val = null) {
+            document.execCommand(cmd, false, val);
+            saveCurrentData();
+        }
+
+        function handleImg(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = `<img src="${e.target.result}">`;
+                    document.execCommand('insertHTML', false, img);
+                    saveCurrentData();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Detecta Colar Imagem (Ctrl+V)
+        document.getElementById('editor-body').addEventListener('paste', function(e) {
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let item of items) {
+                if (item.kind === 'file') {
+                    const blob = item.getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        document.getElementById('editor-body').appendChild(img);
+                        saveCurrentData();
+                    };
+                    reader.readAsDataURL(blob);
+                }
+            }
+        });
 
         function addSubject() {
-            const name = prompt("Nome da nova matéria ou pasta:");
-            if (name && name.trim() !== "") {
-                subjects.push(name.trim());
-                localStorage.setItem('notebook-subjects', JSON.stringify(subjects));
-                activeIdx = subjects.length - 1;
-                localStorage.setItem('notebook-active-idx', activeIdx);
-                renderSubjects();
+            const name = prompt("Nome da Matéria:");
+            if (name && !notebookData[name]) {
+                notebookData[name] = [{ title: "Nova Nota", body: "" }];
+                currentSubject = name; currentNoteIdx = 0; saveAndRefresh();
             }
         }
 
-        function deleteSubject(event, index) {
-            event.stopPropagation();
-            if (subjects.length > 1 && confirm(`Apagar a matéria "${subjects[index]}" e todo o conteúdo dela?`)) {
-                const name = subjects[index];
-                localStorage.removeItem(`note-title-${name}`);
-                localStorage.removeItem(`note-body-${name}`);
-                subjects.splice(index, 1);
-                localStorage.setItem('notebook-subjects', JSON.stringify(subjects));
-                activeIdx = 0;
-                localStorage.setItem('notebook-active-idx', 0);
-                renderSubjects();
+        function addNote() {
+            notebookData[currentSubject].push({ title: "Sem título", body: "" });
+            currentNoteIdx = notebookData[currentSubject].length - 1; saveAndRefresh();
+        }
+
+        function switchSubject(s) { currentSubject = s; currentNoteIdx = 0; saveAndRefresh(); }
+        function switchNote(i) { currentNoteIdx = i; saveAndRefresh(); }
+
+        function saveCurrentData() {
+            const title = document.getElementById('editor-title').value;
+            const body = document.getElementById('editor-body').innerHTML;
+            if(!notebookData[currentSubject]) return;
+            notebookData[currentSubject][currentNoteIdx].title = title;
+            notebookData[currentSubject][currentNoteIdx].body = body;
+            localStorage.setItem('notebook-data-v3', JSON.stringify(notebookData));
+            const active = document.querySelector('.note-list-item.active');
+            if(active) active.innerText = title || "(sem título)";
+        }
+
+        function loadEditor() {
+            const note = notebookData[currentSubject][currentNoteIdx] || { title: "", body: "" };
+            document.getElementById('editor-title').value = note.title;
+            document.getElementById('editor-body').innerHTML = note.body;
+        }
+
+        function deleteSubject(e, s) {
+            e.stopPropagation();
+            if (Object.keys(notebookData).length > 1 && confirm(`Excluir matéria "${s}"?`)) {
+                delete notebookData[s];
+                currentSubject = Object.keys(notebookData)[0]; currentNoteIdx = 0; saveAndRefresh();
             }
         }
 
-        function switchSubject(index) {
-            activeIdx = index;
-            localStorage.setItem('notebook-active-idx', activeIdx);
+        function saveAndRefresh() {
+            localStorage.setItem('notebook-data-v3', JSON.stringify(notebookData));
+            localStorage.setItem('last-subject', currentSubject);
+            localStorage.setItem('last-note-idx', currentNoteIdx);
             renderSubjects();
         }
 
-        function saveNote() {
-            const subjectName = subjects[activeIdx];
-            const title = document.getElementById('note-title').value;
-            const body = document.getElementById('note-body').value;
-            
-            localStorage.setItem(`note-title-${subjectName}`, title);
-            localStorage.setItem(`note-body-${subjectName}`, body);
-            
-            const status = document.getElementById('save-status');
-            status.innerText = "salvando...";
-            setTimeout(() => status.innerText = "todas as alterações salvas", 500);
-        }
-
-        function loadNote() {
-            const subjectName = subjects[activeIdx];
-            document.getElementById('note-title').value = localStorage.getItem(`note-title-${subjectName}`) || "";
-            document.getElementById('note-body').value = localStorage.getItem(`note-body-${subjectName}`) || "";
-        }
-
-        // Inicializar
         renderSubjects();
     </script>
 </body>
