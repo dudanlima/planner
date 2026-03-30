@@ -197,7 +197,11 @@
             itemPadrao.className = 'font-picker-item';
             itemPadrao.innerText = 'Poppins (Padrao)';
             itemPadrao.style.fontFamily = 'Poppins';
-            itemPadrao.onclick = () => selecionarFonte('Poppins', 'Poppins (Padrao)');
+            
+            itemPadrao.onmousedown = (e) => { 
+                e.preventDefault(); 
+                selecionarFonte('Poppins', 'Poppins (Padrao)'); 
+            };
             fontList.appendChild(itemPadrao);
 
             listaArquivosFontes.forEach(arquivo => {
@@ -209,7 +213,11 @@
                     item.className = 'font-picker-item';
                     item.innerText = nome;
                     item.style.fontFamily = `"${nome}"`;
-                    item.onclick = () => selecionarFonte(nome, nome);
+                    
+                    item.onmousedown = (e) => { 
+                        e.preventDefault(); 
+                        selecionarFonte(nome, nome); 
+                    };
                     fontList.appendChild(item);
                 }).catch(err => console.log("Fonte nao carregada:", arquivo));
             });
@@ -222,9 +230,10 @@
 
         function selecionarFonte(nomeFonte, nomeExibicao) {
             document.getElementById('font-btn-text').innerText = nomeExibicao;
-            document.getElementById('font-btn-text').style.fontFamily = nomeFonte;
+            document.getElementById('font-btn-text').style.fontFamily = `"${nomeFonte}"`;
             document.getElementById('font-list').style.display = 'none';
-            document.execCommand('fontName', false, nomeFonte);
+            
+            document.execCommand('fontName', false, `"${nomeFonte}"`);
             saveCurrentData();
         }
 
