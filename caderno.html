@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Cadernos</title>
+    <title>Meus Cadernos virtuais</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
+        /* FONTE HELLO E VARIAVEIS */
         @font-face { font-family: 'Hello'; src: url('fonts/Hello.otf') format('opentype'); }
 
         :root {
@@ -17,7 +18,17 @@
         * { box-sizing: border-box; }
         body { font-family: 'Poppins', sans-serif; margin: 0; background-color: #fff9fb; color: var(--texto); display: flex; height: 100vh; overflow: hidden; }
 
-        /* SIDEBAR RETRÁTIL */
+        /* IMPRESSAO E PDF */
+        @media print {
+            .sidebar, .toolbar, #save-status, .nav-back { display: none !important; }
+            body { background: white; overflow: visible; }
+            #editor-view { border: none; box-shadow: none; margin: 0; overflow: visible; display: block !important; }
+            #editor-title { padding-left: 0; color: black; font-family: 'Hello', serif !important; }
+            .editor-content { padding: 0; overflow: visible; }
+            #shelf-view { display: none !important; }
+        }
+
+        /* SIDEBAR RETRATIL */
         .sidebar { 
             width: 260px; background: white; border-right: 1px solid var(--borda); 
             display: flex; flex-direction: column; padding: 20px; flex-shrink: 0;
@@ -31,10 +42,20 @@
             cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
 
-        .sidebar h1 { font-family: 'Hello', cursive; font-size: 3rem; color: var(--rosa-destaque); text-align: center; margin: 0 0 20px; font-weight: normal; }
-        .nav-back { text-decoration: none; color: var(--rosa-destaque); font-size: 0.8rem; display: block; text-align: center; margin-bottom: 20px; }
+        .sidebar h1 { font-family: 'Hello', cursive; font-size: 3rem; color: var(--rosa-destaque); text-align: center; margin: 0 0 15px; font-weight: normal; }
+        .nav-back { text-decoration: none; color: var(--rosa-destaque); font-size: 0.8rem; display: block; text-align: center; margin-bottom: 20px; font-weight: 600; }
 
-        /* ESTANTE DE CADERNOS (TELA INICIAL) */
+        .btn-action { background: var(--rosa-destaque); color: white; border: none; padding: 10px 15px; border-radius: 12px; cursor: pointer; font-family: inherit; font-weight: 600; font-size: 0.85rem; width: 100%; transition: 0.3s; }
+        .btn-action:hover { opacity: 0.8; }
+
+        /* LISTA DE ANOTACOES (INDICE DO CADERNO) */
+        #notes-index { display: none; flex-direction: column; flex-grow: 1; margin-top: 20px; overflow-y: auto; }
+        .index-title { font-size: 0.75rem; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: center; }
+        .note-list { list-style: none; padding: 0; margin: 0 0 15px 0; }
+        .note-item { padding: 10px 12px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; border-bottom: 1px solid #f0f0f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .note-item.active { background: var(--rosa-claro); font-weight: 600; color: var(--pink-vibrante); border-left: 4px solid var(--rosa-destaque); border-bottom: none; }
+
+        /* ESTANTE DE CADERNOS */
         .shelf-container { 
             flex-grow: 1; padding: 40px; overflow-y: auto; 
             display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
@@ -50,32 +71,40 @@
         .notebook-card:hover { transform: translateY(-10px); box-shadow: 8px 8px 25px rgba(255,182,193,0.4); }
         .notebook-card img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
         .notebook-label { 
-            position: relative; z-index: 2; background: rgba(255,255,255,0.9); 
-            padding: 10px; text-align: center; font-weight: 600; font-size: 0.9rem;
-            border-top: 1px solid var(--borda);
+            position: relative; z-index: 2; background: rgba(255,255,255,0.95); 
+            padding: 12px 10px; text-align: center; font-weight: 600; font-size: 0.9rem;
+            border-top: 1px solid var(--borda); color: var(--pink-vibrante);
         }
 
-        /* EDITOR (ESCONDIDO POR PADRÃO) */
-        #editor-view { display: none; flex-direction: column; flex-grow: 1; background: white; margin: 15px; border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow: hidden; }
-        .toolbar { padding: 10px; border-bottom: 1px solid var(--borda); display: flex; gap: 8px; background: #fffafb; flex-wrap: wrap; }
-        .editor-content { flex-grow: 1; padding: 30px; outline: none; line-height: 1.6; overflow-y: auto; }
-        #editor-title { font-family: 'Hello'; font-size: 2.5rem; border: none; outline: none; color: var(--rosa-destaque); padding: 20px 30px 0; width: 100%; }
-
-        /* BOTÃO ADICIONAR */
         .add-notebook-btn {
             width: 180px; height: 240px; border: 3px dashed var(--rosa-destaque);
             border-radius: 10px 20px 20px 10px; display: flex; flex-direction: column;
             align-items: center; justify-content: center; cursor: pointer; color: var(--rosa-destaque);
-            font-weight: 600; transition: 0.3s;
+            font-weight: 600; transition: 0.3s; background: transparent;
         }
         .add-notebook-btn:hover { background: var(--rosa-claro); }
 
-        .hidden-input { display: none; }
-        .btn-action { background: var(--rosa-destaque); color: white; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-family: inherit; }
+        /* EDITOR DE TEXTO */
+        #editor-view { display: none; flex-direction: column; flex-grow: 1; background: white; margin: 15px; border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow: hidden; }
+        
+        .toolbar { padding: 10px 20px; border-bottom: 1px solid var(--borda); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; background: #fffafb; }
+        .toolbar button, .toolbar select { background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 5px 8px; cursor: pointer; font-family: inherit; font-size: 0.75rem; height: 32px; display: flex; align-items: center; justify-content: center; outline: none; }
+        .toolbar button:hover, .toolbar select:hover { background: var(--rosa-claro); }
+        .toolbar input[type="color"] { border: 1px solid var(--borda); border-radius: 5px; padding: 2px; height: 32px; width: 40px; cursor: pointer; background: white; }
+        
+        .btn-recording { background: #ffeb3b !important; font-weight: bold; animation: pulse 1.5s infinite; color: black !important; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+        #editor-title { font-family: 'Hello', sans-serif; font-size: 2.8rem; border: none; outline: none; color: var(--rosa-destaque); padding: 20px 30px 0; width: 100%; background: transparent; }
+        .editor-content { flex-grow: 1; padding: 30px; outline: none; line-height: 1.6; overflow-y: auto; }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--rosa-claro); border-radius: 10px; }
 
         @media (max-width: 600px) {
             .shelf-container { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); padding: 20px; }
             .notebook-card, .add-notebook-btn { width: 140px; height: 190px; }
+            .sidebar { position: absolute; height: 100%; }
         }
     </style>
 </head>
@@ -85,12 +114,14 @@
         <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
         <h1>Caderno</h1>
         <a href="index.html" class="nav-back">📅 voltar ao planner</a>
-        <button class="btn-action" onclick="showShelf()">📚 ver meus cadernos</button>
-        <hr style="width:100%; border:0; border-top:1px solid var(--borda); margin: 20px 0;">
-        <div id="notes-list-container">
-            <p style="font-size: 0.7rem; color: #999; text-transform: uppercase;">Páginas</p>
-            <ul id="note-list" style="list-style:none; padding:0;"></ul>
-            <button class="btn-action" style="background:none; color:var(--pink-vibrante); border:1px dashed var(--pink-vibrante); width:100%;" onclick="addNote()">+ nova página</button>
+        
+        <button class="btn-action" onclick="showShelf()">📚 minha estante</button>
+        
+        <div id="notes-index">
+            <hr style="width:100%; border:0; border-top:1px solid var(--borda); margin: 15px 0;">
+            <p class="index-title" id="current-notebook-name">Anotacoes</p>
+            <ul id="note-list" class="note-list"></ul>
+            <button class="btn-action" style="background:transparent; color:var(--pink-vibrante); border:1px dashed var(--pink-vibrante);" onclick="addNote()">+ nova anotacao</button>
         </div>
     </div>
 
@@ -98,92 +129,174 @@
         </div>
 
     <div id="editor-view">
-        <input type="text" id="editor-title" placeholder="Título da nota..." oninput="saveCurrentData()">
+        <input type="text" id="editor-title" placeholder="Titulo do resumo..." oninput="saveCurrentData()">
+        
         <div class="toolbar">
-            <button onclick="document.execCommand('bold')"><b>B</b></button>
-            <button onclick="document.execCommand('italic')"><i>I</i></button>
-            <button onclick="window.print()">🖨️ PDF</button>
-            <button class="btn-action" style="margin-left:auto; background:#888;" onclick="showShelf()">Sair</button>
+            <button onclick="format('bold')" title="Negrito">B</button>
+            <button onclick="format('italic')" title="Italico">I</button>
+            <button onclick="format('underline')" title="Sublinhado">U</button>
+            
+            <button onclick="format('justifyLeft')" title="Alinhar a Esquerda">⬅</button>
+            <button onclick="format('justifyCenter')" title="Centralizar">↔</button>
+            <button onclick="format('justifyRight')" title="Alinhar a Direita">➡</button>
+            <button onclick="format('justifyFull')" title="Justificar">≡</button>
+
+            <select id="font-selector" onchange="applyFont(this.value)" style="width:140px;"></select>
+            
+            <select onchange="format('fontSize', this.value)" title="Tamanho da fonte">
+                <option value="3">14px</option>
+                <option value="1">10px</option>
+                <option value="2">12px</option>
+                <option value="4">16px</option>
+                <option value="5">18px</option>
+                <option value="6">24px</option>
+                <option value="7">32px</option>
+            </select>
+
+            <input type="color" onchange="format('foreColor', this.value)" title="Cor do texto">
+            
+            <button onclick="format('insertUnorderedList')" title="Criar Lista">• Lista</button>
+            
+            <button id="btn-speech" onclick="toggleTranscription()" title="Transcrever voz para texto">🎤 Transcrever</button>
+            <button onclick="window.print()">🖨️ Salvar PDF</button>
         </div>
+
         <div id="editor-body" class="editor-content" contenteditable="true" oninput="saveCurrentData()"></div>
+        <div id="save-status" style="font-size:0.6rem; color:#ccc; text-align:right; padding:10px 20px;">alteracoes salvas automaticamente</div>
     </div>
 
     <script>
-        // Dados Estruturados
-        let notebooks = JSON.parse(localStorage.getItem('my-virtual-notebooks')) || {};
-        let currentSubject = null;
-        let currentNoteIdx = 0;
+        // CARREGAMENTO DE FONTES DA PASTA /fonts
+        const listaArquivosFontes = [
+            'Better Together.otf', 'Better Together Script.ttf', 'Good Mood.otf', 
+            'Hanging.otf', 'Kathen Font by Situjuh (7NTypes).otf', 'Magical Feather.ttf',
+            'SimpleHandmade.otf', 'Simple Mandala.otf', 'Skyhigh.ttf', 'Windsol-Regular.ttf',
+            'Autumn in September.ttf', 'Brownist.otf', 'Farmhouse.otf', 'FBCaramelApple.otf',
+            'Handmade.otf', 'KGSimplytheBest.otf', 'Milky Matcha.otf', 'Please write me a song.ttf',
+            'ChettaVissto.otf', 'Happy Night.otf', 'BubbbleGum.otf', 'Muthiara demo version.otf',
+            'hello honey.otf', 'Hello.otf', 'Hello Valentina.ttf', 'Game Bubble.otf', 
+            'Bubbleboddy-FatTrial.ttf', 'Warung Kopi.otf'
+        ];
 
-        // Alternar Sidebar
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('closed');
+        function carregarFontes() {
+            const sel = document.getElementById('font-selector');
+            const p = document.createElement('option'); p.value="Poppins"; p.innerText="Poppins (Padrao)"; sel.appendChild(p);
+            
+            listaArquivosFontes.forEach(arquivo => {
+                const nome = arquivo.split('.')[0];
+                const face = new FontFace(nome, `url(fonts/${arquivo})`);
+                face.load().then(loadedFace => {
+                    document.fonts.add(loadedFace);
+                    const opt = document.createElement('option'); 
+                    opt.value = nome; opt.innerText = nome; 
+                    sel.appendChild(opt);
+                }).catch(err => console.log("Fonte nao carregada:", arquivo));
+            });
         }
 
-        // Mostrar Estante
+        // TRANSCRITOR DE AUDIO
+        let recognition;
+        let isRecording = false;
+
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.lang = 'pt-BR';
+            recognition.continuous = true;
+            recognition.onresult = (e) => {
+                const text = e.results[e.results.length - 1][0].transcript;
+                document.execCommand('insertText', false, text + ' ');
+                saveCurrentData();
+            };
+        }
+
+        function toggleTranscription() {
+            const btn = document.getElementById('btn-speech');
+            if (!recognition) return alert("Navegador incompativel com transcricao.");
+            if (!isRecording) {
+                recognition.start();
+                isRecording = true;
+                btn.classList.add('btn-recording');
+                btn.innerText = "🛑 Parar audio";
+            } else {
+                recognition.stop();
+                isRecording = false;
+                btn.classList.remove('btn-recording');
+                btn.innerText = "🎤 Transcrever";
+            }
+        }
+
+        // FUNCOES DE FORMATACAO DO EDITOR
+        function format(cmd, val=null) { document.execCommand(cmd, false, val); saveCurrentData(); }
+        function applyFont(f) { document.execCommand('fontName', false, f); saveCurrentData(); }
+
+        // SISTEMA DE CADERNOS E ANOTACOES
+        let notebooks = JSON.parse(localStorage.getItem('my-shelf-data')) || {};
+        let currentNotebook = null;
+        let currentNoteIdx = 0;
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
+
         function showShelf() {
-            currentSubject = null;
+            currentNotebook = null;
             document.getElementById('shelf-view').style.display = 'grid';
             document.getElementById('editor-view').style.display = 'none';
-            document.getElementById('notes-list-container').style.display = 'none';
+            document.getElementById('notes-index').style.display = 'none';
             renderShelf();
         }
 
-        // Renderizar Cadernos
         function renderShelf() {
             const shelf = document.getElementById('shelf-view');
             shelf.innerHTML = '';
 
-            Object.keys(notebooks).forEach(subject => {
+            Object.keys(notebooks).forEach(name => {
                 const card = document.createElement('div');
                 card.className = 'notebook-card';
-                if(notebooks[subject].cover) {
-                    card.innerHTML = `<img src="${notebooks[subject].cover}">`;
-                }
-                card.innerHTML += `<div class="notebook-label">${subject}</div>`;
-                card.onclick = () => openNotebook(subject);
+                if(notebooks[name].cover) card.innerHTML = `<img src="${notebooks[name].cover}">`;
+                card.innerHTML += `<div class="notebook-label">${name}</div>`;
+                card.onclick = () => openNotebook(name);
                 shelf.appendChild(card);
             });
 
-            // Botão Adicionar
             const addBtn = document.createElement('div');
             addBtn.className = 'add-notebook-btn';
-            addBtn.innerHTML = `<span>+</span><small>Nova Matéria</small>`;
+            addBtn.innerHTML = `<span style="font-size:2rem; margin-bottom:5px;">+</span><span>Criar Caderno</span>`;
             addBtn.onclick = createNotebook;
             shelf.appendChild(addBtn);
         }
 
-        // Criar Novo Caderno
         function createNotebook() {
-            const name = prompt("Qual o nome da matéria?");
+            const name = prompt("Digite o nome da materia (ex: Nutricao, Italiano):");
             if(!name) return;
+            if(notebooks[name]) return alert("Ja existe um caderno com esse nome!");
             
             const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
+            input.type = 'file'; input.accept = 'image/*';
             input.onchange = (e) => {
                 const file = e.target.files[0];
-                const reader = new FileReader();
-                reader.onload = () => {
-                    notebooks[name] = {
-                        cover: reader.result,
-                        notes: [{ title: "Capa", body: "Comece a escrever..." }]
+                if(file) {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        notebooks[name] = { cover: reader.result, notes: [{ title: "Resumo 1", body: "" }] };
+                        saveToStorage(); renderShelf();
                     };
-                    saveToStorage();
-                    renderShelf();
-                };
-                reader.readAsDataURL(file);
+                    reader.readAsDataURL(file);
+                }
             };
-            alert("Agora escolha uma foto para a capa do seu caderno!");
+            alert("Selecione uma imagem da sua galeria para ser a capa deste caderno.");
             input.click();
         }
 
-        // Abrir Caderno Específico
-        function openNotebook(subject) {
-            currentSubject = subject;
+        function openNotebook(name) {
+            currentNotebook = name;
             currentNoteIdx = 0;
             document.getElementById('shelf-view').style.display = 'none';
             document.getElementById('editor-view').style.display = 'flex';
-            document.getElementById('notes-list-container').style.display = 'block';
+            document.getElementById('notes-index').style.display = 'flex';
+            document.getElementById('current-notebook-name').innerText = `Anotacoes de ${name}`;
+            
+            // Se estiver no celular, fecha a barra lateral ao abrir o caderno para dar espaco
+            if(window.innerWidth <= 600) toggleSidebar();
+            
             renderNotesList();
             loadEditor();
         }
@@ -191,41 +304,46 @@
         function renderNotesList() {
             const list = document.getElementById('note-list');
             list.innerHTML = '';
-            notebooks[currentSubject].notes.forEach((n, i) => {
+            notebooks[currentNotebook].notes.forEach((n, i) => {
                 const li = document.createElement('li');
-                li.style.cssText = "padding:10px; cursor:pointer; font-size:0.8rem; border-bottom:1px solid #f0f0f0";
-                if(i === currentNoteIdx) li.style.fontWeight = "bold";
-                li.innerText = n.title;
+                li.className = `note-item ${i === currentNoteIdx ? 'active' : ''}`;
+                li.innerText = n.title || "Sem titulo";
                 li.onclick = () => { currentNoteIdx = i; loadEditor(); renderNotesList(); };
                 list.appendChild(li);
             });
         }
 
         function loadEditor() {
-            const note = notebooks[currentSubject].notes[currentNoteIdx];
+            const note = notebooks[currentNotebook].notes[currentNoteIdx];
             document.getElementById('editor-title').value = note.title;
             document.getElementById('editor-body').innerHTML = note.body;
         }
 
         function saveCurrentData() {
-            if(!currentSubject) return;
-            notebooks[currentSubject].notes[currentNoteIdx].title = document.getElementById('editor-title').value;
-            notebooks[currentSubject].notes[currentNoteIdx].body = document.getElementById('editor-body').innerHTML;
+            if(!currentNotebook) return;
+            const title = document.getElementById('editor-title').value;
+            notebooks[currentNotebook].notes[currentNoteIdx].title = title;
+            notebooks[currentNotebook].notes[currentNoteIdx].body = document.getElementById('editor-body').innerHTML;
             saveToStorage();
+            
+            const activeItem = document.querySelector('.note-item.active');
+            if(activeItem) activeItem.innerText = title || "Sem titulo";
         }
 
         function addNote() {
-            notebooks[currentSubject].notes.push({ title: "Sem título", body: "" });
-            currentNoteIdx = notebooks[currentSubject].notes.length - 1;
-            renderNotesList();
-            loadEditor();
+            const title = prompt("Nome do novo resumo (ex: Resumo 2, Aula 5):");
+            if(title !== null) {
+                notebooks[currentNotebook].notes.push({ title: title || "Nova anotacao", body: "" });
+                currentNoteIdx = notebooks[currentNotebook].notes.length - 1;
+                renderNotesList();
+                loadEditor();
+            }
         }
 
-        function saveToStorage() {
-            localStorage.setItem('my-virtual-notebooks', JSON.stringify(notebooks));
-        }
+        function saveToStorage() { localStorage.setItem('my-shelf-data', JSON.stringify(notebooks)); }
 
-        // Início
+        // Inicializacao
+        carregarFontes();
         showShelf();
     </script>
 </body>
