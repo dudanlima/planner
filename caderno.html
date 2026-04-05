@@ -6,6 +6,9 @@
     <title>Meus Cadernos virtuais</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <style>
         @font-face { font-family: 'Hello'; src: url('fonts/Hello.otf') format('opentype'); }
 
@@ -179,6 +182,52 @@
     </div>
 
     <script>
+        // CONFIGURACAO DO FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyBSM8qmzB-c8tzDK3D4F_WlroD49D6oi8g",
+            authDomain: "planner-8eb0a.firebaseapp.com",
+            databaseURL: "https://planner-8eb0a-default-rtdb.firebaseio.com",
+            projectId: "planner-8eb0a",
+            storageBucket: "planner-8eb0a.firebasestorage.app",
+            messagingSenderId: "459926334252",
+            appId: "1:459926334252:web:27b700bdb483ed3e7fda89"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let notebooks = JSON.parse(localStorage.getItem('my-shelf-data')) || {};
+        let currentNotebook = null;
+        let currentNoteIdx = 0;
+
+        // A PONTE MÁGICA
+        const originalSetItem = localStorage.setItem;
+        localStorage.setItem = function(key, value) {
+            originalSetItem.apply(this, arguments);
+            db.ref('plannerData/' + key).set(value);
+        };
+
+        // Carrega da nuvem ao iniciar
+        db.ref('plannerData').once('value').then((snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                for (let key in data) {
+                    originalSetItem.call(localStorage, key, data[key]);
+                }
+                notebooks = JSON.parse(localStorage.getItem('my-shelf-data')) || {};
+                if(document.getElementById('shelf-view').style.display !== 'none') {
+                    renderShelf();
+                } else {
+                    renderNotesList();
+                    loadEditor();
+                }
+            } else {
+                for (let i = 0; i < localStorage.length; i++) {
+                    let key = localStorage.key(i);
+                    db.ref('plannerData/' + key).set(localStorage.getItem(key));
+                }
+            }
+        });
+
         const listaArquivosFontes = [
             'Better Together.otf', 'Better Together Script.ttf', 'Good Mood.otf', 
             'Hanging.otf', 'Kathen Font by Situjuh (7NTypes).otf', 'Magical Feather.ttf',
@@ -275,10 +324,6 @@
         }
 
         function format(cmd, val=null) { document.execCommand(cmd, false, val); saveCurrentData(); }
-
-        let notebooks = JSON.parse(localStorage.getItem('my-shelf-data')) || {};
-        let currentNotebook = null;
-        let currentNoteIdx = 0;
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
 
