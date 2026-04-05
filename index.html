@@ -56,6 +56,12 @@
         .cup.filled { background: var(--azul-agua); }
         .cup.filled::after { content: '💧'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; }
 
+        /* Estilos do Cronograma de Estudos */
+        .study-table { width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid var(--borda); border-radius: 15px; overflow: hidden; }
+        .study-table th { background: var(--rosa-claro); padding: 12px; color: var(--pink-vibrante); font-size: 0.8rem; }
+        .study-table td { padding: 0; }
+        .study-table input[type="text"] { border: none !important; outline: none !important; box-shadow: none !important; background: transparent; width: 100%; padding: 12px; font-family: inherit; }
+
         .habit-table { width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid var(--borda); border-radius: 15px; overflow: hidden; }
         .habit-table th { background: var(--rosa-claro); padding: 12px; color: var(--pink-vibrante); font-size: 0.8rem; min-width: 35px; }
         .habit-table input[type="text"] { border: none !important; outline: none !important; box-shadow: none !important; background: transparent; width: 100%; padding: 8px; font-family: inherit; }
@@ -101,6 +107,7 @@
         <div class="menu-item active" onclick="showPage('inicio', this)">🏠 inicio</div>
         <div class="menu-item" onclick="showPage('habitos', this)">✨ habitos</div>
         <div class="menu-item" onclick="showPage('treinos', this)">💪 treinos</div>
+        <div class="menu-item" onclick="showPage('estudos', this)">📖 estudos</div>
         <div class="menu-item" onclick="showPage('financas', this)">💰 financas</div>
         <div class="sidebar-footer"><a href="caderno.html" class="link-caderno">📖 abrir caderno</a></div>
     </div>
@@ -135,6 +142,12 @@
                 <div class="stat-card"><h3>total mensal</h3><p id="month-count">0</p></div>
             </div>
             <div id="workout-container" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:15px;"></div>
+        </section>
+
+        <section id="estudos" class="page-section">
+            <h2 class="section-title">📖 cronograma de estudos</h2>
+            <div style="overflow-x: auto;"><table class="study-table"><thead><tr><th>Horário</th><th>Segunda</th><th>Terça</th><th>Quarta</th><th>Quinta</th><th>Sexta</th><th>Sábado</th></tr></thead><tbody id="study-body"></tbody></table></div>
+            <button class="cal-btn" style="background:var(--rosa-destaque); color:white; margin-top:15px;" onclick="addStudyRow()">+ nova linha</button>
         </section>
 
         <section id="financas" class="page-section">
@@ -179,6 +192,7 @@
     </div>
 
     <script>
+        // CONFIGURACAO DO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyBSM8qmzB-c8tzDK3D4F_WlroD49D6oi8g",
             authDomain: "planner-8eb0a.firebaseapp.com",
@@ -191,12 +205,14 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // A PONTE MÁGICA: Conecta o salvamento local com a nuvem
         const originalSetItem = localStorage.setItem;
         localStorage.setItem = function(key, value) {
             originalSetItem.apply(this, arguments);
             db.ref('plannerData/' + key).set(value);
         };
 
+        // Carrega da nuvem sempre que a página abrir
         db.ref('plannerData').once('value').then((snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
@@ -205,6 +221,7 @@
                 }
                 atualizarTelas();
             } else {
+                // Se a nuvem estiver vazia, ele sobe os dados do seu PC para não perder nada
                 for (let i = 0; i < localStorage.length; i++) {
                     let key = localStorage.key(i);
                     db.ref('plannerData/' + key).set(localStorage.getItem(key));
@@ -216,6 +233,7 @@
             renderCalendar();
             renderWater();
             renderWorkouts();
+            loadStudies(); // Adicionado para carregar os estudos
             renderFinance();
             loadHabits();
         }
@@ -235,9 +253,11 @@
 
             if(id === 'treinos') renderWorkouts();
             if(id === 'habitos') { renderWater(); loadHabits(); }
+            if(id === 'estudos') loadStudies(); // Garante o carregamento ao abrir a aba
             if(id === 'financas') renderFinance();
         }
 
+        // FINANCAS LOGICA
         function renderFinance() {
             let tin = 0, tout = 0;
             const types = ['entradas', 'saidas', 'variaveis'];
@@ -269,6 +289,74 @@
         function saveF(t,i,f,v) { let d = JSON.parse(localStorage.getItem(`fin-2026-${t}`)) || []; d[i][f]=v; localStorage.setItem(`fin-2026-${t}`, JSON.stringify(d)); renderFinance(); }
         function addFinRow(t) { let d = JSON.parse(localStorage.getItem(`fin-2026-${t}`)) || []; d.push({}); localStorage.setItem(`fin-2026-${t}`, JSON.stringify(d)); renderFinance(); }
 
+        // LOGICA DO CRONOGRAMA DE ESTUDOS
+        function saveStudies() {
+            const rows = document.querySelectorAll('#study-body tr');
+            const data = Array.from(rows).map(r => {
+                const inputs = r.querySelectorAll('input[type="text"]');
+                return {
+                    h: inputs[0].value,
+                    seg: inputs[1].value,
+                    ter: inputs[2].value,
+                    qua: inputs[3].value,
+                    qui: inputs[4].value,
+                    sex: inputs[5].value,
+                    sab: inputs[6].value
+                };
+            });
+            localStorage.setItem('study-data', JSON.stringify(data));
+        }
+
+        function loadStudies() {
+            // Dados pré-definidos baseados no modelo que você enviou (Nutrição e Idiomas)
+            const prefilledData = [
+                { h: '', seg: 'CONTRATOS', ter: 'SIOPE', qua: 'FUNDEB', qui: 'SIOPE', sex: 'CONTRATOS', sab: 'NUTRIÇÃO EXPERIMENTAL' },
+                { h: '', seg: 'ITALIANO', ter: 'NUTRIÇÃO EXPERIMENTAL', qua: 'ITALIANO', qui: 'ALIMENTOS FUNCIONAIS', sex: 'FUNDEB', sab: 'ALIMENTOS FUNCIONAIS' },
+                { h: '', seg: '', ter: '', qua: '', qui: '', sex: '', sab: '' },
+                { h: '', seg: '', ter: '', qua: '', qui: '', sex: '', sab: 'ITALIANO' },
+                { h: '', seg: '', ter: '', qua: '', qui: '', sex: '', sab: 'REVISÃO GERAL' }
+            ];
+
+            let data = JSON.parse(localStorage.getItem('study-data'));
+            if (!data || data.length === 0) {
+                data = prefilledData; // Usa o padrão se não houver dados salvos
+                localStorage.setItem('study-data', JSON.stringify(data)); // Salva para forçar sincronização com Firebase
+            }
+
+            const b = document.getElementById('study-body');
+            b.innerHTML = '';
+            data.forEach((row, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" placeholder="Horário..." value="${row.h || ''}" onblur="saveStudies()"></td>
+                    <td><input type="text" value="${row.seg || ''}" onblur="saveStudies()"></td>
+                    <td><input type="text" value="${row.ter || ''}" onblur="saveStudies()"></td>
+                    <td><input type="text" value="${row.qua || ''}" onblur="saveStudies()"></td>
+                    <td><input type="text" value="${row.qui || ''}" onblur="saveStudies()"></td>
+                    <td><input type="text" value="${row.sex || ''}" onblur="saveStudies()"></td>
+                    <td><input type="text" value="${row.sab || ''}" onblur="saveStudies()"></td>
+                `;
+                b.appendChild(tr);
+            });
+        }
+
+        function addStudyRow() {
+            const b = document.getElementById('study-body');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" placeholder="Horário..." onblur="saveStudies()"></td>
+                <td><input type="text" onblur="saveStudies()"></td>
+                <td><input type="text" onblur="saveStudies()"></td>
+                <td><input type="text" onblur="saveStudies()"></td>
+                <td><input type="text" onblur="saveStudies()"></td>
+                <td><input type="text" onblur="saveStudies()"></td>
+                <td><input type="text" onblur="saveStudies()"></td>
+            `;
+            b.appendChild(tr);
+            saveStudies();
+        }
+
+        // AGUA E HABITOS
         function renderWater() {
             const container = document.getElementById('water-cups');
             const saved = JSON.parse(localStorage.getItem(`water-${realToday.toDateString()}`)) || Array(12).fill(0);
@@ -282,6 +370,7 @@
             document.getElementById('water-stats').innerText = `Total: ${total}ml tomados hoje`;
         }
 
+        // CALENDARIO
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid'); grid.innerHTML = '';
             const m = currentDate.getMonth(), y = currentDate.getFullYear();
@@ -320,6 +409,7 @@
             });
         }
 
+        // TREINOS
         function renderWorkouts() {
             const cont = document.getElementById('workout-container'); cont.innerHTML = '';
             let w = 0, mCount = 0;
@@ -345,6 +435,7 @@
         function moveMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
         window.onclick = () => document.getElementById('color-picker').style.display = 'none';
 
+        // HABITS TRACKER POR MÊS
         function getHabitKey() {
             return `habits-${currentDate.getFullYear()}-${currentDate.getMonth()}`;
         }
@@ -381,6 +472,7 @@
             const b = document.getElementById('habit-body');
             b.innerHTML = '';
             
+            // Garantir que o header mostre o numero correto de dias do mes selecionado
             const h = document.getElementById('habit-header');
             const totalDays = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
             while(h.cells.length > 1) h.deleteCell(1);
@@ -398,8 +490,9 @@
                 b.appendChild(tr);
             });
             
+            // Se o mes estiver vazio, cria uma linha padrao
             if(data.length === 0) {
-                for(let i=0; i<3; i++) {
+                for(let i=0; i<3; i++) { // Cria 3 linhas vazias de exemplo
                     const tr = document.createElement('tr');
                     let checks = '';
                     for(let j=0; j<totalDays; j++) checks += `<td><input type="checkbox" onchange="saveHabits()"></td>`;
@@ -409,8 +502,10 @@
             }
         }
 
+        // Inicialização
         atualizarTelas(); 
         initHabits();
+        loadStudies(); // Carrega o cronograma inicialmente
     </script>
 </body>
 </html>
