@@ -112,8 +112,8 @@
         .stat-card { flex: 1; padding: 30px; border-radius: 25px; background: #fffafb; border: 1px solid var(--borda); text-align: center; }
         .stat-card p { margin-top: 10px; font-size: 2.5rem; font-weight: 600; color: var(--pink-vibrante); }
         .meta-atingida { background: var(--verde-suave) !important; border-color: #81c784 !important; }
-        .workout-day { border: 1px solid var(--borda); padding: 20px; border-radius: 20px; background: #fffafb; }
-        .workout-day textarea { width: 100%; border: 1px solid var(--borda); border-radius: 8px; height: 80px; resize: none; outline: none; padding: 10px; font-family: inherit; background: white; }
+        
+        .workout-day { border: 1px solid var(--borda); padding: 20px; border-radius: 20px; background: #fffafb; display: flex; flex-direction: column; }
 
         .fin-summary { display: flex; gap: 15px; margin-bottom: 25px; }
         .sum-card { flex: 1; padding: 20px; border-radius: 20px; text-align: center; font-weight: 600; border: 1px solid rgba(0,0,0,0.03); }
@@ -675,12 +675,37 @@
             let w = 0, mCount = 0;
             const start = new Date(realToday); start.setDate(realToday.getDate() - realToday.getDay() + (realToday.getDay() === 0 ? -6 : 1));
             for(let d=1; d<=31; d++) if(localStorage.getItem(`w-2026-${realToday.getMonth()}-${d}`) === 'true') mCount++;
+            
             ['segunda','terca','quarta','quinta','sexta','sabado','domingo'].forEach((day, i) => {
                 let d = new Date(start); d.setDate(start.getDate() + i);
-                let key = `w-2026-${d.getMonth()}-${d.getDate()}`, chk = localStorage.getItem(key) === 'true';
+                let key = `w-2026-${d.getMonth()}-${d.getDate()}`;
+                let listKey = `w-list-${d.getMonth()}-${d.getDate()}`;
+                let chk = localStorage.getItem(key) === 'true';
                 if(chk) w++;
-                cont.innerHTML += `<div class="workout-day"><h4>${day}</h4><textarea onchange="localStorage.setItem('t-${key}', this.value)">${localStorage.getItem('t-'+key)||''}</textarea><br><label style="display:flex; align-items:center; gap:5px; font-size:0.75rem; justify-content:center; cursor:pointer;"><input type="checkbox" ${chk?'checked':''} onclick="toggleW('${key}', this.checked)"> Concluido</label></div>`;
+                
+                let tasks = JSON.parse(localStorage.getItem(listKey)) || [];
+                
+                let listHTML = `<div id="w-items-${listKey}" style="flex-grow:1; margin-bottom:10px;">`;
+                tasks.forEach((t, idx) => {
+                    listHTML += `
+                        <div style="display:flex; align-items:center; gap:5px; margin-bottom:5px; border-bottom: 1px dashed var(--borda); padding-bottom:5px;">
+                            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleWItem('${listKey}', ${idx}, '${key}')" style="accent-color:var(--pink-vibrante); margin:0;">
+                            <input type="text" value="${t.text}" onblur="updateWItem('${listKey}', ${idx}, this.value)" style="border:none; outline:none; background:transparent; font-family:inherit; font-size:0.8rem; width:100%; color:var(--texto); ${t.done ? 'text-decoration:line-through; opacity:0.5' : ''}" placeholder="Exercicio...">
+                            <span style="cursor:pointer; font-size:0.6rem; color:#ccc;" onclick="deleteWItem('${listKey}', ${idx})">✕</span>
+                        </div>
+                    `;
+                });
+                listHTML += `</div><button class="add-todo-btn" style="border: 1px dashed var(--rosa-destaque); background: transparent; color: var(--rosa-destaque); padding:5px; font-size:0.7rem; margin-bottom:15px; width:100%; border-radius:8px; cursor:pointer;" onclick="addWItem('${listKey}')">+ exercicio</button>`;
+
+                cont.innerHTML += `<div class="workout-day" style="display:flex; flex-direction:column;">
+                    <h4 style="margin-top:0; color:var(--pink-vibrante); text-align:center;">${day}</h4>
+                    ${listHTML}
+                    <label style="display:flex; align-items:center; gap:5px; font-size:0.75rem; justify-content:center; cursor:pointer; margin-top:auto; border-top: 1px solid var(--borda); padding-top:10px;">
+                        <input type="checkbox" ${chk?'checked':''} onclick="toggleW('${key}', this.checked)"> Dia concluido
+                    </label>
+                </div>`;
             });
+            
             document.getElementById('week-count').innerText = w > 4 ? 4 : w;
             document.getElementById('month-count').innerText = mCount;
             const card = document.getElementById('card-weekly');
@@ -688,6 +713,49 @@
                 if(!card.classList.contains('meta-atingida')) confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff69b4', '#ffb6c1'] });
                 card.classList.add('meta-atingida');
             } else card.classList.remove('meta-atingida');
+        }
+
+        function addWItem(listKey) {
+            let tasks = JSON.parse(localStorage.getItem(listKey)) || [];
+            tasks.push({ text: '', done: false });
+            localStorage.setItem(listKey, JSON.stringify(tasks));
+            renderWorkouts();
+            setTimeout(() => {
+                const lists = document.getElementById(`w-items-${listKey}`).querySelectorAll('input[type="text"]');
+                if (lists.length > 0) lists[lists.length - 1].focus();
+            }, 50);
+        }
+
+        function toggleWItem(listKey, idx, dayKey) {
+            let tasks = JSON.parse(localStorage.getItem(listKey)) || [];
+            tasks[idx].done = !tasks[idx].done;
+            let isNowDone = tasks[idx].done;
+            localStorage.setItem(listKey, JSON.stringify(tasks));
+            
+            renderWorkouts();
+            
+            if (isNowDone) {
+                let allDone = tasks.every(t => t.done);
+                if (allDone && tasks.length > 0) {
+                    confetti({
+                        particleCount: 150, spread: 70, origin: { y: 0.5 }, colors: ['#ffb6c1', '#ff69b4', '#b3e5fc']
+                    });
+                }
+            }
+        }
+
+        function updateWItem(listKey, idx, val) {
+            let tasks = JSON.parse(localStorage.getItem(listKey)) || [];
+            tasks[idx].text = val;
+            localStorage.setItem(listKey, JSON.stringify(tasks));
+            renderWorkouts();
+        }
+
+        function deleteWItem(listKey, idx) {
+            let tasks = JSON.parse(localStorage.getItem(listKey)) || [];
+            tasks.splice(idx, 1);
+            localStorage.setItem(listKey, JSON.stringify(tasks));
+            renderWorkouts();
         }
 
         function toggleW(k, v) { localStorage.setItem(k, v); renderWorkouts(); }
