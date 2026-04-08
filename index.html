@@ -4,23 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planner 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     
     <style>
-        @font-face { font-family: 'Hello'; src: url('fonts/Hello.otf') format('opentype'); }
+        @font-face { 
+            font-family: 'Brownist'; 
+            src: url('fonts/Brownist.otf') format('opentype'), url('fonts/Brownist.ttf') format('truetype'); 
+        }
+        
         :root {
             --rosa-claro: #fff0f5; --rosa-destaque: #ffb6c1; --pink-vibrante: #ff69b4;
             --azul-agua: #b3e5fc; --azul-deep: #03a9f4; --texto: #444;
             --borda: #fce4ec; --verde-suave: #e8f5e9; --vermelho-suave: #ffebee;
-            --yellow-postit: #fffacd; /* Novo tom de amarelo para a wishlist */
+            --yellow-postit: #fffacd;
         }
 
         * { box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; margin: 0; display: flex; height: 100vh; background-color: #fff9fb; color: var(--texto); overflow: hidden; }
+        body { font-family: 'Brownist', sans-serif; margin: 0; display: flex; height: 100vh; background-color: #fff9fb; color: var(--texto); overflow: hidden; }
 
         .sidebar { 
             width: 260px; background: white; border-right: 1px solid var(--borda); 
@@ -35,7 +38,7 @@
             cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
 
-        .sidebar h1 { font-family: 'Hello', cursive; font-size: 4rem; color: var(--rosa-destaque); text-align: center; margin-bottom: 40px; margin-top: 0; font-weight: normal; }
+        .sidebar h1 { font-family: 'Brownist', cursive; font-size: 3rem; color: var(--rosa-destaque); text-align: center; margin-bottom: 40px; margin-top: 0; font-weight: normal; }
         .menu-item { padding: 15px; margin-bottom: 10px; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 1.1rem; transition: 0.3s; }
         .menu-item.active { background: var(--rosa-claro); font-weight: 600; color: var(--pink-vibrante); }
         .sidebar-footer { margin-top: auto; padding-bottom: 20px; }
@@ -46,13 +49,12 @@
         .page-section.active { display: block; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        h2.section-title, #month-display, #wishlist-title { font-family: 'Hello', sans-serif; color: var(--rosa-destaque); font-size: 2.5rem; font-weight: normal; }
+        h2.section-title, #month-display, #wishlist-title { font-family: 'Brownist', sans-serif; color: var(--rosa-destaque); font-size: 2rem; font-weight: normal; }
         h2.section-title { border-left: 4px solid var(--rosa-claro); padding-left: 15px; margin-top: 40px; }
         #wishlist-title { text-align: center; margin-bottom: 30px; }
 
-        .cal-btn { border: none; outline: none; background: var(--rosa-claro); color: var(--pink-vibrante); padding: 8px 15px; border-radius: 10px; cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 600; }
+        .cal-btn { border: none; outline: none; background: var(--rosa-claro); color: var(--pink-vibrante); padding: 8px 15px; border-radius: 10px; cursor: pointer; font-family: 'Brownist', sans-serif; font-weight: 600; }
 
-        /* Estilos da To-Do List - Estilo Post-it com Canto Dobrado */
         .todo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
         .todo-block { background: var(--rosa-destaque); color: white; border-radius: 0; padding: 20px; min-height: 300px; box-shadow: 5px 5px 15px rgba(255, 182, 193, 0.4); position: relative; }
         .todo-block::after { content: ''; position: absolute; bottom: 0; right: 0; width: 0; height: 0; border-style: solid; border-width: 0 0 25px 25px; border-color: transparent transparent #fff9fb #fff9fb; border-radius: 20px 0 0 0; }
@@ -65,12 +67,10 @@
         .add-todo-btn { width: 100%; padding: 10px; border: 1px dashed white; background: transparent; color: white; border-radius: 12px; cursor: pointer; font-family: inherit; font-size: 0.8rem; transition: 0.3s; margin-top: 10px; }
         .add-todo-btn:hover { background: rgba(255, 255, 255, 0.2); }
 
-        /* Estilos da Wishlist - FIEL AO DESENHO COM NOVA ORDEM */
         .wishlist-container { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
         .small-blocks-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .wishlist-postit { box-shadow: 5px 5px 15px rgba(0,0,0,0.1); border-radius: 20px; position: relative; padding: 20px; color: white; display: flex; flex-direction: column; }
         
-        /* Título interno do bloco */
         .wishlist-block-header { font-weight: 600; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: inherit; opacity: 0.7; text-align: center; margin-bottom: 15px; border-bottom: 1px dashed rgba(255, 255, 255, 0.3); padding-bottom: 10px; }
 
         .wishlist-item { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; background: rgba(255,255,255,0.15); padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
@@ -79,13 +79,11 @@
         .wishlist-item input[type="text"]::placeholder { color: rgba(255,255,255,0.5); }
         .wishlist-item input[type="text"].completed { text-decoration: line-through; color: rgba(255,255,255,0.4); text-decoration-color: white; }
         
-        /* Cores específicas de cada bloco da wishlist */
         .apartamento-block { background: var(--rosa-destaque); width: 100%; min-height: 200px; }
         .quero-block { background: var(--yellow-postit); color: #666; min-height: 180px; }
         .preciso-block { background: var(--verde-suave); color: #2e7d32; min-height: 180px; }
         .necessidade-block { background: var(--vermelho-suave); color: #c62828; min-height: 180px; }
 
-        /* Ajustes de cor para blocos claros */
         .quero-block input[type="checkbox"], .preciso-block input[type="checkbox"], .necessidade-block input[type="checkbox"] { accent-color: currentColor; mix-blend-mode: multiply; }
         .quero-block input[type="text"], .preciso-block input[type="text"], .necessidade-block input[type="text"] { color: currentColor; }
         .quero-block input[type="text"]::placeholder { color: #aaa; }
@@ -96,12 +94,10 @@
         .quero-block .wishlist-item { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.05); }
         .preciso-block .wishlist-item, .necessidade-block .wishlist-item { background: rgba(255,255,255,0.4); border-color: rgba(255,255,255,0.5); }
 
-
         .water-container { background: #f0faff; padding: 30px; border-radius: 25px; margin-bottom: 30px; text-align: center; }
         .cup-grid { margin: 20px 0; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
         .cup { width: 35px; height: 45px; border: 2.5px solid var(--azul-deep); border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; cursor: pointer; background: white; position: relative; }
         .cup.filled { background: var(--azul-agua); }
-        .cup.filled::after { content: '💧'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; }
 
         .study-table { width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid var(--borda); border-radius: 15px; overflow: hidden; }
         .study-table th { background: var(--rosa-claro); padding: 12px; color: var(--pink-vibrante); font-size: 0.8rem; }
@@ -142,7 +138,6 @@
             .fin-grid { grid-template-columns: 1fr; }
             .stats-container { flex-direction: column; }
             .fin-summary { flex-direction: column; }
-            /* Empilhar blocos da wishlist no celular */
             .small-blocks-row { grid-template-columns: 1fr; }
         }
     </style>
@@ -152,14 +147,14 @@
     <div class="sidebar" id="sidebar">
         <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
         <h1>Planner</h1>
-        <div class="menu-item active" onclick="showPage('inicio', this)">🏠 inicio</div>
-        <div class="menu-item" onclick="showPage('tarefas', this)">✅ tarefas</div>
-        <div class="menu-item" onclick="showPage('wishlist', this)">⭐ wishlist</div>
-        <div class="menu-item" onclick="showPage('habitos', this)">✨ habitos</div>
-        <div class="menu-item" onclick="showPage('treinos', this)">💪 treinos</div>
-        <div class="menu-item" onclick="showPage('estudos', this)">📖 estudos</div>
-        <div class="menu-item" onclick="showPage('financas', this)">💰 financas</div>
-        <div class="sidebar-footer"><a href="caderno.html" class="link-caderno">📖 abrir caderno</a></div>
+        <div class="menu-item active" onclick="showPage('inicio', this)">inicio</div>
+        <div class="menu-item" onclick="showPage('tarefas', this)">tarefas</div>
+        <div class="menu-item" onclick="showPage('wishlist', this)">wishlist</div>
+        <div class="menu-item" onclick="showPage('habitos', this)">habitos</div>
+        <div class="menu-item" onclick="showPage('treinos', this)">treinos</div>
+        <div class="menu-item" onclick="showPage('estudos', this)">estudos</div>
+        <div class="menu-item" onclick="showPage('financas', this)">financas</div>
+        <div class="sidebar-footer"><a href="caderno.html" class="link-caderno">abrir caderno</a></div>
     </div>
 
     <div class="main-content">
@@ -170,12 +165,12 @@
                 <button class="cal-btn" onclick="moveMonth(1)">proximo ❯</button>
             </div>
             <div class="calendar-grid" id="calendar-grid"></div>
-            <h2 class="section-title">⏳ contagem regressiva</h2>
+            <h2 class="section-title">contagem regressiva</h2>
             <div id="countdown-area"></div>
         </section>
 
         <section id="tarefas" class="page-section">
-            <h2 class="section-title">✅ minha lista de tarefas</h2>
+            <h2 class="section-title">minha lista de tarefas</h2>
             <div class="todo-grid" id="todo-grid">
                 <div class="todo-block">
                     <div class="todo-date-header" id="date-col-0">Hoje</div>
@@ -196,7 +191,7 @@
         </section>
 
         <section id="wishlist" class="page-section">
-            <h1 id="wishlist-title">Wishlist</h1>
+            <h1 id="wishlist-title">wishlist</h1>
             <div class="wishlist-container">
                 <div class="small-blocks-row">
                     <div class="wishlist-postit quero-block">
@@ -225,17 +220,17 @@
 
         <section id="habitos" class="page-section">
             <div class="water-container">
-                <p style="font-family: 'Hello'; font-size: 3rem; color: var(--azul-deep); margin:0;">beba agua 💧</p>
+                <p style="font-family: 'Brownist'; font-size: 2.5rem; color: var(--azul-deep); margin:0;">beba agua</p>
                 <div class="cup-grid" id="water-cups"></div>
                 <p id="water-stats" style="color: var(--azul-deep); font-weight: 600;"></p>
             </div>
-            <h2 class="section-title">✨ habit tracker</h2>
+            <h2 class="section-title">habit tracker</h2>
             <button class="cal-btn" style="background:var(--rosa-destaque); color:white;" onclick="addHabitRow()">+ novo habito</button>
             <div style="overflow-x: auto;"><table class="habit-table"><thead><tr id="habit-header"><th>Habito</th></tr></thead><tbody id="habit-body"></tbody></table></div>
         </section>
 
         <section id="treinos" class="page-section">
-            <h2 class="section-title">💪 foco no treino</h2>
+            <h2 class="section-title">foco no treino</h2>
             <div class="stats-container">
                 <div id="card-weekly" class="stat-card"><h3>meta semanal (min 4x)</h3><p id="week-count">0</p></div>
                 <div class="stat-card"><h3>total mensal</h3><p id="month-count">0</p></div>
@@ -244,13 +239,13 @@
         </section>
 
         <section id="estudos" class="page-section">
-            <h2 class="section-title">📖 cronograma de estudos</h2>
+            <h2 class="section-title">cronograma de estudos</h2>
             <div style="overflow-x: auto;"><table class="study-table"><thead><tr><th>Horário</th><th>Segunda</th><th>Terça</th><th>Quarta</th><th>Quinta</th><th>Sexta</th><th>Sábado</th></tr></thead><tbody id="study-body"></tbody></table></div>
             <button class="cal-btn" style="background:var(--rosa-destaque); color:white; margin-top:15px;" onclick="addStudyRow()">+ nova linha</button>
         </section>
 
         <section id="financas" class="page-section">
-            <h2 class="section-title">💰 controle financeiro</h2>
+            <h2 class="section-title">controle financeiro</h2>
             <div class="fin-summary">
                 <div class="sum-card" style="background:var(--verde-suave); color:#2e7d32">Entradas: <span id="total-in">R$ 0,00</span></div>
                 <div class="sum-card" style="background:var(--vermelho-suave); color:#c62828">Saidas: <span id="total-out">R$ 0,00</span></div>
@@ -459,13 +454,11 @@
             renderTodoList();
         }
 
-        // LOGICA DA WISHLIST ATUALIZADA
         function renderWishlist() {
             const types = ['apartamento', 'quero', 'preciso', 'necessidade'];
             
             types.forEach(type => {
                 const tasks = JSON.parse(localStorage.getItem(`wish-${type}`)) || [];
-                // Prefill if empty (based on drawing)
                 if (tasks.length === 0) {
                     let defaultLen = (type === 'apartamento') ? 5 : (type === 'necessidade' ? 3 : 4);
                     for (let i = 0; i < defaultLen; i++) tasks.push({ text: '', done: false });
@@ -531,7 +524,6 @@
             renderWishlist();
         }
 
-        // RESTANTE DAS FUNÇÕES (FINANÇAS, CALENDÁRIO, ETC)
         function renderFinance() {
             let tin = 0, tout = 0;
             const types = ['entradas', 'saidas', 'variaveis'];
