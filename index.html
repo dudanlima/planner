@@ -662,7 +662,14 @@
                 let k = `cal-${y}-${m}-${d}`; let t = localStorage.getItem(k);
                 if(t && t.trim() !== "") {
                     let evD = new Date(y, m, d); let diff = Math.ceil((evD - realToday) / 86400000);
-                    if(diff >= 0) events.push({ days: diff, text: t.split('\n')[0], color: localStorage.getItem(`color-${k}`) || '#fff0f5' });
+                    if(diff >= 0) {
+                        let linhas = t.split('\n');
+                        linhas.forEach(linha => {
+                            if(linha.trim() !== "") {
+                                events.push({ days: diff, text: linha.trim(), color: localStorage.getItem(`color-${k}`) || '#fff0f5' });
+                            }
+                        });
+                    }
                 }
             }
             events.sort((a,b) => a.days - b.days).forEach(ev => {
