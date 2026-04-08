@@ -56,7 +56,6 @@
         .cup.filled { background: var(--azul-agua); }
         .cup.filled::after { content: '💧'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; }
 
-        /* Estilos do Cronograma de Estudos */
         .study-table { width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid var(--borda); border-radius: 15px; overflow: hidden; }
         .study-table th { background: var(--rosa-claro); padding: 12px; color: var(--pink-vibrante); font-size: 0.8rem; }
         .study-table td { padding: 0; }
@@ -205,35 +204,36 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // A PONTE MÁGICA: Conecta o salvamento local com a nuvem
         const originalSetItem = localStorage.setItem;
         localStorage.setItem = function(key, value) {
             originalSetItem.apply(this, arguments);
             db.ref('plannerData/' + key).set(value);
         };
 
-        // Carrega da nuvem sempre que a página abrir
+        // Correção aplicada aqui: o site agora espera a nuvem responder antes de criar as telas
         db.ref('plannerData').once('value').then((snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
                 for (let key in data) {
                     originalSetItem.call(localStorage, key, data[key]);
                 }
-                atualizarTelas();
             } else {
-                // Se a nuvem estiver vazia, ele sobe os dados do seu PC para não perder nada
                 for (let i = 0; i < localStorage.length; i++) {
                     let key = localStorage.key(i);
                     db.ref('plannerData/' + key).set(localStorage.getItem(key));
                 }
             }
+            
+            // As telas só são construídas depois que o download termina
+            atualizarTelas(); 
+            initHabits();
+            loadStudies();
         });
 
         function atualizarTelas() {
             renderCalendar();
             renderWater();
             renderWorkouts();
-            loadStudies(); // Adicionado para carregar os estudos
             renderFinance();
             loadHabits();
         }
@@ -253,11 +253,10 @@
 
             if(id === 'treinos') renderWorkouts();
             if(id === 'habitos') { renderWater(); loadHabits(); }
-            if(id === 'estudos') loadStudies(); // Garante o carregamento ao abrir a aba
+            if(id === 'estudos') loadStudies();
             if(id === 'financas') renderFinance();
         }
 
-        // FINANCAS LOGICA
         function renderFinance() {
             let tin = 0, tout = 0;
             const types = ['entradas', 'saidas', 'variaveis'];
@@ -289,7 +288,6 @@
         function saveF(t,i,f,v) { let d = JSON.parse(localStorage.getItem(`fin-2026-${t}`)) || []; d[i][f]=v; localStorage.setItem(`fin-2026-${t}`, JSON.stringify(d)); renderFinance(); }
         function addFinRow(t) { let d = JSON.parse(localStorage.getItem(`fin-2026-${t}`)) || []; d.push({}); localStorage.setItem(`fin-2026-${t}`, JSON.stringify(d)); renderFinance(); }
 
-        // LOGICA DO CRONOGRAMA DE ESTUDOS
         function saveStudies() {
             const rows = document.querySelectorAll('#study-body tr');
             const data = Array.from(rows).map(r => {
@@ -308,7 +306,6 @@
         }
 
         function loadStudies() {
-            // Dados pré-definidos baseados no modelo que você enviou (Nutrição e Idiomas)
             const prefilledData = [
                 { h: '', seg: 'CONTRATOS', ter: 'SIOPE', qua: 'FUNDEB', qui: 'SIOPE', sex: 'CONTRATOS', sab: 'NUTRIÇÃO EXPERIMENTAL' },
                 { h: '', seg: 'ITALIANO', ter: 'NUTRIÇÃO EXPERIMENTAL', qua: 'ITALIANO', qui: 'ALIMENTOS FUNCIONAIS', sex: 'FUNDEB', sab: 'ALIMENTOS FUNCIONAIS' },
@@ -319,8 +316,8 @@
 
             let data = JSON.parse(localStorage.getItem('study-data'));
             if (!data || data.length === 0) {
-                data = prefilledData; // Usa o padrão se não houver dados salvos
-                localStorage.setItem('study-data', JSON.stringify(data)); // Salva para forçar sincronização com Firebase
+                data = prefilledData; 
+                localStorage.setItem('study-data', JSON.stringify(data)); 
             }
 
             const b = document.getElementById('study-body');
@@ -356,7 +353,6 @@
             saveStudies();
         }
 
-        // AGUA E HABITOS
         function renderWater() {
             const container = document.getElementById('water-cups');
             const saved = JSON.parse(localStorage.getItem(`water-${realToday.toDateString()}`)) || Array(12).fill(0);
@@ -370,7 +366,6 @@
             document.getElementById('water-stats').innerText = `Total: ${total}ml tomados hoje`;
         }
 
-        // CALENDARIO
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid'); grid.innerHTML = '';
             const m = currentDate.getMonth(), y = currentDate.getFullYear();
@@ -390,7 +385,6 @@
                 grid.appendChild(cell);
             }
             updateCountdowns();
-            loadHabits();
         }
 
         function updateCountdowns() {
@@ -409,7 +403,6 @@
             });
         }
 
-        // TREINOS
         function renderWorkouts() {
             const cont = document.getElementById('workout-container'); cont.innerHTML = '';
             let w = 0, mCount = 0;
@@ -435,7 +428,6 @@
         function moveMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
         window.onclick = () => document.getElementById('color-picker').style.display = 'none';
 
-        // HABITS TRACKER POR MÊS
         function getHabitKey() {
             return `habits-${currentDate.getFullYear()}-${currentDate.getMonth()}`;
         }
@@ -447,7 +439,6 @@
                     let th = document.createElement('th'); th.innerText = i; h.appendChild(th);
                 }
             }
-            loadHabits();
         }
 
         function addHabitRow() {
@@ -472,7 +463,6 @@
             const b = document.getElementById('habit-body');
             b.innerHTML = '';
             
-            // Garantir que o header mostre o numero correto de dias do mes selecionado
             const h = document.getElementById('habit-header');
             const totalDays = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
             while(h.cells.length > 1) h.deleteCell(1);
@@ -490,9 +480,8 @@
                 b.appendChild(tr);
             });
             
-            // Se o mes estiver vazio, cria uma linha padrao
             if(data.length === 0) {
-                for(let i=0; i<3; i++) { // Cria 3 linhas vazias de exemplo
+                for(let i=0; i<3; i++) {
                     const tr = document.createElement('tr');
                     let checks = '';
                     for(let j=0; j<totalDays; j++) checks += `<td><input type="checkbox" onchange="saveHabits()"></td>`;
@@ -502,10 +491,6 @@
             }
         }
 
-        // Inicialização
-        atualizarTelas(); 
-        initHabits();
-        loadStudies(); // Carrega o cronograma inicialmente
     </script>
 </body>
 </html>
