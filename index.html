@@ -115,15 +115,6 @@
         
         .workout-day { border: 1px solid var(--borda); padding: 20px; border-radius: 20px; background: #fffafb; display: flex; flex-direction: column; }
 
-        .fin-summary { display: flex; gap: 15px; margin-bottom: 25px; }
-        .sum-card { flex: 1; padding: 20px; border-radius: 20px; text-align: center; font-weight: 600; border: 1px solid rgba(0,0,0,0.03); }
-        .fin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .fin-box { background: #fffafb; border: 1px solid var(--borda); border-radius: 20px; padding: 20px; }
-        .fin-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-        .fin-table th { text-align: left; padding: 8px; border-bottom: 1px solid var(--borda); color: #888; }
-        .fin-table input { width: 100%; border: none !important; outline: none !important; background: transparent; padding: 6px; font-family: inherit; }
-        .val-input { text-align: right; font-weight: 600; }
-
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
         .day-cell { border: 1px solid var(--borda); min-height: 110px; padding: 10px; border-radius: 15px; background: #fff; position: relative; }
         .day-cell textarea { width: 100%; border: none !important; outline: none !important; height: 60px; resize: none; font-size: 0.75rem; background: transparent; font-family: inherit; }
@@ -135,9 +126,7 @@
         @media (max-width: 768px) {
             .sidebar { position: absolute; height: 100%; box-shadow: 5px 0 15px rgba(0,0,0,0.05); }
             .main-content { padding: 20px; margin: 10px; }
-            .fin-grid { grid-template-columns: 1fr; }
             .stats-container { flex-direction: column; }
-            .fin-summary { flex-direction: column; }
             .small-blocks-row { grid-template-columns: 1fr; }
         }
     </style>
@@ -153,7 +142,6 @@
         <div class="menu-item" onclick="showPage('habitos', this)">habitos</div>
         <div class="menu-item" onclick="showPage('treinos', this)">treinos</div>
         <div class="menu-item" onclick="showPage('estudos', this)">estudos</div>
-        <div class="menu-item" onclick="showPage('financas', this)">financas</div>
         <div class="sidebar-footer"><a href="caderno.html" class="link-caderno">abrir caderno</a></div>
     </div>
 
@@ -243,35 +231,6 @@
             <div style="overflow-x: auto;"><table class="study-table"><thead><tr><th>Horário</th><th>Segunda</th><th>Terça</th><th>Quarta</th><th>Quinta</th><th>Sexta</th><th>Sábado</th></tr></thead><tbody id="study-body"></tbody></table></div>
             <button class="cal-btn" style="background:var(--rosa-destaque); color:white; margin-top:15px;" onclick="addStudyRow()">+ nova linha</button>
         </section>
-
-        <section id="financas" class="page-section">
-            <h2 class="section-title">controle financeiro</h2>
-            <div class="fin-summary">
-                <div class="sum-card" style="background:var(--verde-suave); color:#2e7d32">Entradas: <span id="total-in">R$ 0,00</span></div>
-                <div class="sum-card" style="background:var(--vermelho-suave); color:#c62828">Saidas: <span id="total-out">R$ 0,00</span></div>
-                <div id="saldo-card" class="sum-card" style="background:var(--rosa-claro); color:var(--pink-vibrante)">Saldo: <span id="total-saldo">R$ 0,00</span></div>
-            </div>
-            <div class="fin-grid">
-                <div class="fin-box">
-                    <h3>Entradas</h3>
-                    <table class="fin-table"><thead><tr><th>Descricao</th><th style="text-align:right">Valor</th></tr></thead><tbody id="f-entradas"></tbody></table>
-                    <button class="cal-btn" style="font-size:0.7rem; margin-top:10px;" onclick="addFinRow('entradas')">+ entrada</button>
-                </div>
-                <div class="fin-box">
-                    <h3>Fixos / Saidas</h3>
-                    <table class="fin-table"><thead><tr><th>Descricao</th><th style="text-align:right">Valor</th></tr></thead><tbody id="f-saidas"></tbody></table>
-                    <button class="cal-btn" style="font-size:0.7rem; margin-top:10px;" onclick="addFinRow('saidas')">+ saida</button>
-                </div>
-                <div class="fin-box" style="grid-column: 1 / -1">
-                    <h3>Variaveis (Parcelas)</h3>
-                    <table class="fin-table">
-                        <thead><tr><th>Item</th><th>Data</th><th>Parcela</th><th style="text-align:right">Valor</th></tr></thead>
-                        <tbody id="f-variaveis"></tbody>
-                    </table>
-                    <button class="cal-btn" style="font-size:0.7rem; margin-top:10px;" onclick="addFinRow('variaveis')">+ variavel</button>
-                </div>
-            </div>
-        </section>
     </div>
 
     <div id="color-picker" class="color-menu">
@@ -329,7 +288,6 @@
             renderCalendar();
             renderWater();
             renderWorkouts();
-            renderFinance();
             loadHabits();
         }
 
@@ -349,7 +307,6 @@
             if(id === 'treinos') renderWorkouts();
             if(id === 'habitos') { renderWater(); loadHabits(); }
             if(id === 'estudos') loadStudies();
-            if(id === 'financas') renderFinance();
             if(id === 'tarefas') renderTodoList();
             if(id === 'wishlist') renderWishlist();
         }
@@ -523,37 +480,6 @@
             localStorage.setItem(`wish-${type}`, JSON.stringify(tasks));
             renderWishlist();
         }
-
-        function renderFinance() {
-            let tin = 0, tout = 0;
-            const types = ['entradas', 'saidas', 'variaveis'];
-            types.forEach(type => {
-                const b = document.getElementById(`f-${type}`); b.innerHTML = '';
-                let data = JSON.parse(localStorage.getItem(`fin-2026-${type}`)) || [{}, {}];
-                data.forEach((item, i) => {
-                    const tr = document.createElement('tr');
-                    if(type === 'variaveis') {
-                        tr.innerHTML = `<td><input value="${item.n||''}" onblur="saveF('${type}',${i},'n',this.value)"></td>
-                                        <td><input style="text-align:center" value="${item.d||''}" onblur="saveF('${type}',${i},'d',this.value)"></td>
-                                        <td><input style="text-align:center" placeholder="1/1" value="${item.p||''}" onblur="saveF('${type}',${i},'p',this.value)"></td>
-                                        <td><input class="val-input" value="${item.v||''}" onblur="saveF('${type}',${i},'v',this.value)"></td>`;
-                    } else {
-                        tr.innerHTML = `<td><input value="${item.n||''}" onblur="saveF('${type}',${i},'n',this.value)"></td>
-                                        <td><input class="val-input" value="${item.v||''}" onblur="saveF('${type}',${i},'v',this.value)"></td>`;
-                    }
-                    let val = parseFloat(item.v || 0);
-                    if(type === 'entradas') tin += val; else tout += val;
-                    b.appendChild(tr);
-                });
-            });
-            document.getElementById('total-in').innerText = `R$ ${tin.toFixed(2)}`;
-            document.getElementById('total-out').innerText = `R$ ${tout.toFixed(2)}`;
-            let saldo = tin - tout;
-            document.getElementById('total-saldo').innerText = `R$ ${saldo.toFixed(2)}`;
-            document.getElementById('saldo-card').style.background = saldo >= 0 ? 'var(--rosa-claro)' : 'var(--vermelho-suave)';
-        }
-        function saveF(t,i,f,v) { let d = JSON.parse(localStorage.getItem(`fin-2026-${t}`)) || []; d[i][f]=v; localStorage.setItem(`fin-2026-${t}`, JSON.stringify(d)); renderFinance(); }
-        function addFinRow(t) { let d = JSON.parse(localStorage.getItem(`fin-2026-${t}`)) || []; d.push({}); localStorage.setItem(`fin-2026-${t}`, JSON.stringify(d)); renderFinance(); }
 
         function saveStudies() {
             const rows = document.querySelectorAll('#study-body tr');
