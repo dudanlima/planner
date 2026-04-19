@@ -149,6 +149,8 @@
             <button onmousedown="event.preventDefault(); format('italic')" title="Italico" style="font-style: italic;">I</button>
             <button onmousedown="event.preventDefault(); format('underline')" title="Sublinhado" style="text-decoration: underline;">U</button>
             
+            <button id="btn-format-painter" onmousedown="event.preventDefault(); toggleFormatPainter()" title="Copiar Formatacao">🖌️</button>
+            
             <button onmousedown="event.preventDefault(); format('justifyLeft')" title="Alinhar a Esquerda">⬅</button>
             <button onmousedown="event.preventDefault(); format('justifyCenter')" title="Centralizar">↔</button>
             <button onmousedown="event.preventDefault(); format('justifyRight')" title="Alinhar a Direita">➡</button>
@@ -179,7 +181,7 @@
             <button onclick="window.print()">Salvar PDF</button>
         </div>
 
-        <div id="editor-body" class="editor-content" contenteditable="true" oninput="saveCurrentData()"></div>
+        <div id="editor-body" class="editor-content" contenteditable="true" oninput="saveCurrentData()" onmouseup="handleFormatPaint()"></div>
         <div id="save-status" style="font-size:0.8rem; color:#ccc; text-align:right; padding:10px 20px;">alteracoes salvas automaticamente</div>
     </div>
 
@@ -200,6 +202,9 @@
         let notebooks = JSON.parse(localStorage.getItem('my-shelf-data')) || {};
         let currentNotebook = null;
         let currentNoteIdx = 0;
+
+        let copiedStyles = null;
+        let isFormatPainting = false;
 
         // A PONTE MAGICA
         const originalSetItem = localStorage.setItem;
@@ -288,7 +293,7 @@
             editor.focus();
             
             document.execCommand('styleWithCSS', false, true);
-            document.execCommand('fontName', false, "'" + nomeFonte + "'");
+            document.execCommand('fontName', false, nomeFonte);
             
             saveCurrentData();
         }
@@ -299,6 +304,50 @@
                 document.getElementById('font-list').style.display = 'none';
             }
         });
+
+        // LOGICA DO PINCEL DE FORMATACAO
+        function toggleFormatPainter() {
+            const btn = document.getElementById('btn-format-painter');
+            const editor = document.getElementById('editor-body');
+            
+            if (isFormatPainting) {
+                isFormatPainting = false;
+                btn.style.background = '';
+                editor.style.cursor = 'text';
+            } else {
+                copiedStyles = {
+                    bold: document.queryCommandState('bold'),
+                    italic: document.queryCommandState('italic'),
+                    underline: document.queryCommandState('underline'),
+                    fontName: document.queryCommandValue('fontName'),
+                    fontSize: document.queryCommandValue('fontSize'),
+                    foreColor: document.queryCommandValue('foreColor')
+                };
+                isFormatPainting = true;
+                btn.style.background = 'var(--rosa-claro)';
+                editor.style.cursor = 'crosshair';
+            }
+        }
+
+        function handleFormatPaint() {
+            if (isFormatPainting && copiedStyles) {
+                document.execCommand('styleWithCSS', false, true);
+
+                if (document.queryCommandState('bold') !== copiedStyles.bold) document.execCommand('bold');
+                if (document.queryCommandState('italic') !== copiedStyles.italic) document.execCommand('italic');
+                if (document.queryCommandState('underline') !== copiedStyles.underline) document.execCommand('underline');
+                
+                if (copiedStyles.fontName) document.execCommand('fontName', false, copiedStyles.fontName);
+                if (copiedStyles.fontSize) document.execCommand('fontSize', false, copiedStyles.fontSize);
+                if (copiedStyles.foreColor) document.execCommand('foreColor', false, copiedStyles.foreColor);
+
+                isFormatPainting = false;
+                document.getElementById('btn-format-painter').style.background = '';
+                document.getElementById('editor-body').style.cursor = 'text';
+                
+                saveCurrentData();
+            }
+        }
 
         let recognition;
         let isRecording = false;
