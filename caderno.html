@@ -145,17 +145,17 @@
         <input type="text" id="editor-title" placeholder="Titulo do resumo..." oninput="saveCurrentData()">
         
         <div class="toolbar">
-            <button onclick="format('bold')" title="Negrito" style="font-weight: bold;">B</button>
-            <button onclick="format('italic')" title="Italico" style="font-style: italic;">I</button>
-            <button onclick="format('underline')" title="Sublinhado" style="text-decoration: underline;">U</button>
+            <button onmousedown="event.preventDefault(); format('bold')" title="Negrito" style="font-weight: bold;">B</button>
+            <button onmousedown="event.preventDefault(); format('italic')" title="Italico" style="font-style: italic;">I</button>
+            <button onmousedown="event.preventDefault(); format('underline')" title="Sublinhado" style="text-decoration: underline;">U</button>
             
-            <button onclick="format('justifyLeft')" title="Alinhar a Esquerda">⬅</button>
-            <button onclick="format('justifyCenter')" title="Centralizar">↔</button>
-            <button onclick="format('justifyRight')" title="Alinhar a Direita">➡</button>
-            <button onclick="format('justifyFull')" title="Justificar">≡</button>
+            <button onmousedown="event.preventDefault(); format('justifyLeft')" title="Alinhar a Esquerda">⬅</button>
+            <button onmousedown="event.preventDefault(); format('justifyCenter')" title="Centralizar">↔</button>
+            <button onmousedown="event.preventDefault(); format('justifyRight')" title="Alinhar a Direita">➡</button>
+            <button onmousedown="event.preventDefault(); format('justifyFull')" title="Justificar">≡</button>
 
             <div class="custom-font-picker" id="font-picker-container">
-                <div class="font-picker-btn" onclick="toggleFontList(event)">
+                <div class="font-picker-btn" onmousedown="event.preventDefault(); toggleFontList(event)">
                     <span id="font-btn-text">SimpleHandmade (Padrao)</span>
                     <span style="font-size:0.5rem;">▼</span>
                 </div>
@@ -174,7 +174,7 @@
 
             <input type="color" onchange="format('foreColor', this.value)" title="Cor do texto">
             
-            <button onclick="format('insertUnorderedList')" title="Criar Lista">Lista</button>
+            <button onmousedown="event.preventDefault(); format('insertUnorderedList')" title="Criar Lista">Lista</button>
             <button id="btn-speech" onclick="toggleTranscription()" title="Transcrever voz para texto">Transcrever</button>
             <button onclick="window.print()">Salvar PDF</button>
         </div>
@@ -201,7 +201,7 @@
         let currentNotebook = null;
         let currentNoteIdx = 0;
 
-        // A PONTE MÁGICA
+        // A PONTE MAGICA
         const originalSetItem = localStorage.setItem;
         localStorage.setItem = function(key, value) {
             originalSetItem.apply(this, arguments);
@@ -284,7 +284,12 @@
             document.getElementById('font-btn-text').style.fontFamily = `"${nomeFonte}"`;
             document.getElementById('font-list').style.display = 'none';
             
-            document.execCommand('fontName', false, `"${nomeFonte}"`);
+            const editor = document.getElementById('editor-body');
+            editor.focus();
+            
+            document.execCommand('styleWithCSS', false, true);
+            document.execCommand('fontName', false, "'" + nomeFonte + "'");
+            
             saveCurrentData();
         }
 
@@ -325,7 +330,12 @@
             }
         }
 
-        function format(cmd, val=null) { document.execCommand(cmd, false, val); saveCurrentData(); }
+        function format(cmd, val=null) { 
+            document.execCommand('styleWithCSS', false, true);
+            document.execCommand(cmd, false, val); 
+            document.getElementById('editor-body').focus();
+            saveCurrentData(); 
+        }
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
 
