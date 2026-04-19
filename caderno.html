@@ -24,10 +24,10 @@
 
         @media print {
             .sidebar, .toolbar, #save-status, .nav-back { display: none !important; }
-            body { background: white; overflow: visible; }
-            #editor-view { border: none; box-shadow: none; margin: 0; overflow: visible; display: block !important; }
-            #editor-title { padding-left: 0; color: black; font-family: 'SimpleHandmade', serif !important; }
-            .editor-content { padding: 0; overflow: visible; }
+            html, body { height: auto !important; overflow: visible !important; background: white !important; display: block !important; margin: 0 !important; padding: 0 !important; }
+            #editor-view { border: none !important; box-shadow: none !important; margin: 0 !important; padding: 20px !important; overflow: visible !important; display: block !important; height: auto !important; }
+            #editor-title { padding: 0 0 20px 0 !important; color: black !important; font-family: 'SimpleHandmade', serif !important; }
+            .editor-content { padding: 0 !important; overflow: visible !important; height: auto !important; display: block !important; }
             #shelf-view { display: none !important; }
         }
 
@@ -186,7 +186,6 @@
     </div>
 
     <script>
-        // CONFIGURACAO DO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyBSM8qmzB-c8tzDK3D4F_WlroD49D6oi8g",
             authDomain: "planner-8eb0a.firebaseapp.com",
@@ -206,14 +205,12 @@
         let copiedStyles = null;
         let isFormatPainting = false;
 
-        // A PONTE MAGICA
         const originalSetItem = localStorage.setItem;
         localStorage.setItem = function(key, value) {
             originalSetItem.apply(this, arguments);
             db.ref('plannerData/' + key).set(value);
         };
 
-        // Carrega da nuvem ao iniciar
         db.ref('plannerData').once('value').then((snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
@@ -305,7 +302,6 @@
             }
         });
 
-        // LOGICA DO PINCEL DE FORMATACAO
         function toggleFormatPainter() {
             const btn = document.getElementById('btn-format-painter');
             const editor = document.getElementById('editor-body');
