@@ -268,11 +268,14 @@
 
             <div style="display:flex; justify-content:space-between; align-items:center; border-left: 4px solid var(--rosa-claro); padding-left: 15px;">
                 <h2 style="font-family: 'SimpleHandmade', sans-serif; color: var(--rosa-destaque); font-size: 2rem; font-weight: normal; margin:0;">meus cadernos / materias</h2>
-                <button class="cal-btn" style="background:var(--rosa-destaque); color:white;" onclick="addNewSubject()">+ criar materia</button>
+                <div style="display:flex; gap: 10px;">
+                    <button class="cal-btn" id="btn-filter-subjects" style="background:transparent; color:var(--pink-vibrante); border: 1px dashed var(--pink-vibrante);" onclick="toggleSubjectFilter()">mostrar todas</button>
+                    <button class="cal-btn" style="background:var(--rosa-destaque); color:white;" onclick="addNewSubject()">+ criar materia</button>
+                </div>
             </div>
             
             <div id="subjects-container" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:20px; margin-top:20px;">
-                </div>
+            </div>
         </section>
     </div>
 
@@ -525,7 +528,16 @@
             renderWishlist();
         }
 
-        /* --- LOGICA NOVA DE ESTUDOS (CRONOGRAMA E POST-ITS) --- */
+        /* --- LOGICA NOVA DE ESTUDOS --- */
+
+        let filterTodaySubjects = true;
+
+        function toggleSubjectFilter() {
+            filterTodaySubjects = !filterTodaySubjects;
+            const btn = document.getElementById('btn-filter-subjects');
+            btn.innerText = filterTodaySubjects ? 'mostrar todas' : 'mostrar apenas de hoje';
+            renderSubjectPostits();
+        }
 
         function saveStudies() {
             const rows = document.querySelectorAll('#study-body tr');
@@ -543,6 +555,7 @@
             });
             localStorage.setItem('study-data', JSON.stringify(data));
             renderTodaySchedule();
+            renderSubjectPostits();
         }
 
         function toggleFullSchedule() {
@@ -642,7 +655,6 @@
             saveStudies();
         }
 
-        // LOGICA DOS POST-ITS DE MATERIAS
         function getSubjects() {
             return JSON.parse(localStorage.getItem('study-subjects')) || [];
         }
@@ -663,6 +675,10 @@
                 exe: [{ text: '', done: false, score: '' }]
             });
             saveSubjects(subjects);
+            
+            if (filterTodaySubjects) {
+                toggleSubjectFilter();
+            }
         }
 
         function deleteSubject(idx) {
@@ -677,15 +693,39 @@
             const container = document.getElementById('subjects-container');
             const subjects = getSubjects();
             container.innerHTML = '';
+            
+            const data = JSON.parse(localStorage.getItem('study-data')) || [];
+            const dayIdx = realToday.getDay();
+            const columnMap = [null, 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+            const colKey = columnMap[dayIdx];
+            let todaySubjs = [];
+            
+            if (dayIdx !== 0 && colKey) {
+                data.forEach(row => {
+                    if (row[colKey] && row[colKey].trim() !== '') {
+                        todaySubjs.push(row[colKey].trim().toLowerCase());
+                    }
+                });
+            }
+
+            let renderedCount = 0;
 
             subjects.forEach((sub, idx) => {
+                
+                if (filterTodaySubjects) {
+                    if (!todaySubjs.includes(sub.name.trim().toLowerCase())) {
+                        return; 
+                    }
+                }
+                
+                renderedCount++;
+
                 let html = `<div class="subject-postit">
                     <div style="position:relative;">
                         <h3 class="subject-title">${sub.name}</h3>
                         <span style="position:absolute; right:0; top:0; cursor:pointer; color:#ccc; font-size:0.8rem;" onclick="deleteSubject(${idx})">✕</span>
                     </div>`;
 
-                // Render Aulas
                 html += `<div><h4 class="subject-section-title">aulas</h4>`;
                 sub.cls.forEach((item, itemIdx) => {
                     html += `<div class="subject-item-row">
@@ -696,7 +736,6 @@
                 });
                 html += `<button class="btn-add-subitem" onclick="addSubjItem(${idx}, 'cls')">+ adicionar aula</button></div>`;
 
-                // Render Resumos
                 html += `<div><h4 class="subject-section-title">resumos</h4>`;
                 sub.sum.forEach((item, itemIdx) => {
                     html += `<div class="subject-item-row">
@@ -707,7 +746,6 @@
                 });
                 html += `<button class="btn-add-subitem" onclick="addSubjItem(${idx}, 'sum')">+ adicionar resumo</button></div>`;
 
-                // Render Exercicios
                 html += `<div><h4 class="subject-section-title">exercicios</h4>`;
                 sub.exe.forEach((item, itemIdx) => {
                     html += `<div class="subject-item-row">
@@ -722,6 +760,16 @@
                 html += `</div>`;
                 container.innerHTML += html;
             });
+            
+            if (renderedCount === 0) {
+                if (filterTodaySubjects && todaySubjs.length > 0) {
+                     container.innerHTML = `<p style="color: #999; width: 100%; grid-column: 1 / -1; text-align: center; font-style: italic; margin-top: 40px;">Crie uma materia com o mesmo nome do seu cronograma para ver os post-its aqui!</p>`;
+                } else if (filterTodaySubjects && todaySubjs.length === 0) {
+                     container.innerHTML = `<p style="color: #999; width: 100%; grid-column: 1 / -1; text-align: center; font-style: italic; margin-top: 40px;">Nenhuma materia no cronograma de hoje. Aproveite o descanso ou clique em "mostrar todas"!</p>`;
+                } else {
+                     container.innerHTML = `<p style="color: #999; width: 100%; grid-column: 1 / -1; text-align: center; font-style: italic; margin-top: 40px;">Voce ainda nao criou nenhuma materia. Clique no botao acima!</p>`;
+                }
+            }
         }
 
         function addSubjItem(subjIdx, type) {
@@ -761,8 +809,6 @@
                 }
             }
         }
-
-        /* --- RESTANTE DAS FUNÇÕES (AGUA, CALENDARIO, TREINO, ETC) --- */
 
         function renderWater() {
             const container = document.getElementById('water-cups');
