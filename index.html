@@ -6,6 +6,7 @@
     <title>Planner 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
+    <!-- Bibliotecas do Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     
@@ -123,7 +124,7 @@
         .color-menu { position: fixed; background: white; border: 1px solid var(--borda); border-radius: 12px; display: none; z-index: 1000; padding: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); max-width: 160px; }
         .color-option { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; margin: 5px; display: inline-block; border: 1px solid #eee; }
 
-        /* ESTILOS NOVOS DOS POST-ITS DE ESTUDO */
+        /* ESTILOS DOS POST-ITS DE ESTUDO */
         .subject-postit {
             background: #fffdf8; border: 1px solid var(--rosa-destaque);
             border-radius: 15px; padding: 20px; box-shadow: 5px 5px 15px rgba(255, 182, 193, 0.15);
@@ -234,12 +235,22 @@
 
         <section id="habitos" class="page-section">
             <div class="water-container">
-                <p style="font-family: 'SimpleHandmade'; font-size: 2.5rem; color: var(--azul-deep); margin:0;">beba agua</p>
+                <div style="display:flex; justify-content: center; align-items: center; gap: 20px;">
+                    <button class="cal-btn" style="background:transparent; color:var(--azul-deep); font-size:1.5rem; padding:0;" onclick="changeWaterDay(-1)">❮</button>
+                    <p id="water-date-display" style="font-family: 'SimpleHandmade'; font-size: 2.5rem; color: var(--azul-deep); margin:0; min-width: 250px;">beba agua</p>
+                    <button class="cal-btn" style="background:transparent; color:var(--azul-deep); font-size:1.5rem; padding:0;" onclick="changeWaterDay(1)">❯</button>
+                </div>
                 <div class="cup-grid" id="water-cups"></div>
                 <p id="water-stats" style="color: var(--azul-deep); font-weight: 600;"></p>
             </div>
-            <h2 class="section-title">habit tracker</h2>
-            <button class="cal-btn" style="background:var(--rosa-destaque); color:white;" onclick="addHabitRow()">+ novo habito</button>
+            
+            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px; margin-top: 30px;">
+                <button class="cal-btn" onclick="moveMonth(-1)">❮ anterior</button>
+                <h2 id="habit-month-display" style="margin:0; font-family:'SimpleHandmade'; color:var(--rosa-destaque); font-size:2rem; font-weight:normal;">mes</h2>
+                <button class="cal-btn" onclick="moveMonth(1)">proximo ❯</button>
+            </div>
+
+            <button class="cal-btn" style="background:var(--rosa-destaque); color:white; margin-bottom:15px;" onclick="addHabitRow()">+ novo habito</button>
             <div style="overflow-x: auto;"><table class="habit-table"><thead><tr id="habit-header"><th>Habito</th></tr></thead><tbody id="habit-body"></tbody></table></div>
         </section>
 
@@ -341,6 +352,8 @@
         let currentDate = new Date();
         const realToday = new Date(); realToday.setHours(0,0,0,0);
         let selectedDayKey = null;
+
+        let waterDate = new Date(realToday);
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
 
@@ -527,8 +540,6 @@
             localStorage.setItem(`wish-${type}`, JSON.stringify(tasks));
             renderWishlist();
         }
-
-        /* --- LOGICA NOVA DE ESTUDOS --- */
 
         let filterTodaySubjects = true;
 
@@ -810,23 +821,49 @@
             }
         }
 
+        function changeWaterDay(dir) {
+            waterDate.setDate(waterDate.getDate() + dir);
+            renderWater();
+        }
+
         function renderWater() {
             const container = document.getElementById('water-cups');
-            const saved = JSON.parse(localStorage.getItem(`water-${realToday.toDateString()}`)) || Array(12).fill(0);
+            const dateStr = waterDate.toDateString();
+            const saved = JSON.parse(localStorage.getItem(`water-${dateStr}`)) || Array(12).fill(0);
+            
+            const displayTitle = document.getElementById('water-date-display');
+            if (waterDate.getTime() === realToday.getTime()) {
+                displayTitle.innerText = "beba agua (hoje)";
+            } else {
+                let day = String(waterDate.getDate()).padStart(2, '0');
+                let month = String(waterDate.getMonth() + 1).padStart(2, '0');
+                displayTitle.innerText = `beba agua (${day}/${month})`;
+            }
+
             container.innerHTML = ''; let total = 0;
             saved.forEach((f, i) => {
                 let c = document.createElement('div'); c.className = `cup ${f ? 'filled' : ''}`;
                 if(f) total += 200;
-                c.onclick = () => { saved[i] = saved[i] ? 0 : 1; localStorage.setItem(`water-${realToday.toDateString()}`, JSON.stringify(saved)); renderWater(); };
+                c.onclick = () => { 
+                    saved[i] = saved[i] ? 0 : 1; 
+                    localStorage.setItem(`water-${dateStr}`, JSON.stringify(saved)); 
+                    renderWater(); 
+                };
                 container.appendChild(c);
             });
-            document.getElementById('water-stats').innerText = `Total: ${total}ml tomados hoje`;
+            document.getElementById('water-stats').innerText = `Total: ${total}ml tomados`;
         }
 
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid'); grid.innerHTML = '';
             const m = currentDate.getMonth(), y = currentDate.getFullYear();
-            document.getElementById('month-display').innerText = `${currentDate.toLocaleString('pt-br', { month: 'long' })} ${y}`;
+            
+            const monthStr = `${currentDate.toLocaleString('pt-br', { month: 'long' })} ${y}`;
+            document.getElementById('month-display').innerText = monthStr;
+            if(document.getElementById('habit-month-display')) {
+                document.getElementById('habit-month-display').innerText = monthStr;
+            }
+
             const first = new Date(y, m, 1).getDay();
             ['dom','seg','ter','qua','qui','sex','sab'].forEach(d => {
                 let div = document.createElement('div'); div.style="text-align:center; font-weight:600; font-size:0.75rem; background:var(--rosa-claro); padding:10px; border-radius:8px"; div.innerText = d; grid.appendChild(div);
@@ -957,7 +994,13 @@
 
         function toggleW(k, v) { localStorage.setItem(k, v); renderWorkouts(); }
         function setDayColor(c) { localStorage.setItem(`color-${selectedDayKey}`, c); document.getElementById('color-picker').style.display = 'none'; renderCalendar(); }
-        function moveMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
+        
+        function moveMonth(dir) { 
+            currentDate.setMonth(currentDate.getMonth() + dir); 
+            renderCalendar(); 
+            loadHabits();
+        }
+        
         window.onclick = () => document.getElementById('color-picker').style.display = 'none';
 
         function getHabitKey() { return `habits-${currentDate.getFullYear()}-${currentDate.getMonth()}`; }
@@ -989,7 +1032,17 @@
         }
 
         function loadHabits() {
-            const data = JSON.parse(localStorage.getItem(getHabitKey())) || [];
+            let data = JSON.parse(localStorage.getItem(getHabitKey())) || [];
+            
+            if (data.length === 0) {
+                let prevMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+                let prevKey = `habits-${prevMonthDate.getFullYear()}-${prevMonthDate.getMonth()}`;
+                let prevData = JSON.parse(localStorage.getItem(prevKey)) || [];
+                if (prevData.length > 0) {
+                    data = prevData.map(h => ({ n: h.n, c: [] }));
+                }
+            }
+
             const b = document.getElementById('habit-body');
             b.innerHTML = '';
             const h = document.getElementById('habit-header');
