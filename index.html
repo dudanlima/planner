@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planner 2026</title>
+    <title>Planner 2026 Celestial</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* Paleta Chique com Personalidade (Bordô e Ouro) */
+            /* Paleta Chique Celestial com Personalidade (Bordo e Ouro) */
             --bordo-personalidade: #800020; 
             --ouro-destaque: #d4af37;        
             --caixa-fundo: rgba(255, 255, 255, 0.95); 
@@ -36,6 +37,90 @@
             overflow: hidden; 
         }
 
+        /* --- TELA DE LOGIN --- */
+        #login-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--fundo-celestial);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999; /* Fica acima de tudo */
+        }
+        
+        .login-box {
+            background: var(--caixa-fundo);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(128, 0, 32, 0.1);
+            border: 2px solid var(--bordo-personalidade);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-box h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--bordo-personalidade);
+            font-size: 2.5rem;
+            margin-top: 0;
+            margin-bottom: 30px;
+            letter-spacing: -1px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--borda);
+            border-radius: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+            background: #fff;
+        }
+        
+        .login-input:focus {
+            border-color: var(--bordo-personalidade);
+            box-shadow: 0 0 8px rgba(128, 0, 32, 0.2);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--bordo-personalidade);
+            color: var(--ouro-destaque);
+            border: none;
+            border-radius: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        #login-error {
+            color: #c62828;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- O PLANNER (Escondido inicialmente) --- */
+        #app-container {
+            display: none; /* Só aparece após login */
+            width: 100%;
+            height: 100%;
+        }
+
         /* Sidebar Chique e Clean */
         .sidebar { 
             width: 260px; 
@@ -51,7 +136,7 @@
         }
         .sidebar.closed { margin-left: -260px; }
         
-        /* Botão ☰ Elegante */
+        /* Botao Menu Elegante */
         .toggle-btn {
             position: absolute; right: -40px; top: 20px; 
             background: var(--bordo-personalidade); 
@@ -61,7 +146,7 @@
             font-size: 1.2rem;
         }
 
-        /* Títulos Chiques com Serifada Bodoni-style */
+        /* Titulos Chiques com Serifada Bodoni-style */
         .sidebar h1 { 
             font-family: 'Playfair Display', serif; 
             font-size: 2.8rem; 
@@ -92,17 +177,31 @@
             color: var(--bordo-personalidade); 
         }
         
-        .sidebar-footer { margin-top: auto; padding-bottom: 20px; }
-        .link-caderno { 
+        .sidebar-footer { margin-top: auto; padding-bottom: 20px; display: flex; flex-direction: column; gap: 10px;}
+        
+        .link-caderno, .logout-btn { 
             text-decoration: none; 
-            color: var(--bordo-personalidade); 
             font-size: 1rem; 
             display: flex; 
             align-items: center; 
             gap: 12px; 
             padding: 15px; 
             font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
         }
+        
+        .link-caderno { color: var(--bordo-personalidade); }
+        .link-caderno:hover { background: rgba(128, 0, 32, 0.05); }
+
+        .logout-btn { 
+            color: #c62828; 
+            background: transparent;
+            border: 1px dashed #c62828;
+            justify-content: center;
+        }
+        .logout-btn:hover { background: #ffebee; }
 
         /* Main Content mais Clean */
         .main-content { 
@@ -118,7 +217,7 @@
         .page-section.active { display: block; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Títulos de Seção Chiques */
+        /* Titulos de Secao Chiques */
         h2.section-title, #month-display, #wishlist-title { 
             font-family: 'Playfair Display', serif; 
             color: var(--bordo-personalidade); 
@@ -129,7 +228,7 @@
         h2.section-title { border-left: 6px solid var(--ouro-destaque); padding-left: 15px; }
         #wishlist-title { text-align: center; margin-bottom: 30px; font-weight: 700;}
 
-        /* Botões Chiques (Bordô com Ouro) */
+        /* Botoes Chiques (Bordo com Ouro) */
         .cal-btn { 
             border: 1px solid var(--bordo-personalidade);
             outline: none; 
@@ -176,7 +275,7 @@
             position: relative; 
         }
         
-        /* Cabeçalho Todo Refinado */
+        /* Cabecalho Todo Refinado */
         .todo-date-header { 
             font-family: 'Playfair Display', serif; 
             font-weight: 600; 
@@ -197,7 +296,7 @@
         .todo-item input[type="text"]::placeholder { color: #aaa; }
         .todo-item input[type="text"].completed { text-decoration: line-through; color: #888; text-decoration-color: var(--bordo-personalidade); }
         
-        /* Botão de Adicionar Todo Refinado */
+        /* Botao de Adicionar Todo Refinado */
         .add-todo-btn { 
             width: 100%; padding: 10px; 
             border: 1px dashed var(--bordo-personalidade); 
@@ -208,7 +307,7 @@
         }
         .add-todo-btn:hover { background: rgba(128, 0, 32, 0.05); }
 
-        /* Wishlist Chique (Bordô com personalidade) */
+        /* Wishlist Chique */
         .wishlist-container { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
         .small-blocks-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         
@@ -243,13 +342,13 @@
         .wishlist-item input[type="text"]::placeholder { color: #aaa; }
         .wishlist-item input[type="text"].completed { text-decoration: line-through; color: #888; text-decoration-color: var(--bordo-personalidade); }
         
-        /* Diferenciações sutis nas Wishlists */
+        /* Diferenciacoes sutis nas Wishlists */
         .apartamento-block .wishlist-block-header { border-bottom-color: var(--bordo-personalidade); }
         .quero-block { border-top: 4px solid var(--ouro-destaque); } 
         .preciso-block { border-top: 4px solid #a5d6a7; } 
         .necessidade-block { border-top: 4px solid #ef9a9a; } 
 
-        /* Água Chique */
+        /* Agua Chique */
         .water-container { 
             background: var(--nude-suave); 
             border: 1px solid var(--borda);
@@ -287,7 +386,7 @@
         .study-table td { padding: 0; border-bottom: 1px solid #f0f0f0;}
         .study-table input[type="text"] { border: none !important; outline: none !important; box-shadow: none !important; background: transparent; width: 100%; padding: 12px; font-family: inherit; color: var(--texto-principal);}
 
-        /* Tabela de Hábitos Refinada */
+        /* Tabela de Habitos Refinada */
         .habit-table { width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid var(--borda); border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.03);}
         .habit-table th { 
             font-family: 'Playfair Display', serif; 
@@ -330,7 +429,7 @@
         .meta-atingida { background: rgba(165, 214, 167, 0.2) !important; border-color: #a5d6a7 !important; }
         .meta-atingida p { color: #2e7d32 !important; }
         
-        /* Workout Cards Clean e Bordô */
+        /* Workout Cards Clean e Bordo */
         .workout-day { 
             border: 1px solid var(--borda); 
             padding: 20px; 
@@ -375,7 +474,7 @@
             padding: 5px 0 0 0;
         }
         
-        /* Círculo do Dia Atual Clean e Bordô */
+        /* Circulo do Dia Atual Clean e Bordo */
         .day-number { font-family: 'Playfair Display', serif; font-size: 0.9rem; font-weight: 600; color: #555;}
         .today-circle { 
             background: var(--bordo-personalidade); 
@@ -506,148 +605,163 @@
 </head>
 <body>
 
-    <div class="sidebar" id="sidebar">
-        <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-        <h1>Planner</h1>
-        <div class="menu-item active" onclick="showPage('inicio', this)">Início</div>
-        <div class="menu-item" onclick="showPage('tarefas', this)">Tarefas</div>
-        <div class="menu-item" onclick="showPage('wishlist', this)">Wishlist</div>
-        <div class="menu-item" onclick="showPage('habitos', this)">Hábitos</div>
-        <div class="menu-item" onclick="showPage('treinos', this)">Treinos</div>
-        <div class="menu-item" onclick="showPage('estudos', this)">Estudos</div>
-        <div class="sidebar-footer"><a href="caderno.html" class="link-caderno">📓 Abrir caderno</a></div>
+    <div id="login-screen">
+        <div class="login-box">
+            <h1>Planner 2026</h1>
+            <input type="email" id="login-email" class="login-input" placeholder="E-mail">
+            <input type="password" id="login-password" class="login-input" placeholder="Senha">
+            <button class="login-btn" onclick="fazerLogin()">Entrar</button>
+            <p id="login-error">Credenciais inválidas. Tente novamente.</p>
+        </div>
     </div>
 
-    <div class="main-content">
-        <section id="inicio" class="page-section active">
-            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                <button class="cal-btn" onclick="moveMonth(-1)">❮ Anterior</button>
-                <h2 id="month-display" style="margin:0;">mês</h2>
-                <button class="cal-btn" onclick="moveMonth(1)">Próximo ❯</button>
+    <div id="app-container">
+        <div class="sidebar" id="sidebar">
+            <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+            <h1>Planner</h1>
+            <div class="menu-item active" onclick="showPage('inicio', this)">Início</div>
+            <div class="menu-item" onclick="showPage('tarefas', this)">Tarefas</div>
+            <div class="menu-item" onclick="showPage('wishlist', this)">Wishlist</div>
+            <div class="menu-item" onclick="showPage('habitos', this)">Hábitos</div>
+            <div class="menu-item" onclick="showPage('treinos', this)">Treinos</div>
+            <div class="menu-item" onclick="showPage('estudos', this)">Estudos</div>
+            <div class="sidebar-footer">
+                <a href="caderno.html" class="link-caderno">📓 Abrir caderno</a>
+                <button class="logout-btn" onclick="fazerLogout()">Sair (Bloquear Planner)</button>
             </div>
-            <div class="calendar-grid" id="calendar-grid"></div>
-            <h2 class="section-title">Contagem Regressiva</h2>
-            <div id="countdown-area"></div>
-        </section>
+        </div>
 
-        <section id="tarefas" class="page-section">
-            <h2 class="section-title">Minha lista de tarefas</h2>
-            <div class="todo-grid" id="todo-grid">
-                <div class="todo-block">
-                    <div class="todo-date-header" id="date-col-0">Hoje</div>
-                    <div id="list-col-0"></div>
-                    <button class="add-todo-btn" onclick="addNewTodo(0)">+ Adicionar tarefa</button>
+        <div class="main-content">
+            <section id="inicio" class="page-section active">
+                <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <button class="cal-btn" onclick="moveMonth(-1)">❮ Anterior</button>
+                    <h2 id="month-display" style="margin:0;">mês</h2>
+                    <button class="cal-btn" onclick="moveMonth(1)">Próximo ❯</button>
                 </div>
-                <div class="todo-block">
-                    <div class="todo-date-header" id="date-col-1">Amanhã</div>
-                    <div id="list-col-1"></div>
-                    <button class="add-todo-btn" onclick="addNewTodo(1)">+ Adicionar tarefa</button>
-                </div>
-                <div class="todo-block">
-                    <div class="todo-date-header" id="date-col-2">Depois</div>
-                    <div id="list-col-2"></div>
-                    <button class="add-todo-btn" onclick="addNewTodo(2)">+ Adicionar tarefa</button>
-                </div>
-            </div>
-        </section>
+                <div class="calendar-grid" id="calendar-grid"></div>
+                <h2 class="section-title">Contagem Regressiva</h2>
+                <div id="countdown-area"></div>
+            </section>
 
-        <section id="wishlist" class="page-section">
-            <h1 id="wishlist-title">Minha Wishlist</h1>
-            <div class="wishlist-container">
-                <div class="small-blocks-row">
-                    <div class="wishlist-postit quero-block">
-                        <div class="wishlist-block-header">quero</div>
-                        <div id="list-quero"></div>
-                        <button class="add-todo-btn" onclick="addWishItem('quero')">+ Item</button>
+            <section id="tarefas" class="page-section">
+                <h2 class="section-title">Minha lista de tarefas</h2>
+                <div class="todo-grid" id="todo-grid">
+                    <div class="todo-block">
+                        <div class="todo-date-header" id="date-col-0">Hoje</div>
+                        <div id="list-col-0"></div>
+                        <button class="add-todo-btn" onclick="addNewTodo(0)">+ Adicionar tarefa</button>
                     </div>
-                    <div class="wishlist-postit preciso-block">
-                        <div class="wishlist-block-header">preciso</div>
-                        <div id="list-preciso"></div>
-                        <button class="add-todo-btn" onclick="addWishItem('preciso')">+ Item</button>
+                    <div class="todo-block">
+                        <div class="todo-date-header" id="date-col-1">Amanhã</div>
+                        <div id="list-col-1"></div>
+                        <button class="add-todo-btn" onclick="addNewTodo(1)">+ Adicionar tarefa</button>
                     </div>
-                    <div class="wishlist-postit necessidade-block">
-                        <div class="wishlist-block-header">necessidade</div>
-                        <div id="list-necessidade"></div>
-                        <button class="add-todo-btn" onclick="addWishItem('necessidade')">+ Item</button>
+                    <div class="todo-block">
+                        <div class="todo-date-header" id="date-col-2">Depois</div>
+                        <div id="list-col-2"></div>
+                        <button class="add-todo-btn" onclick="addNewTodo(2)">+ Adicionar tarefa</button>
                     </div>
                 </div>
-                <div class="wishlist-postit apartamento-block">
-                    <div class="wishlist-block-header">apartamento</div>
-                    <div id="list-apartamento"></div>
-                    <button class="add-todo-btn" onclick="addWishItem('apartamento')">+ Item</button>
+            </section>
+
+            <section id="wishlist" class="page-section">
+                <h1 id="wishlist-title">Minha Wishlist</h1>
+                <div class="wishlist-container">
+                    <div class="small-blocks-row">
+                        <div class="wishlist-postit quero-block">
+                            <div class="wishlist-block-header">quero</div>
+                            <div id="list-quero"></div>
+                            <button class="add-todo-btn" onclick="addWishItem('quero')">+ Item</button>
+                        </div>
+                        <div class="wishlist-postit preciso-block">
+                            <div class="wishlist-block-header">preciso</div>
+                            <div id="list-preciso"></div>
+                            <button class="add-todo-btn" onclick="addWishItem('preciso')">+ Item</button>
+                        </div>
+                        <div class="wishlist-postit necessidade-block">
+                            <div class="wishlist-block-header">necessidade</div>
+                            <div id="list-necessidade"></div>
+                            <button class="add-todo-btn" onclick="addWishItem('necessidade')">+ Item</button>
+                        </div>
+                    </div>
+                    <div class="wishlist-postit apartamento-block">
+                        <div class="wishlist-block-header">apartamento</div>
+                        <div id="list-apartamento"></div>
+                        <button class="add-todo-btn" onclick="addWishItem('apartamento')">+ Item</button>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="habitos" class="page-section">
-            <div class="water-container">
-                <div style="display:flex; justify-content: center; align-items: center; gap: 20px;">
-                    <button class="cal-btn" style="background:transparent; color:var(--bordo-personalidade); font-size:1.5rem; padding:0; border:none; box-shadow:none;" onclick="changeWaterDay(-1)">❮</button>
-                    <p id="water-date-display" style="font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--bordo-personalidade); margin:0; min-width: 250px; font-weight:700;">beba água</p>
-                    <button class="cal-btn" style="background:transparent; color:var(--bordo-personalidade); font-size:1.5rem; padding:0; border:none; box-shadow:none;" onclick="changeWaterDay(1)">❯</button>
+            <section id="habitos" class="page-section">
+                <div class="water-container">
+                    <div style="display:flex; justify-content: center; align-items: center; gap: 20px;">
+                        <button class="cal-btn" style="background:transparent; color:var(--bordo-personalidade); font-size:1.5rem; padding:0; border:none; box-shadow:none;" onclick="changeWaterDay(-1)">❮</button>
+                        <p id="water-date-display" style="font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--bordo-personalidade); margin:0; min-width: 250px; font-weight:700;">beba água</p>
+                        <button class="cal-btn" style="background:transparent; color:var(--bordo-personalidade); font-size:1.5rem; padding:0; border:none; box-shadow:none;" onclick="changeWaterDay(1)">❯</button>
+                    </div>
+                    <div class="cup-grid" id="water-cups"></div>
+                    <p id="water-stats" style="color: var(--texto-principal); font-weight: 600; font-size:0.95rem;"></p>
                 </div>
-                <div class="cup-grid" id="water-cups"></div>
-                <p id="water-stats" style="color: var(--texto-principal); font-weight: 600; font-size:0.95rem;"></p>
-            </div>
-            
-            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px; margin-top: 30px;">
-                <button class="cal-btn" onclick="moveMonth(-1)">❮ Anterior</button>
-                <h2 id="habit-month-display" style="margin:0; font-family:'Playfair Display', serif; color:var(--bordo-personalidade); font-size:2rem; font-weight:600;">mês</h2>
-                <button class="cal-btn" onclick="moveMonth(1)">Próximo ❯</button>
-            </div>
-
-            <button class="cal-btn" style="margin-bottom:15px;" onclick="addHabitRow()">+ Novo hábito</button>
-            <div style="overflow-x: auto;"><table class="habit-table"><thead><tr id="habit-header"><th>Hábito</th></tr></thead><tbody id="habit-body"></tbody></table></div>
-        </section>
-
-        <section id="treinos" class="page-section">
-            <h2 class="section-title">Foco no treino</h2>
-            <div class="stats-container">
-                <div id="card-weekly" class="stat-card"><h3>meta semanal (mín 4x)</h3><p id="week-count">0</p></div>
-                <div class="stat-card"><h3>total mensal</h3><p id="month-count">0</p></div>
-            </div>
-            <div id="workout-container" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:15px;"></div>
-        </section>
-
-        <section id="estudos" class="page-section">
-            <div style="margin-bottom: 25px;">
-                <h1 class="today-schedule-title">Cronograma de hoje (<span id="today-weekday-name" class="today-weekday-span"></span>)</h1>
-                <div id="today-schedule-container" style="display:flex; gap:15px; flex-wrap:wrap;"></div>
-            </div>
-            
-            <button class="cal-btn" onclick="toggleFullSchedule()" id="btn-toggle-schedule" style="font-size:0.8rem; margin-bottom: 30px; background: transparent; color: var(--bordo-personalidade);">Mostrar cronograma completo da semana</button>
-            
-            <div id="full-schedule-container" style="display:none; overflow-x: auto; margin-bottom:40px; border-top: 2px solid var(--borda); padding-top: 20px;">
-                <table class="study-table">
-                    <thead><tr><th>Horário</th><th>Segunda</th><th>Terça</th><th>Quarta</th><th>Quinta</th><th>Sexta</th><th>Sábado</th></tr></thead>
-                    <tbody id="study-body"></tbody>
-                </table>
-                <button class="cal-btn" style="margin-top:15px;" onclick="addStudyRow()">+ Adicionar linha de horário</button>
-            </div>
-
-            <div class="ai-container">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 class="ai-header-title">✨ Assistente de Estudos IA</h3>
-                    <button onclick="configurarAPI()" style="background:transparent; border:none; cursor:pointer; font-size:1.2rem; color:var(--ouro-destaque);" title="Configurar Chave API">⚙️</button>
-                </div>
-                <p style="font-size: 0.8rem; margin-top: 0; margin-bottom: 10px; color:#555;">Escreva o que precisa de estudar e eu organizo os seus cadernos automaticamente.</p>
                 
-                <textarea id="ai-prompt" class="ai-prompt-area" placeholder="Ex: Crie a matéria Nutrição Clínica. Tenho 4 aulas para assistir, ler o artigo sobre dietas e fazer a lista de exercícios 1 e 2..."></textarea>
-                
-                <button id="btn-ai" class="cal-btn" style="width:100%; border-color:var(--bordo-personalidade);" onclick="gerarMateriaIA()">🪄 Organizar Automaticamente</button>
-                <p id="ai-status" style="font-size: 0.85rem; color: var(--bordo-personalidade); font-weight: 600; margin: 10px 0 0 0; text-align: center; display:none;">A organizar...</p>
-            </div>
-
-            <div class="subjects-postit-header">
-                <h2>Meus Cadernos / Matérias</h2>
-                <div style="display:flex; gap: 10px;">
-                    <button class="cal-btn" id="btn-filter-subjects" style="background:transparent; color:var(--bordo-personalidade);" onclick="toggleSubjectFilter()">Mostrar todas</button>
-                    <button class="cal-btn" onclick="addNewSubject()">+ Criar matéria</button>
+                <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px; margin-top: 30px;">
+                    <button class="cal-btn" onclick="moveMonth(-1)">❮ Anterior</button>
+                    <h2 id="habit-month-display" style="margin:0; font-family:'Playfair Display', serif; color:var(--bordo-personalidade); font-size:2rem; font-weight:600;">mês</h2>
+                    <button class="cal-btn" onclick="moveMonth(1)">Próximo ❯</button>
                 </div>
-            </div>
-            
-            <div id="subjects-container" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:20px; margin-top:20px;"></div>
-        </section>
+
+                <button class="cal-btn" style="margin-bottom:15px;" onclick="addHabitRow()">+ Novo hábito</button>
+                <div style="overflow-x: auto;"><table class="habit-table"><thead><tr id="habit-header"><th>Hábito</th></tr></thead><tbody id="habit-body"></tbody></table></div>
+            </section>
+
+            <section id="treinos" class="page-section">
+                <h2 class="section-title">Foco no treino</h2>
+                <div class="stats-container">
+                    <div id="card-weekly" class="stat-card"><h3>meta semanal (mín 4x)</h3><p id="week-count">0</p></div>
+                    <div class="stat-card"><h3>total mensal</h3><p id="month-count">0</p></div>
+                </div>
+                <div id="workout-container" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:15px;"></div>
+            </section>
+
+            <section id="estudos" class="page-section">
+                <div style="margin-bottom: 25px;">
+                    <h1 class="today-schedule-title">Cronograma de hoje (<span id="today-weekday-name" class="today-weekday-span"></span>)</h1>
+                    <div id="today-schedule-container" style="display:flex; gap:15px; flex-wrap:wrap;"></div>
+                </div>
+                
+                <button class="cal-btn" onclick="toggleFullSchedule()" id="btn-toggle-schedule" style="font-size:0.8rem; margin-bottom: 30px; background: transparent; color: var(--bordo-personalidade);">Mostrar cronograma completo da semana</button>
+                
+                <div id="full-schedule-container" style="display:none; overflow-x: auto; margin-bottom:40px; border-top: 2px solid var(--borda); padding-top: 20px;">
+                    <table class="study-table">
+                        <thead><tr><th>Horário</th><th>Segunda</th><th>Terça</th><th>Quarta</th><th>Quinta</th><th>Sexta</th><th>Sábado</th></tr></thead>
+                        <tbody id="study-body"></tbody>
+                    </table>
+                    <button class="cal-btn" style="margin-top:15px;" onclick="addStudyRow()">+ Adicionar linha de horário</button>
+                </div>
+
+                <div class="ai-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h3 class="ai-header-title">✨ Assistente de Estudos IA</h3>
+                        <button onclick="configurarAPI()" style="background:transparent; border:none; cursor:pointer; font-size:1.2rem; color:var(--ouro-destaque);" title="Configurar Chave API">⚙️</button>
+                    </div>
+                    <p style="font-size: 0.8rem; margin-top: 0; margin-bottom: 10px; color:#555;">Escreva o que precisa de estudar e eu organizo os seus cadernos e horários automaticamente.</p>
+                    
+                    <textarea id="ai-prompt" class="ai-prompt-area" placeholder="Ex: Crie a matéria Nutrição Clínica. Tenho 4 aulas para assistir, ler o artigo sobre dietas e fazer a lista de exercícios 1 e 2. Adicione na terça e quarta feira..."></textarea>
+                    
+                    <button id="btn-ai" class="cal-btn" style="width:100%; border-color:var(--bordo-personalidade);" onclick="gerarMateriaIA()">🪄 Organizar Automaticamente</button>
+                    <p id="ai-status" style="font-size: 0.85rem; color: var(--bordo-personalidade); font-weight: 600; margin: 10px 0 0 0; text-align: center; display:none;">A organizar...</p>
+                </div>
+
+                <div class="subjects-postit-header">
+                    <h2>Meus Cadernos / Matérias</h2>
+                    <div style="display:flex; gap: 10px;">
+                        <button class="cal-btn" id="btn-filter-subjects" style="background:transparent; color:var(--bordo-personalidade);" onclick="toggleSubjectFilter()">Mostrar todas</button>
+                        <button class="cal-btn" onclick="addNewSubject()">+ Criar matéria</button>
+                    </div>
+                </div>
+                
+                <div id="subjects-container" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:20px; margin-top:20px;"></div>
+            </section>
+        </div>
     </div>
 
     <div id="color-picker" class="color-menu">
@@ -674,34 +788,76 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        const auth = firebase.auth();
 
-        const originalSetItem = localStorage.setItem;
-        localStorage.setItem = function(key, value) {
-            originalSetItem.apply(this, arguments);
-            db.ref('plannerData/' + key).set(value);
-        };
-
-        db.ref('plannerData').once('value').then((snapshot) => {
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                for (let key in data) {
-                    originalSetItem.call(localStorage, key, data[key]);
-                }
+        /* --- SISTEMA DE LOGIN BLINDADO --- */
+        
+        // Verifica se o usuário já está logado
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // Usuário logado: Esconde login, mostra planner, carrega os dados
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app-container').style.display = 'flex';
+                iniciarPlanner();
             } else {
-                for (let i = 0; i < localStorage.length; i++) {
-                    let key = localStorage.key(i);
-                    db.ref('plannerData/' + key).set(localStorage.getItem(key));
-                }
+                // Ninguém logado: Mostra login, esconde planner
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('app-container').style.display = 'none';
             }
-            
-            processTaskRollover();
-            atualizarTelas(); 
-            initHabits();
-            loadStudies();
-            renderTodoList();
-            renderWishlist();
-            renderSubjectPostits();
         });
+
+        function fazerLogin() {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            const errorMsg = document.getElementById('login-error');
+            
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(() => {
+                    errorMsg.style.display = 'none';
+                })
+                .catch((error) => {
+                    errorMsg.style.display = 'block';
+                    console.error("Erro de login:", error);
+                });
+        }
+
+        function fazerLogout() {
+            auth.signOut().then(() => {
+                // Limpa a tela localmente por segurança ao sair
+                document.getElementById('app-container').style.display = 'none';
+            });
+        }
+
+        /* --- NÚCLEO DO PLANNER (Só roda após login) --- */
+        function iniciarPlanner() {
+            const originalSetItem = localStorage.setItem;
+            localStorage.setItem = function(key, value) {
+                originalSetItem.apply(this, arguments);
+                db.ref('plannerData/' + key).set(value);
+            };
+
+            db.ref('plannerData').once('value').then((snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    for (let key in data) {
+                        originalSetItem.call(localStorage, key, data[key]);
+                    }
+                } else {
+                    for (let i = 0; i < localStorage.length; i++) {
+                        let key = localStorage.key(i);
+                        db.ref('plannerData/' + key).set(localStorage.getItem(key));
+                    }
+                }
+                
+                processTaskRollover();
+                atualizarTelas(); 
+                initHabits();
+                loadStudies();
+                renderTodoList();
+                renderWishlist();
+                renderSubjectPostits();
+            });
+        }
 
         function atualizarTelas() {
             renderCalendar();
@@ -731,7 +887,7 @@
             if(id === 'wishlist') renderWishlist();
         }
 
-        /* --- INTEGRAÇÃO COM A INTELIGÊNCIA ARTIFICIAL --- */
+        /* --- INTEGRACAO COM A INTELIGENCIA ARTIFICIAL --- */
 
         function configurarAPI() {
             let key = prompt("Cole aqui a sua chave de API do Google AI Studio:");
@@ -744,7 +900,7 @@
         async function gerarMateriaIA() {
             let apiKey = localStorage.getItem('gemini-api-key');
             if (!apiKey) {
-                alert("Precisa de configurar a chave de API primeiro! Clique no botão da engrenagem.");
+                alert("Precisa de configurar a chave de API primeiro! Clique no botao da engrenagem.");
                 return;
             }
 
@@ -758,21 +914,29 @@
             btn.style.opacity = '0.6';
             status.style.display = 'block';
             status.style.color = 'var(--bordo-personalidade)';
-            status.innerText = 'A organizar os seus estudos...';
+            status.innerText = 'A organizar os seus estudos e cronograma...';
 
-            let systemInstruction = `Sua tarefa é analisar o texto do usuário e extrair as matérias, aulas, resumos e exercícios.
-IMPORTANTE: Se o usuário disser que já concluiu, finalizou ou "já fez" um item, marque "done": true. Caso contrário, "done": false.
-Retorne APENAS um array JSON válido, sem formatação markdown. Siga estritamente esta estrutura:
-[
-  {
-    "name": "Nome da Matéria",
-    "cls": [{"text": "nome da aula", "done": false}],
-    "sum": [{"text": "nome do resumo ou PDF", "done": false}],
-    "exe": [{"text": "nome do exercicio", "done": true, "score": ""}]
-  }
-]
-Se o usuário não especificar itens para uma categoria, deixe o array vazio [].
-Texto do usuário: ${promptText}`;
+            let systemInstruction = `Sua tarefa e analisar o texto do usuario e extrair as materias, aulas, resumos, exercicios e a alocacao no cronograma semanal de estudos.
+IMPORTANTE: Se o usuario disser que ja concluiu um item, marque done: true.
+Retorne APENAS um objeto JSON valido, sem formatacao markdown. Siga estritamente esta estrutura:
+{
+  "subjects": [
+    {
+      "name": "Nome da Materia",
+      "cls": [{"text": "nome da aula", "done": false}],
+      "sum": [{"text": "nome do resumo", "done": false}],
+      "exe": [{"text": "nome do exercicio", "done": false, "score": ""}]
+    }
+  ],
+  "schedule": [
+    {
+      "subject": "Nome da Materia",
+      "day": "seg" // use apenas: seg, ter, qua, qui, sex, sab
+    }
+  ]
+}
+Se nao houver itens para alguma categoria, deixe o array vazio.
+Texto do usuario: ${promptText}`;
 
             try {
                 let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
@@ -791,8 +955,12 @@ Texto do usuário: ${promptText}`;
                 }
 
                 let rawText = data.candidates[0].content.parts[0].text;
-                let novasMaterias = JSON.parse(rawText);
+                let resultJSON = JSON.parse(rawText);
                 
+                let novasMaterias = resultJSON.subjects || [];
+                let novoCronograma = resultJSON.schedule || [];
+                
+                // 1. Atualizar as materias (Post-its)
                 let subjects = getSubjects();
                 
                 novasMaterias.forEach(nova => {
@@ -817,9 +985,36 @@ Texto do usuário: ${promptText}`;
                 });
 
                 saveSubjects(subjects);
+
+                // 2. Atualizar o Cronograma da Semana (Tabela superior)
+                if (novoCronograma.length > 0) {
+                    let studyData = JSON.parse(localStorage.getItem('study-data')) || [];
+                    
+                    novoCronograma.forEach(sched => {
+                        let dayKey = sched.day;
+                        let subjName = sched.subject;
+                        
+                        if(!['seg', 'ter', 'qua', 'qui', 'sex', 'sab'].includes(dayKey)) return;
+
+                        // Procura a primeira linha onde o dia especifico esta vazio
+                        let rowIndex = studyData.findIndex(row => !row[dayKey] || row[dayKey].trim() === '');
+                        
+                        if (rowIndex !== -1) {
+                            studyData[rowIndex][dayKey] = subjName;
+                        } else {
+                            // Se nao tiver espaco vazio, cria uma linha nova no cronograma
+                            let newRow = { h: '', seg: '', ter: '', qua: '', qui: '', sex: '', sab: '' };
+                            newRow[dayKey] = subjName;
+                            studyData.push(newRow);
+                        }
+                    });
+                    
+                    localStorage.setItem('study-data', JSON.stringify(studyData));
+                    loadStudies(); // Recarrega a tabela e o banner de hoje
+                }
                 
                 document.getElementById('ai-prompt').value = '';
-                status.innerText = 'Matérias organizadas com sucesso!';
+                status.innerText = 'Tudo organizado e preenchido com sucesso!';
                 
                 renderSubjectPostits();
 
