@@ -418,18 +418,19 @@
             status.style.color = 'var(--pink-vibrante)';
             status.innerText = 'Lendo e organizando seus estudos...';
 
-            let systemInstruction = `Sua tarefa é analisar o texto do usuário e extrair as matérias, aulas, resumos e exercícios para criar um cronograma de estudos.
-Retorne APENAS um array JSON válido, sem formatação markdown. Siga estritamente esta estrutura:
+            let systemInstruction = `Sua tarefa e analisar o texto do usuario e extrair as materias, aulas, resumos e exercicios.
+IMPORTANTE: Se o usuario disser que ja concluiu, finalizou ou "ja fez" um item, marque "done": true. Caso contrario, "done": false.
+Retorne APENAS um array JSON valido, sem formatacao markdown. Siga estritamente esta estrutura:
 [
   {
-    "name": "Nome da Matéria",
+    "name": "Nome da Materia",
     "cls": [{"text": "nome da aula", "done": false}],
     "sum": [{"text": "nome do resumo ou PDF", "done": false}],
-    "exe": [{"text": "nome do exercicio", "done": false, "score": ""}]
+    "exe": [{"text": "nome do exercicio", "done": true, "score": ""}]
   }
 ]
-Se o usuário não especificar itens para uma categoria, deixe o array vazio [].
-Texto do usuário: ${promptText}`;
+Se o usuario nao especificar itens para uma categoria, deixe o array vazio [].
+Texto do usuario: ${promptText}`;
 
             try {
                 let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
@@ -451,15 +452,34 @@ Texto do usuário: ${promptText}`;
                 let novasMaterias = JSON.parse(rawText);
                 
                 let subjects = getSubjects();
-                novasMaterias.forEach(m => subjects.push(m));
+                
+                novasMaterias.forEach(nova => {
+                    let existing = subjects.find(s => s.name.trim().toLowerCase() === nova.name.trim().toLowerCase());
+                    
+                    if (existing) {
+                        if (nova.cls && nova.cls.length > 0) existing.cls.push(...nova.cls);
+                        if (nova.sum && nova.sum.length > 0) existing.sum.push(...nova.sum);
+                        if (nova.exe && nova.exe.length > 0) existing.exe.push(...nova.exe);
+                        
+                        existing.cls = existing.cls.filter(item => item.text.trim() !== '' || item.done);
+                        existing.sum = existing.sum.filter(item => item.text.trim() !== '' || item.done);
+                        existing.exe = existing.exe.filter(item => item.text.trim() !== '' || item.done);
+                        
+                        if(existing.cls.length === 0) existing.cls.push({ text: '', done: false });
+                        if(existing.sum.length === 0) existing.sum.push({ text: '', done: false });
+                        if(existing.exe.length === 0) existing.exe.push({ text: '', done: false, score: '' });
+
+                    } else {
+                        subjects.push(nova);
+                    }
+                });
+
                 saveSubjects(subjects);
                 
                 document.getElementById('ai-prompt').value = '';
-                status.innerText = '✨ Materias e cronograma criados com sucesso!';
+                status.innerText = 'Magica feita com sucesso!';
                 
-                if (filterTodaySubjects) {
-                    toggleSubjectFilter();
-                }
+                renderSubjectPostits();
 
                 setTimeout(() => {
                     status.style.display = 'none';
@@ -468,7 +488,7 @@ Texto do usuário: ${promptText}`;
             } catch (err) {
                 console.error(err);
                 status.style.color = '#c62828';
-                status.innerText = 'Ocorreu um erro. Verifique sua chave de API ou tente escrever de outra forma.';
+                status.innerText = 'Ocorreu um erro. Tente novamente.';
             } finally {
                 btn.disabled = false;
                 btn.style.opacity = '1';
