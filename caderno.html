@@ -7,6 +7,8 @@
     
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
     <style>
         @font-face { 
@@ -15,46 +17,51 @@
         }
 
         :root {
-            --rosa-claro: #fff0f5; --rosa-destaque: #ffb6c1; --pink-vibrante: #ff69b4;
-            --texto: #444; --borda: #fce4ec;
+            --bordo-personalidade: #800020; 
+            --ouro-destaque: #d4af37;        
+            --caixa-fundo: rgba(255, 255, 255, 0.95); 
+            --texto-principal: #333;
+            --fundo-celestial: linear-gradient(135deg, #fffdf5 0%, #ffe0b2 25%, #f8bbd0 50%, #f48fb1 75%, #fffdf5 100%); 
+            --borda: #e1bee7; 
+            --nude-suave: #fffafb;
         }
 
         * { box-sizing: border-box; }
-        body { font-family: 'SimpleHandmade', sans-serif; margin: 0; background-color: #fff9fb; color: var(--texto); display: flex; height: 100vh; overflow: hidden; }
+        body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--fundo-celestial); color: var(--texto-principal); display: flex; height: 100vh; overflow: hidden; }
 
         @media print {
             .sidebar, .toolbar, #save-status, .nav-back { display: none !important; }
             html, body { height: auto !important; overflow: visible !important; background: white !important; display: block !important; margin: 0 !important; padding: 0 !important; }
             #editor-view { border: none !important; box-shadow: none !important; margin: 0 !important; padding: 20px !important; overflow: visible !important; display: block !important; height: auto !important; }
-            #editor-title { padding: 0 0 20px 0 !important; color: black !important; font-family: 'SimpleHandmade', serif !important; }
+            #editor-title { padding: 0 0 20px 0 !important; color: black !important; font-family: 'Playfair Display', serif !important; }
             .editor-content { padding: 0 !important; overflow: visible !important; height: auto !important; display: block !important; }
             #shelf-view { display: none !important; }
         }
 
         .sidebar { 
-            width: 260px; background: white; border-right: 1px solid var(--borda); 
+            width: 260px; background: var(--caixa-fundo); border-right: 1px solid var(--borda); 
             display: flex; flex-direction: column; padding: 20px; flex-shrink: 0;
             transition: 0.3s; position: relative; z-index: 100;
         }
         .sidebar.closed { margin-left: -260px; }
         
         .toggle-btn {
-            position: absolute; right: -40px; top: 20px; background: var(--rosa-destaque);
-            border: none; color: white; width: 30px; height: 30px; border-radius: 0 8px 8px 0;
+            position: absolute; right: -40px; top: 20px; background: var(--bordo-personalidade);
+            border: none; color: var(--ouro-destaque); width: 30px; height: 30px; border-radius: 0 8px 8px 0;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
 
-        .sidebar h1 { font-family: 'SimpleHandmade', cursive; font-size: 3rem; color: var(--rosa-destaque); text-align: center; margin: 0 0 15px; font-weight: normal; }
-        .nav-back { text-decoration: none; color: var(--rosa-destaque); font-size: 1.2rem; display: block; text-align: center; margin-bottom: 20px; font-weight: normal; }
+        .sidebar h1 { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--bordo-personalidade); text-align: center; margin: 0 0 15px; font-weight: 700; letter-spacing: -1px; }
+        .nav-back { text-decoration: none; color: var(--bordo-personalidade); font-size: 1rem; display: block; text-align: center; margin-bottom: 20px; font-weight: 600; }
 
-        .btn-action { background: var(--rosa-destaque); color: white; border: none; padding: 10px 15px; border-radius: 12px; cursor: pointer; font-family: inherit; font-size: 1.2rem; width: 100%; transition: 0.3s; }
-        .btn-action:hover { opacity: 0.8; }
+        .btn-action { background: var(--bordo-personalidade); color: var(--ouro-destaque); border: none; padding: 10px 15px; border-radius: 12px; cursor: pointer; font-family: inherit; font-size: 1rem; font-weight: 600; width: 100%; transition: 0.3s; }
+        .btn-action:hover { opacity: 0.8; transform: translateY(-2px); }
 
         #notes-index { display: none; flex-direction: column; flex-grow: 1; margin-top: 20px; overflow-y: auto; }
-        .index-title { font-size: 1rem; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: center; }
+        .index-title { font-size: 0.9rem; color: #777; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: center; font-weight: 600; }
         .note-list { list-style: none; padding: 0; margin: 0 0 15px 0; }
-        .note-item { padding: 10px 12px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; font-size: 1.2rem; border-bottom: 1px solid #f0f0f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .note-item.active { background: var(--rosa-claro); color: var(--pink-vibrante); border-left: 4px solid var(--rosa-destaque); border-bottom: none; }
+        .note-item { padding: 10px 12px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; font-size: 1rem; border-bottom: 1px solid #f0f0f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: 0.2s; }
+        .note-item.active { background: rgba(128, 0, 32, 0.08); color: var(--bordo-personalidade); border-left: 4px solid var(--ouro-destaque); border-bottom: none; font-weight: 600; }
 
         .shelf-container { 
             flex-grow: 1; padding: 40px; overflow-y: auto; 
@@ -66,14 +73,15 @@
             width: 180px; height: 240px; background: #eee; border-radius: 10px 20px 20px 10px;
             box-shadow: 5px 5px 15px rgba(0,0,0,0.1); cursor: pointer; transition: 0.3s;
             position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end;
-            border-left: 10px solid rgba(0,0,0,0.1);
+            border-left: 10px solid rgba(128,0,32,0.1);
         }
-        .notebook-card:hover { transform: translateY(-5px); box-shadow: 8px 8px 25px rgba(255,182,193,0.4); }
+        .notebook-card:hover { transform: translateY(-5px); box-shadow: 8px 8px 25px rgba(128, 0, 32, 0.2); }
         .notebook-card img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
         .notebook-label { 
             position: relative; z-index: 2; background: rgba(255,255,255,0.95); 
-            padding: 12px 10px; text-align: center; font-size: 1.2rem;
-            border-top: 1px solid var(--borda); color: var(--pink-vibrante);
+            padding: 12px 10px; text-align: center; font-size: 1.1rem;
+            border-top: 1px solid var(--borda); color: var(--bordo-personalidade);
+            font-family: 'Playfair Display', serif; font-weight: 600;
         }
 
         .notebook-actions {
@@ -81,38 +89,38 @@
         }
         .notebook-card:hover .notebook-actions { opacity: 1; }
         .action-btn { background: rgba(255,255,255,0.9); border: none; border-radius: 8px; cursor: pointer; padding: 6px; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .action-btn:hover { background: var(--rosa-claro); }
+        .action-btn:hover { background: rgba(128, 0, 32, 0.1); }
 
         .add-notebook-btn {
-            width: 180px; height: 240px; border: 3px dashed var(--rosa-destaque);
+            width: 180px; height: 240px; border: 3px dashed var(--bordo-personalidade);
             border-radius: 10px 20px 20px 10px; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; cursor: pointer; color: var(--rosa-destaque);
-            font-size: 1.2rem; transition: 0.3s; background: transparent;
+            align-items: center; justify-content: center; cursor: pointer; color: var(--bordo-personalidade);
+            font-size: 1.1rem; transition: 0.3s; background: transparent; font-weight: 600;
         }
-        .add-notebook-btn:hover { background: var(--rosa-claro); }
+        .add-notebook-btn:hover { background: rgba(128, 0, 32, 0.05); }
 
-        #editor-view { display: none; flex-direction: column; flex-grow: 1; background: white; margin: 15px; border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow: hidden; }
+        #editor-view { display: none; flex-direction: column; flex-grow: 1; background: var(--caixa-fundo); margin: 20px; border-radius: 20px; box-shadow: 0 10px 40px rgba(128, 0, 32, 0.05); overflow: hidden; border: 1px solid var(--borda); }
         
-        .toolbar { padding: 10px 20px; border-bottom: 1px solid var(--borda); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; background: #fffafb; }
-        .toolbar button, .toolbar select { background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 5px 8px; cursor: pointer; font-family: inherit; font-size: 1rem; height: 32px; display: flex; align-items: center; justify-content: center; outline: none; }
-        .toolbar button:hover, .toolbar select:hover { background: var(--rosa-claro); }
+        .toolbar { padding: 10px 20px; border-bottom: 1px solid var(--borda); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; background: var(--nude-suave); }
+        .toolbar button, .toolbar select { background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 5px 8px; cursor: pointer; font-family: inherit; font-size: 0.9rem; height: 32px; display: flex; align-items: center; justify-content: center; outline: none; transition: 0.2s; }
+        .toolbar button:hover, .toolbar select:hover { background: rgba(128, 0, 32, 0.1); color: var(--bordo-personalidade); border-color: var(--bordo-personalidade); }
         .toolbar input[type="color"] { border: 1px solid var(--borda); border-radius: 5px; padding: 2px; height: 32px; width: 40px; cursor: pointer; background: white; }
         
-        .custom-font-picker { position: relative; font-family: 'SimpleHandmade', sans-serif; font-size: 1rem; }
-        .font-picker-btn { background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 0 10px; cursor: pointer; height: 32px; display: flex; align-items: center; min-width: 150px; justify-content: space-between; }
-        .font-picker-btn:hover { background: var(--rosa-claro); }
+        .custom-font-picker { position: relative; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; }
+        .font-picker-btn { background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 0 10px; cursor: pointer; height: 32px; display: flex; align-items: center; min-width: 150px; justify-content: space-between; transition: 0.2s;}
+        .font-picker-btn:hover { background: rgba(128, 0, 32, 0.1); border-color: var(--bordo-personalidade); }
         .font-picker-list { position: absolute; background: white; border: 1px solid var(--borda); border-radius: 5px; top: 100%; left: 0; width: 220px; z-index: 999; max-height: 250px; overflow-y: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: none; margin-top: 5px; }
-        .font-picker-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0; font-size: 1.2rem; color: var(--texto); }
-        .font-picker-item:hover { background: var(--rosa-claro); color: var(--pink-vibrante); }
+        .font-picker-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0; font-size: 1.1rem; color: var(--texto-principal); }
+        .font-picker-item:hover { background: rgba(128, 0, 32, 0.08); color: var(--bordo-personalidade); }
 
-        .btn-recording { background: #ffeb3b !important; font-weight: normal; animation: pulse 1.5s infinite; color: black !important; }
+        .btn-recording { background: #ffeb3b !important; font-weight: normal; animation: pulse 1.5s infinite; color: black !important; border-color: #ffeb3b !important;}
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
 
-        #editor-title { font-family: 'SimpleHandmade', sans-serif; font-size: 2.8rem; border: none; outline: none; color: var(--rosa-destaque); padding: 20px 30px 0; width: 100%; background: transparent; }
+        #editor-title { font-family: 'Playfair Display', serif; font-size: 2.8rem; border: none; outline: none; color: var(--bordo-personalidade); padding: 20px 30px 0; width: 100%; background: transparent; font-weight: 700; letter-spacing: -1px; }
         .editor-content { flex-grow: 1; padding: 30px; outline: none; line-height: 1.6; font-size: 1.2rem; overflow-y: auto; }
 
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--rosa-claro); border-radius: 10px; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--borda); border-radius: 10px; }
 
         @media (max-width: 600px) {
             .shelf-container { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); padding: 20px; }
@@ -135,7 +143,7 @@
             <hr style="width:100%; border:0; border-top:1px solid var(--borda); margin: 15px 0;">
             <p class="index-title" id="current-notebook-name">Anotacoes</p>
             <ul id="note-list" class="note-list"></ul>
-            <button class="btn-action" style="background:transparent; color:var(--pink-vibrante); border:1px dashed var(--pink-vibrante);" onclick="addNote()">+ nova anotacao</button>
+            <button class="btn-action" style="background:transparent; color:var(--bordo-personalidade); border:1px dashed var(--bordo-personalidade);" onclick="addNote()">+ nova anotacao</button>
         </div>
     </div>
 
@@ -321,7 +329,7 @@
                     foreColor: document.queryCommandValue('foreColor')
                 };
                 isFormatPainting = true;
-                btn.style.background = 'var(--rosa-claro)';
+                btn.style.background = 'rgba(128, 0, 32, 0.1)';
                 editor.style.cursor = 'crosshair';
             }
         }
@@ -405,7 +413,7 @@
                 if(notebooks[name].cover) {
                     card.innerHTML = `<img src="${notebooks[name].cover}">`;
                 } else {
-                    card.innerHTML = `<div style="width:100%; height:100%; background:var(--rosa-claro); display:flex; align-items:center; justify-content:center; color:var(--rosa-destaque); font-size:4rem;"></div>`;
+                    card.innerHTML = `<div style="width:100%; height:100%; background:var(--nude-suave); display:flex; align-items:center; justify-content:center; color:var(--bordo-personalidade); font-size:4rem;"></div>`;
                 }
                 
                 card.innerHTML += `<div class="notebook-label">${name}</div>`;
