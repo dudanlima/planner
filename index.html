@@ -328,10 +328,31 @@
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
         .calendar-weekday { text-align:center; font-weight:600; font-size:0.7rem; color: #777; background:transparent; padding:5px; border-radius:0; text-transform: uppercase; letter-spacing: 1px; }
         .day-cell { border: 1px solid var(--borda); min-height: 110px; padding: 8px; border-radius: 12px; background: #fff; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: 0.2s; }
-        .day-cell textarea { width: 100%; border: none !important; outline: none !important; height: 60px; resize: none; font-size: 0.75rem; background: transparent; font-family: 'Montserrat', sans-serif; color: var(--texto-principal); padding: 5px 0 0 0; }
         .day-number { font-family: 'Playfair Display', serif; font-size: 0.9rem; font-weight: 600; color: #555;}
         .today-circle { background: var(--bordo-personalidade); color: var(--ouro-destaque); border-radius: 50%; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; }
         
+        .day-event-box {
+            border-radius: 6px;
+            padding: 4px 6px;
+            margin-bottom: 3px;
+            font-size: 0.7rem;
+            color: var(--texto-principal);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .day-event-input {
+            border: none;
+            background: transparent;
+            width: 90%;
+            font-family: inherit;
+            font-size: inherit;
+            color: inherit;
+            outline: none;
+            font-weight: 600;
+        }
+
         .color-menu { position: fixed; background: rgba(255, 255, 255, 0.98); border: 1px solid var(--borda); border-radius: 12px; display: none; z-index: 1000; padding: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); max-width: 160px; }
         .color-option { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; margin: 5px; display: inline-block; border: 1px solid #f0f0f0; transition: 0.2s;}
 
@@ -353,6 +374,14 @@
         .ai-container { background: rgba(128, 0, 32, 0.05); padding: 20px; border-radius: 15px; border: 2px solid var(--bordo-personalidade); margin-bottom: 30px; box-shadow: 0 5px 15px rgba(128, 0, 32, 0.05); }
         .ai-header-title { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--bordo-personalidade); margin: 0; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
         .ai-prompt-area { width: 100%; height: 80px; border-radius: 10px; border: 1px solid var(--borda); padding: 12px; font-family: 'Montserrat', sans-serif; margin-bottom: 10px; outline:none; resize:none; background: rgba(255, 255, 255, 0.9); color: var(--texto-principal); font-size: 0.85rem; }
+
+        /* Estilos do Assistente Global */
+        #global-ai-btn { position: fixed; bottom: 30px; right: 30px; background: var(--bordo-personalidade); color: var(--ouro-destaque); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; box-shadow: 0 5px 15px rgba(128, 0, 32, 0.3); z-index: 1000; transition: 0.3s; }
+        #global-ai-btn:hover { transform: scale(1.1); }
+        #global-ai-modal { position: fixed; bottom: 100px; right: 30px; width: 320px; background: rgba(255, 255, 255, 0.98); border: 2px solid var(--bordo-personalidade); border-radius: 15px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 1000; display: none; flex-direction: column; gap: 10px; }
+        .global-ai-header { display: flex; justify-content: space-between; align-items: center; font-family: 'Playfair Display', serif; color: var(--bordo-personalidade); margin-bottom: 5px; }
+        .global-ai-header h3 { margin: 0; font-size: 1.2rem; }
+        .global-ai-close { cursor: pointer; color: #999; font-size: 1rem; }
 
         @media (max-width: 768px) {
             body { flex-direction: column; }
@@ -404,12 +433,14 @@
             .day-cell { min-height: 80px; padding: 4px; border-radius: 8px;}
             .day-number { font-size: 0.75rem; }
             .today-circle { width: 20px; height: 20px; font-size: 0.7rem; }
-            .day-cell textarea { font-size: 0.65rem; padding: 2px 0 0 0; line-height: 1.1; word-break: break-word; hyphens: auto; }
             
             .study-table th, .habit-table th { font-size: 0.6rem; padding: 8px 4px; }
             .study-table td input, .habit-table td input { padding: 8px 4px; font-size: 0.75rem; }
             
             #water-date-display { font-size: 1.8rem !important; min-width: 180px !important; }
+            
+            #global-ai-btn { bottom: 90px; right: 20px; width: 50px; height: 50px; font-size: 1.2rem; }
+            #global-ai-modal { bottom: 150px; right: 10px; width: calc(100% - 20px); }
         }
     </style>
 </head>
@@ -594,6 +625,7 @@
         </div>
     </div>
 
+    <!-- Menu de Cores -->
     <div id="color-picker" class="color-menu">
         <div class="color-option" style="background:#ffffff;" onclick="setDayColor('#ffffff')" title="Branco Puro"></div>
         <div class="color-option" style="background:#fffdf5;" onclick="setDayColor('#fffdf5')" title="Marfim Celestial"></div>
@@ -604,6 +636,19 @@
         <div class="color-option" style="background:#cfe7e5;" onclick="setDayColor('#cfe7e5')" title="Turquesa Joia Claro"></div>
         <div class="color-option" style="background:#e2decb;" onclick="setDayColor('#e2decb')" title="Ouro Envelhecido Suave"></div>
         <div class="color-option" style="background:#e0dad5;" onclick="setDayColor('#e0dad5')" title="Fendi Minimalista"></div>
+    </div>
+
+    <!-- Elementos do Assistente Global -->
+    <div id="global-ai-btn" onclick="toggleGlobalAI()">✨</div>
+    <div id="global-ai-modal">
+        <div class="global-ai-header">
+            <h3>Assistente Global</h3>
+            <span class="global-ai-close" onclick="toggleGlobalAI()">✕</span>
+        </div>
+        <p style="font-size: 0.75rem; color: #555; margin: 0 0 10px 0;">Peça para adicionar itens no calendário, nas tarefas ou na wishlist automaticamente.</p>
+        <textarea id="global-ai-prompt" class="ai-prompt-area" style="height: 100px;" placeholder="Ex: Adiciona revisão do TCC na segunda e um jaleco novo na wishlist de necessidade..."></textarea>
+        <button id="btn-global-ai" class="cal-btn" onclick="executarIAGlobal()">🪄 Executar Magia</button>
+        <p id="global-ai-status" style="font-size: 0.8rem; margin: 10px 0 0 0; text-align: center; font-weight: 600;"></p>
     </div>
 
     <script>
@@ -695,6 +740,7 @@
         let currentDate = new Date();
         const realToday = new Date(); realToday.setHours(0,0,0,0);
         let selectedDayKey = null;
+        let selectedEventIdx = null; 
         let waterDate = new Date(realToday);
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
@@ -721,6 +767,126 @@
                 alert("A sua chave foi guardada com sucesso no cofre do seu navegador!");
             }
         }
+
+        /* ----- FUNCOES DO ASSISTENTE GLOBAL ----- */
+        
+        function toggleGlobalAI() {
+            const modal = document.getElementById('global-ai-modal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+            if (modal.style.display === 'flex') {
+                document.getElementById('global-ai-prompt').focus();
+            }
+        }
+
+        async function executarIAGlobal() {
+            let apiKey = localStorage.getItem('gemini-api-key');
+            if (!apiKey) {
+                alert("Configure a chave de API na aba de Estudos primeiro clicando na engrenagem!");
+                return;
+            }
+
+            let promptText = document.getElementById('global-ai-prompt').value;
+            if (!promptText.trim()) return;
+
+            let btn = document.getElementById('btn-global-ai');
+            let status = document.getElementById('global-ai-status');
+            
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            status.style.display = 'block';
+            status.style.color = 'var(--bordo-personalidade)';
+            status.innerText = 'Lendo e organizando seu pedido...';
+
+            let systemInstruction = `Você é o assistente virtual do planner. O usuário enviará comandos para adicionar itens no calendário, nas tarefas da semana (todo) ou na wishlist.
+Retorne APENAS um objeto JSON válido, sem formatação markdown. Siga esta estrutura exata para as ações necessárias:
+{
+  "actions": [
+    { "type": "todo", "dayOffset": 0, "text": "Nome da tarefa" }, 
+    { "type": "wishlist", "category": "quero", "text": "Nome do item" }, 
+    { "type": "calendar", "year": 2026, "month": 6, "day": 15, "text": "Evento", "color": "#cfe7e5" } 
+  ]
+}
+Regras:
+- todo dayOffset: de 0 (Segunda-feira) a 5 (Sábado).
+- wishlist category: apenas "quero", "preciso", "necessidade" ou "apartamento".
+- calendar month: o mês começa em 0 (ex: janeiro é 0, julho é 6, agosto é 7).
+- calendar color: use uma das seguintes cores em hex: #ffffff, #fffdf5, #f5ebd6, #f0d0d6, #e0b0b9, #dcd0e3, #cfe7e5, #e2decb, #e0dad5.
+Se não houver itens para alguma categoria, apenas omita a ação. Retorne apenas o JSON. Hoje é: ` + new Date().toLocaleDateString('pt-BR');
+
+            let promptCompleto = systemInstruction + "\nTexto do usuário: " + promptText;
+
+            try {
+                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: promptCompleto }] }],
+                        generationConfig: { responseMimeType: "application/json" }
+                    })
+                });
+
+                let data = await response.json();
+                
+                if (data.error) throw new Error(data.error.message);
+
+                let rawText = data.candidates[0].content.parts[0].text;
+                let resultJSON = JSON.parse(rawText);
+                
+                if (resultJSON.actions && resultJSON.actions.length > 0) {
+                    resultJSON.actions.forEach(acao => {
+                        if (acao.type === 'todo') {
+                            let tasks = JSON.parse(localStorage.getItem('todo-tasks')) || [];
+                            let monday = getMondayDate(realToday);
+                            let d = new Date(monday);
+                            d.setDate(monday.getDate() + acao.dayOffset);
+                            let dStr = d.toISOString().split('T')[0];
+                            tasks.push({ text: acao.text, done: false, date: dStr, notes: '' });
+                            localStorage.setItem('todo-tasks', JSON.stringify(tasks));
+                        } 
+                        else if (acao.type === 'wishlist') {
+                            let cat = acao.category || 'quero';
+                            let wishes = JSON.parse(localStorage.getItem(`wish-${cat}`)) || [];
+                            wishes.push({ text: acao.text, done: false });
+                            localStorage.setItem(`wish-${cat}`, JSON.stringify(wishes));
+                        }
+                        else if (acao.type === 'calendar') {
+                            let dayKey = `cal-${acao.year}-${acao.month}-${acao.day}`;
+                            let rawData = localStorage.getItem(dayKey) || '[]';
+                            let events = [];
+                            try { events = JSON.parse(rawData); } catch(e) { events = []; }
+                            events.push({ text: acao.text, color: acao.color || '#cfe7e5' });
+                            localStorage.setItem(dayKey, JSON.stringify(events));
+                        }
+                    });
+                    
+                    atualizarTelas(); 
+                    renderTodoList();
+                    renderWishlist();
+                    
+                    status.innerText = 'Magia concluída! Itens adicionados com sucesso.';
+                    status.style.color = '#2e7d32';
+                    document.getElementById('global-ai-prompt').value = '';
+                    
+                    setTimeout(() => {
+                        toggleGlobalAI();
+                        status.innerText = '';
+                    }, 2500);
+
+                } else {
+                    status.innerText = 'Nenhuma ação identificada no texto.';
+                }
+
+            } catch (err) {
+                console.error(err);
+                status.style.color = '#c62828';
+                status.innerText = 'Ocorreu um erro na IA. Tente novamente.';
+            } finally {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
+        }
+
+        /* ----- RESTANTE DAS FUNCOES ----- */
 
         async function gerarMateriaIA() {
             let apiKey = localStorage.getItem('gemini-api-key');
@@ -756,7 +922,7 @@ Retorne APENAS um objeto JSON valido, sem formatacao markdown. Siga estritamente
   "schedule": [
     {
       "subject": "Nome da Materia",
-      "day": "seg" // use apenas: seg, ter, qua, qui, sex, sab
+      "day": "seg" 
     }
   ]
 }
@@ -893,11 +1059,18 @@ Texto do usuario: ${promptText}`;
                 listDiv.innerHTML = '';
 
                 let calKey = `cal-${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-                let calText = localStorage.getItem(calKey) || '';
-                if (calText.trim() !== '') {
+                let calText = localStorage.getItem(calKey) || '[]';
+                let calEvents = [];
+                try {
+                    calEvents = JSON.parse(calText);
+                } catch(e) {
+                    if(calText.trim() !== '') calEvents = [{text: calText, color: '#f0d0d6'}];
+                }
+
+                if (calEvents.length > 0) {
                     let calDiv = document.createElement('div');
                     calDiv.className = 'todo-cal-events';
-                    let linhas = calText.split('\n').filter(l => l.trim() !== '').map(l => `• ${l}`).join('<br>');
+                    let linhas = calEvents.filter(ev => ev.text && ev.text.trim() !== '').map(ev => `• ${ev.text}`).join('<br>');
                     if (linhas.trim() !== '') {
                         calDiv.innerHTML = `<div class="todo-cal-events-title">Eventos do Calendario:</div><div>${linhas}</div>`;
                         listDiv.appendChild(calDiv);
@@ -1394,17 +1567,85 @@ Texto do usuario: ${promptText}`;
             for(let d=1; d<=new Date(y, m+1, 0).getDate(); d++) {
                 let key = `cal-${y}-${m}-${d}`;
                 let cell = document.createElement('div'); cell.className = 'day-cell';
-                cell.style.backgroundColor = localStorage.getItem(`color-${key}`) || '#ffffff';
-                let isT = (realToday.getDate() === d && realToday.getMonth() === m && realToday.getFullYear() === y);
-                cell.innerHTML = `<span class="day-number ${isT ? 'today-circle' : ''}">${d}</span><textarea oninput="localStorage.setItem('${key}', this.value); updateCountdowns(); renderTodoList();">${localStorage.getItem(key)||''}</textarea>`;
+                cell.style.backgroundColor = '#ffffff'; 
                 
-                cell.oncontextmenu = (e) => { 
-                    e.preventDefault(); selectedDayKey = key; 
-                    const menu = document.getElementById('color-picker'); 
-                    menu.style.display = 'flex'; menu.style.left = e.pageX + 'px'; menu.style.top = e.pageY + 'px'; 
-                };
+                let isT = (realToday.getDate() === d && realToday.getMonth() === m && realToday.getFullYear() === y);
+                
+                let rawData = localStorage.getItem(key) || '[]';
+                let events = [];
+                try {
+                    events = JSON.parse(rawData);
+                } catch(e) {
+                    if(rawData.trim() !== "") {
+                        events = [{ text: rawData, color: localStorage.getItem(`color-${key}`) || '#f0d0d6' }];
+                    }
+                }
+
+                let eventsHTML = `<div id="events-${key}" style="display:flex; flex-direction:column; gap:2px; margin-top:5px; flex-grow:1; width: 100%;">`;
+                
+                events.forEach((ev, idx) => {
+                    eventsHTML += `
+                        <div class="day-event-box" style="background-color: ${ev.color || '#f0d0d6'};" oncontextmenu="openEventColorPicker(event, '${key}', ${idx})">
+                            <input type="text" class="day-event-input" value="${ev.text}" placeholder="Novo evento..." onblur="updateCalEvent('${key}', ${idx}, this.value)">
+                            <span style="cursor:pointer; font-size:0.55rem; opacity:0.4;" onclick="deleteCalEvent('${key}', ${idx})">✕</span>
+                        </div>
+                    `;
+                });
+                eventsHTML += `</div>`;
+                eventsHTML += `<button style="background:transparent; border:none; color:var(--bordo-personalidade); font-size:0.7rem; cursor:pointer; margin-top:4px; font-weight:600;" onclick="addCalEvent('${key}')">+ adicionar</button>`;
+
+                cell.innerHTML = `<span class="day-number ${isT ? 'today-circle' : ''}">${d}</span>` + eventsHTML;
                 grid.appendChild(cell);
             }
+            updateCountdowns();
+        }
+
+        function openEventColorPicker(e, dayKey, eventIdx) {
+            e.preventDefault();
+            e.stopPropagation();
+            selectedDayKey = dayKey;
+            selectedEventIdx = eventIdx;
+            const menu = document.getElementById('color-picker');
+            menu.style.display = 'flex';
+            menu.style.left = e.pageX + 'px';
+            menu.style.top = e.pageY + 'px';
+        }
+
+        function addCalEvent(dayKey) {
+            let rawData = localStorage.getItem(dayKey) || '[]';
+            let events = [];
+            try { events = JSON.parse(rawData); } catch(e) { events = []; }
+            events.push({ text: '', color: '#f5ebd6' }); 
+            localStorage.setItem(dayKey, JSON.stringify(events));
+            renderCalendar();
+            renderTodoList();
+        }
+
+        function updateCalEvent(dayKey, idx, val) {
+            let events = JSON.parse(localStorage.getItem(dayKey)) || [];
+            events[idx].text = val;
+            localStorage.setItem(dayKey, JSON.stringify(events));
+            updateCountdowns();
+            renderTodoList();
+        }
+
+        function deleteCalEvent(dayKey, idx) {
+            let events = JSON.parse(localStorage.getItem(dayKey)) || [];
+            events.splice(idx, 1);
+            localStorage.setItem(dayKey, JSON.stringify(events));
+            renderCalendar();
+            updateCountdowns();
+            renderTodoList();
+        }
+
+        function setDayColor(c) {
+            if (selectedEventIdx !== null && selectedDayKey !== null) {
+                let events = JSON.parse(localStorage.getItem(selectedDayKey)) || [];
+                events[selectedEventIdx].color = c;
+                localStorage.setItem(selectedDayKey, JSON.stringify(events));
+            }
+            document.getElementById('color-picker').style.display = 'none';
+            renderCalendar();
             updateCountdowns();
         }
 
@@ -1413,21 +1654,27 @@ Texto do usuario: ${promptText}`;
             const m = currentDate.getMonth(), y = currentDate.getFullYear();
             let events = [];
             for(let d=1; d<=31; d++) {
-                let k = `cal-${y}-${m}-${d}`; let t = localStorage.getItem(k);
-                if(t && t.trim() !== "") {
-                    let evD = new Date(y, m, d); let diff = Math.ceil((evD - realToday) / 86400000);
-                    if(diff >= 0) {
-                        let linhas = t.split('\n');
-                        linhas.forEach(linha => {
-                            if(linha.trim() !== "") {
-                                events.push({ days: diff, text: standaloneSanitize(linha.trim()), color: localStorage.getItem(`color-${k}`) || '#fff' });
-                            }
-                        });
-                    }
+                let k = `cal-${y}-${m}-${d}`;
+                let t = localStorage.getItem(k) || '[]';
+                let dayEvents = [];
+                try {
+                    dayEvents = JSON.parse(t);
+                } catch(e) {
+                    if(t.trim() !== "") dayEvents = [{text: t, color: localStorage.getItem(`color-${k}`) || '#fff'}];
                 }
+
+                dayEvents.forEach(ev => {
+                    if(ev.text && ev.text.trim() !== "") {
+                        let evD = new Date(y, m, d); let diff = Math.ceil((evD - realToday) / 86400000);
+                        if(diff >= 0) {
+                            events.push({ days: diff, text: standaloneSanitize(ev.text.trim()), color: ev.color || '#fff' });
+                        }
+                    }
+                });
             }
             events.sort((a,b) => a.days - b.days).forEach(ev => {
-                area.innerHTML += `<div class="countdown-item" style="background:${ev.color}; border-left-color: ${ev.color === '#fff' ? 'var(--ouro-destaque)' : 'var(--bordo-personalidade)'}"><span>${ev.days === 0 ? "hoje!" : ev.days + " dias"}</span>: ${ev.text}</div>`;
+                let borderColor = (ev.color === '#ffffff' || ev.color === '#fff') ? 'var(--ouro-destaque)' : 'var(--bordo-personalidade)';
+                area.innerHTML += `<div class="countdown-item" style="background:${ev.color}; border-left-color: ${borderColor}"><span>${ev.days === 0 ? "hoje!" : ev.days + " dias"}</span>: ${ev.text}</div>`;
             });
         }
 
@@ -1525,7 +1772,6 @@ Texto do usuario: ${promptText}`;
         }
 
         function toggleW(k, v) { localStorage.setItem(k, v); renderWorkouts(); }
-        function setDayColor(c) { localStorage.setItem(`color-${selectedDayKey}`, c); document.getElementById('color-picker').style.display = 'none'; renderCalendar(); renderTodoList(); }
         
         function moveMonth(dir) { 
             currentDate.setMonth(currentDate.getMonth() + dir); 
