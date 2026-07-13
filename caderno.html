@@ -30,12 +30,12 @@
         body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--fundo-celestial); color: var(--texto-principal); display: flex; height: 100vh; overflow: hidden; }
 
         @media print {
-            .sidebar, .toolbar, #save-status, .nav-back { display: none !important; }
+            .sidebar, .toolbar, #save-status, .nav-back, #notebook-ai-modal { display: none !important; }
             html, body { height: auto !important; overflow: visible !important; background: white !important; display: block !important; margin: 0 !important; padding: 0 !important; }
             #editor-view { border: none !important; box-shadow: none !important; margin: 0 !important; padding: 20px !important; overflow: visible !important; display: block !important; height: auto !important; }
             #editor-title { padding: 0 0 20px 0 !important; color: black !important; font-family: 'Playfair Display', serif !important; }
             .editor-content { padding: 0 !important; overflow: visible !important; height: auto !important; display: block !important; }
-            #shelf-view { display: none !important; }
+            #shelf-view, #shelf-header { display: none !important; }
         }
 
         .sidebar { 
@@ -64,7 +64,7 @@
         .note-item.active { background: rgba(128, 0, 32, 0.08); color: var(--bordo-personalidade); border-left: 4px solid var(--ouro-destaque); border-bottom: none; font-weight: 600; }
 
         .shelf-container { 
-            flex-grow: 1; padding: 40px; overflow-y: auto; 
+            padding: 20px 40px 40px 40px; overflow-y: auto; 
             display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
             gap: 30px; align-content: start;
         }
@@ -99,7 +99,7 @@
         }
         .add-notebook-btn:hover { background: rgba(128, 0, 32, 0.05); }
 
-        #editor-view { display: none; flex-direction: column; flex-grow: 1; background: var(--caixa-fundo); margin: 20px; border-radius: 20px; box-shadow: 0 10px 40px rgba(128, 0, 32, 0.05); overflow: hidden; border: 1px solid var(--borda); }
+        #editor-view { display: none; flex-direction: column; flex-grow: 1; background: var(--caixa-fundo); margin: 20px; border-radius: 20px; box-shadow: 0 10px 40px rgba(128, 0, 32, 0.05); overflow: hidden; border: 1px solid var(--borda); position: relative; }
         
         .toolbar { padding: 10px 20px; border-bottom: 1px solid var(--borda); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; background: var(--nude-suave); }
         .toolbar button, .toolbar select { background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 5px 8px; cursor: pointer; font-family: inherit; font-size: 0.9rem; height: 32px; display: flex; align-items: center; justify-content: center; outline: none; transition: 0.2s; }
@@ -147,7 +147,14 @@
         </div>
     </div>
 
-    <div id="shelf-view" class="shelf-container"></div>
+    <!-- Cabeçalho da Estante com Filtro -->
+    <div id="shelf-header" style="width: 100%; flex-grow: 1; display: flex; flex-direction: column;">
+        <div style="padding: 40px 40px 0 40px; display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="font-family:'Playfair Display', serif; color:var(--bordo-personalidade); margin:0;">Meus Cadernos</h2>
+            <button id="btn-filter-notebooks" class="btn-action" style="width:auto; padding: 8px 15px; font-size: 0.9rem;" onclick="toggleNotebookFilter()">Mostrar Todos</button>
+        </div>
+        <div id="shelf-view" class="shelf-container"></div>
+    </div>
 
     <div id="editor-view">
         <input type="text" id="editor-title" placeholder="Titulo do resumo..." oninput="saveCurrentData()">
@@ -188,10 +195,28 @@
             <button onmousedown="event.preventDefault(); format('insertUnorderedList')" title="Criar Lista">Lista</button>
             <button id="btn-speech" onclick="toggleTranscription()" title="Transcrever voz para texto">Transcrever</button>
             <button onclick="window.print()">Salvar PDF</button>
+            
+            <!-- Botão da IA -->
+            <button onclick="toggleNotebookAI()" style="background: var(--ouro-destaque); color: var(--bordo-personalidade); border-color: var(--ouro-destaque); font-weight: 600;" title="Abrir Assistente Inteligente">✨ Assistente IA</button>
         </div>
 
         <div id="editor-body" class="editor-content" contenteditable="true" oninput="saveCurrentData()" onmouseup="handleFormatPaint()"></div>
         <div id="save-status" style="font-size:0.8rem; color:#ccc; text-align:right; padding:10px 20px;">alteracoes salvas automaticamente</div>
+        
+        <!-- Modal da IA dentro do Editor -->
+        <div id="notebook-ai-modal" style="display:none; position:absolute; right:20px; bottom:20px; width:350px; background:rgba(255,255,255,0.98); border:2px solid var(--bordo-personalidade); border-radius:15px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.1); z-index:1000; flex-direction:column; gap:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; color:var(--bordo-personalidade); font-family:'Playfair Display', serif;">
+                <h3 style="margin:0;">Tutor Inteligente</h3>
+                <span style="cursor:pointer; color:#999;" onclick="toggleNotebookAI()">✕</span>
+            </div>
+            <textarea id="notebook-ai-prompt" style="width:100%; height:80px; border-radius:10px; border:1px solid var(--borda); padding:10px; font-family:'Montserrat', sans-serif; font-size: 0.85rem; resize:none; outline:none;" placeholder="Ex: Revise este parágrafo ou explique a normativa..."></textarea>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-action" style="flex:1; padding:8px; font-size:0.8rem;" onclick="askNotebookAI('pergunta')">Perguntar</button>
+                <button class="btn-action" style="flex:1; padding:8px; font-size:0.8rem;" onclick="askNotebookAI('reescrever')">Reescrever Resumo</button>
+            </div>
+            <div id="notebook-ai-response" style="font-size:0.85rem; color:#555; max-height:150px; overflow-y:auto; margin-top:10px;"></div>
+            <button class="btn-action" id="btn-apply-ai" style="display:none; padding:8px; font-size:0.8rem; background:var(--ouro-destaque); color:var(--bordo-personalidade);" onclick="applyAIResponse()">Adicionar ao Caderno</button>
+        </div>
     </div>
 
     <script>
@@ -213,6 +238,8 @@
 
         let copiedStyles = null;
         let isFormatPainting = false;
+        
+        let filterTodayNotebooks = true;
 
         const originalSetItem = localStorage.setItem;
         localStorage.setItem = function(key, value) {
@@ -227,7 +254,7 @@
                     originalSetItem.call(localStorage, key, data[key]);
                 }
                 notebooks = JSON.parse(localStorage.getItem('my-shelf-data')) || {};
-                if(document.getElementById('shelf-view').style.display !== 'none') {
+                if(document.getElementById('shelf-header').style.display !== 'none') {
                     renderShelf();
                 } else {
                     renderNotesList();
@@ -393,9 +420,33 @@
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('closed'); }
 
+        /* ----- Lógica de Filtro e Estante ----- */
+        function getTodaySubjects() {
+            const data = JSON.parse(localStorage.getItem('study-data')) || [];
+            const dayIdx = new Date().getDay();
+            const columnMap = [null, 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+            const colKey = columnMap[dayIdx];
+            let todaySubjs = [];
+            
+            if (dayIdx !== 0 && colKey) {
+                data.forEach(row => {
+                    if (row[colKey] && row[colKey].trim() !== '') {
+                        todaySubjs.push(row[colKey].trim().toLowerCase());
+                    }
+                });
+            }
+            return todaySubjs;
+        }
+
+        function toggleNotebookFilter() {
+            filterTodayNotebooks = !filterTodayNotebooks;
+            document.getElementById('btn-filter-notebooks').innerText = filterTodayNotebooks ? 'Mostrar Todos' : 'Filtrar por Hoje';
+            renderShelf();
+        }
+
         function showShelf() {
             currentNotebook = null;
-            document.getElementById('shelf-view').style.display = 'grid';
+            document.getElementById('shelf-header').style.display = 'flex';
             document.getElementById('editor-view').style.display = 'none';
             document.getElementById('notes-index').style.display = 'none';
             renderShelf();
@@ -404,8 +455,16 @@
         function renderShelf() {
             const shelf = document.getElementById('shelf-view');
             shelf.innerHTML = '';
+            
+            const todaySubjs = getTodaySubjects();
+            let renderedCount = 0;
 
             Object.keys(notebooks).forEach(name => {
+                if (filterTodayNotebooks && todaySubjs.length > 0) {
+                    if (!todaySubjs.includes(name.trim().toLowerCase())) return;
+                }
+                
+                renderedCount++;
                 const card = document.createElement('div');
                 card.className = 'notebook-card';
                 card.onclick = () => openNotebook(name);
@@ -439,6 +498,16 @@
 
                 shelf.appendChild(card);
             });
+
+            if (renderedCount === 0 && filterTodayNotebooks && todaySubjs.length === 0) {
+                const msg = document.createElement('p');
+                msg.style.width = '100%';
+                msg.style.gridColumn = '1 / -1';
+                msg.style.textAlign = 'center';
+                msg.style.color = '#999';
+                msg.innerText = 'Você não tem cadernos agendados para hoje. Aproveite o descanso ou clique em "Mostrar Todos" no topo.';
+                shelf.appendChild(msg);
+            }
 
             const addBtn = document.createElement('div');
             addBtn.className = 'add-notebook-btn';
@@ -523,7 +592,7 @@
         function openNotebook(name) {
             currentNotebook = name;
             currentNoteIdx = 0;
-            document.getElementById('shelf-view').style.display = 'none';
+            document.getElementById('shelf-header').style.display = 'none';
             document.getElementById('editor-view').style.display = 'flex';
             document.getElementById('notes-index').style.display = 'flex';
             document.getElementById('current-notebook-name').innerText = `Anotacoes de ${name}`;
@@ -577,6 +646,76 @@
         }
 
         function saveToStorage() { localStorage.setItem('my-shelf-data', JSON.stringify(notebooks)); }
+
+        /* ----- Lógica da IA Integrada no Caderno ----- */
+        let lastAIResponse = "";
+
+        function toggleNotebookAI() {
+            const modal = document.getElementById('notebook-ai-modal');
+            modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
+            if (modal.style.display === 'flex') {
+                document.getElementById('notebook-ai-prompt').focus();
+            }
+        }
+
+        async function askNotebookAI(action) {
+            let apiKey = localStorage.getItem('gemini-api-key');
+            if (!apiKey) return alert("Configure a chave de API na aba de Estudos do Planner primeiro!");
+            
+            let promptText = document.getElementById('notebook-ai-prompt').value;
+            let editorContent = document.getElementById('editor-body').innerText;
+            let resDiv = document.getElementById('notebook-ai-response');
+            let btnApply = document.getElementById('btn-apply-ai');
+            
+            if (!promptText.trim()) return;
+
+            resDiv.innerText = "Analisando...";
+            btnApply.style.display = 'none';
+            
+            let context = `Conteúdo atual do caderno:\n"${editorContent}"\n\n`;
+            
+            let systemPrompt = `Você é um tutor inteligente focado em auxiliar na revisão de textos acadêmicos (como TCCs), organização de resumos de administração escolar e estudos de idiomas. 
+REGRA CRÍTICA: Você DEVE fornecer explicações e revisar os textos estritamente em Português. Nunca responda ou converse em italiano ou outro idioma estrangeiro, mesmo que o caderno do usuário seja sobre isso.`;
+            
+            if (action === 'pergunta') {
+                systemPrompt += "\nCom base no conteúdo do caderno (se relevante), responda à pergunta do estudante de forma clara e direta.";
+            } else if (action === 'reescrever') {
+                systemPrompt += "\nReescreva, melhore a formatação ou expanda o conteúdo do caderno com base nas instruções do usuário. Retorne APENAS o texto resultante formatado (sem markdown extra, pronto para visualização).";
+            }
+            
+            let finalPrompt = systemPrompt + "\n" + context + "Instrução/Dúvida do usuário: " + promptText;
+            
+            try {
+                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: finalPrompt }] }]
+                    })
+                });
+
+                let data = await response.json();
+                if (data.error) throw new Error(data.error.message);
+
+                lastAIResponse = data.candidates[0].content.parts[0].text;
+                resDiv.innerHTML = lastAIResponse.replace(/\n/g, '<br>');
+                
+                if (action === 'reescrever' || action === 'pergunta') {
+                    btnApply.style.display = 'block';
+                }
+                
+            } catch (err) {
+                resDiv.innerText = "Erro: " + err.message;
+            }
+        }
+
+        function applyAIResponse() {
+            if (!lastAIResponse) return;
+            document.getElementById('editor-body').focus();
+            document.execCommand('insertHTML', false, lastAIResponse.replace(/\n/g, '<br>') + '<br><br>');
+            saveCurrentData();
+            toggleNotebookAI();
+        }
 
         carregarFontesVisuais();
         showShelf();
