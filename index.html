@@ -32,8 +32,8 @@
         .day-cell { border: 1px solid var(--borda); min-height: 110px; padding: 8px; border-radius: 12px; background: #fff; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .day-event-box { border-radius: 6px; padding: 4px 6px; margin-bottom: 3px; font-size: 0.7rem; display: flex; align-items: center; justify-content: space-between; }
         .day-event-input { border: none; background: transparent; width: 90%; font-family: inherit; font-size: inherit; outline: none; font-weight: 600; }
-        #color-confirm-panel { position: fixed; z-index: 2000; background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--bordo-personalidade); box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none; flex-direction: column; gap: 10px; align-items: center; }
         #global-ai-btn { position: fixed; bottom: 30px; right: 30px; background: var(--bordo-personalidade); color: var(--ouro-destaque); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 1000; }
+        #global-ai-modal { position: fixed; bottom: 100px; right: 30px; width: 320px; background: white; border: 2px solid var(--bordo-personalidade); border-radius: 15px; padding: 20px; display: none; flex-direction: column; gap: 10px; z-index: 1000; }
     </style>
 </head>
 <body>
@@ -44,7 +44,6 @@
             <input type="email" id="login-email" class="login-input" placeholder="E-mail">
             <input type="password" id="login-password" class="login-input" placeholder="Senha">
             <button class="login-btn" onclick="fazerLogin()">Entrar</button>
-            <p id="login-error">Credenciais invalidas.</p>
         </div>
     </div>
 
@@ -52,7 +51,6 @@
         <div class="sidebar" id="sidebar">
             <h1>Planner</h1>
             <div class="menu-item active" onclick="showPage('inicio', this)">Inicio</div>
-            <div class="menu-item" onclick="showPage('tarefas', this)">Tarefas</div>
         </div>
         <div class="main-content">
             <section id="inicio" class="page-section active">
@@ -66,44 +64,39 @@
         </div>
     </div>
 
-    <!-- Painel de confirmação de cor -->
-    <div id="color-confirm-panel">
-        <input type="color" id="native-color-picker">
-        <button class="cal-btn" onclick="confirmColor()">Confirmar Cor</button>
+    <div id="global-ai-btn" onclick="toggleGlobalAI()">✨</div>
+    <div id="global-ai-modal">
+        <div style="display:flex; justify-content:space-between;"><h3>Assistente Global</h3><span onclick="toggleGlobalAI()" style="cursor:pointer;">✕</span></div>
+        <textarea id="global-ai-prompt" style="width:100%; height:80px;"></textarea>
+        <button id="btn-global-ai" class="cal-btn" onclick="executarIAGlobal()">Executar Magia</button>
+        <p id="global-ai-status"></p>
     </div>
 
+    <input type="color" id="native-color-picker" style="visibility:hidden; position:absolute;" onchange="setDayColor(this.value)">
+
     <script>
-        const db = firebase.database();
         const auth = firebase.auth();
         let currentDate = new Date();
         const realToday = new Date();
         let selectedDayKey = null;
         let selectedEventIdx = null;
 
-        function iniciarPlanner() {
-            renderCalendar();
-        }
+        function iniciarPlanner() { renderCalendar(); }
 
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid'); grid.innerHTML = '';
             const m = currentDate.getMonth(), y = currentDate.getFullYear();
             document.getElementById('month-display').innerText = currentDate.toLocaleString('pt-br', { month: 'long' }) + ' ' + y;
-
             const first = new Date(y, m, 1).getDay();
             for(let i=0; i<first; i++) grid.appendChild(document.createElement('div'));
-            
             for(let d=1; d<=new Date(y, m+1, 0).getDate(); d++) {
                 let key = `cal-${y}-${m}-${d}`;
                 let cell = document.createElement('div'); cell.className = 'day-cell';
                 let events = JSON.parse(localStorage.getItem(key) || '[]');
-
                 let eventsHTML = `<div style="display:flex; flex-direction:column; gap:2px; margin-top:5px;">`;
                 events.forEach((ev, idx) => {
-                    eventsHTML += `
-                        <div class="day-event-box" style="background-color: ${ev.color || '#f0d0d6'};" oncontextmenu="openEventColorPicker(event, '${key}', ${idx})">
-                            <input type="text" class="day-event-input" value="${ev.text}" onblur="updateCalEvent('${key}', ${idx}, this.value)">
-                        </div>
-                    `;
+                    eventsHTML += `<div class="day-event-box" style="background-color: ${ev.color || '#f0d0d6'};" oncontextmenu="openEventColorPicker(event, '${key}', ${idx})">
+                                    <input type="text" class="day-event-input" value="${ev.text}" onblur="updateCalEvent('${key}', ${idx}, this.value)"></div>`;
                 });
                 eventsHTML += `</div><button style="background:none; border:none; color:var(--bordo-personalidade); cursor:pointer;" onclick="addCalEvent('${key}')">+</button>`;
                 cell.innerHTML = `<span>${d}</span>` + eventsHTML;
@@ -111,45 +104,59 @@
             }
         }
 
-        function openEventColorPicker(e, dayKey, eventIdx) {
-            e.preventDefault();
-            selectedDayKey = dayKey;
-            selectedEventIdx = eventIdx;
-            const panel = document.getElementById('color-confirm-panel');
-            panel.style.display = 'flex';
-            panel.style.left = e.pageX + 'px';
-            panel.style.top = e.pageY + 'px';
+        function toggleGlobalAI() { document.getElementById('global-ai-modal').style.display = document.getElementById('global-ai-modal').style.display === 'flex' ? 'none' : 'flex'; }
+
+        async function executarIAGlobal() {
+            let apiKey = localStorage.getItem('gemini-api-key');
+            if (!apiKey) { alert("Configure a chave de API na aba de Estudos primeiro!"); return; }
+            let promptText = document.getElementById('global-ai-prompt').value;
+            if (!promptText.trim()) return;
+
+            let btn = document.getElementById('btn-global-ai');
+            let status = document.getElementById('global-ai-status');
+            btn.disabled = true; status.innerText = 'Processando...';
+
+            let systemInstruction = `Você é o assistente do planner. O usuário enviará comandos para ADICIONAR ou APAGAR itens. 
+Retorne APENAS JSON sem markdown. Estrutura: {"actions": [{"type": "todo"|"calendar"|"clear_schedule", "action": "add"|"delete", "text": "...", "dayOffset": 0, "year": 2026, "month": 6, "day": 15, "color": "#..."}]}. 
+Se for para apagar o cronograma, use {"type": "clear_schedule", "action": "delete"}.`;
+
+            try {
+                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: systemInstruction + "\nTexto: " + promptText }] }], generationConfig: { responseMimeType: "application/json" } })
+                });
+                let data = await response.json();
+                let resultJSON = JSON.parse(data.candidates[0].content.parts[0].text);
+                
+                resultJSON.actions.forEach(acao => {
+                    if (acao.action === 'delete' && acao.type === 'clear_schedule') localStorage.removeItem('study-data');
+                    else if (acao.action === 'add') {
+                        if (acao.type === 'calendar') {
+                            let key = `cal-${acao.year}-${acao.month}-${acao.day}`;
+                            let events = JSON.parse(localStorage.getItem(key) || '[]');
+                            events.push({ text: acao.text, color: acao.color || '#cfe7e5' });
+                            localStorage.setItem(key, JSON.stringify(events));
+                        }
+                    }
+                });
+                renderCalendar();
+                status.innerText = 'Magia concluída!';
+            } catch (err) { status.innerText = 'Erro ao processar.'; } finally { btn.disabled = false; }
         }
 
-        function confirmColor() {
-            const color = document.getElementById('native-color-picker').value;
+        function openEventColorPicker(e, dayKey, eventIdx) { e.preventDefault(); selectedDayKey = dayKey; selectedEventIdx = eventIdx; document.getElementById('native-color-picker').click(); }
+        function setDayColor(c) {
             let events = JSON.parse(localStorage.getItem(selectedDayKey)) || [];
-            if (selectedEventIdx !== null) {
-                events[selectedEventIdx].color = color;
-                localStorage.setItem(selectedDayKey, JSON.stringify(events));
-            }
-            document.getElementById('color-confirm-panel').style.display = 'none';
+            if (selectedEventIdx !== null) { events[selectedEventIdx].color = c; localStorage.setItem(selectedDayKey, JSON.stringify(events)); }
             renderCalendar();
         }
-
-        function addCalEvent(key) {
-            let events = JSON.parse(localStorage.getItem(key) || '[]');
-            events.push({ text: 'Nova tarefa', color: '#f5ebd6' });
-            localStorage.setItem(key, JSON.stringify(events));
-            renderCalendar();
-        }
-
-        function updateCalEvent(key, idx, val) {
-            let events = JSON.parse(localStorage.getItem(key) || '[]');
-            events[idx].text = val;
-            localStorage.setItem(key, JSON.stringify(events));
-        }
-
+        function addCalEvent(key) { let events = JSON.parse(localStorage.getItem(key) || '[]'); events.push({ text: 'Nova tarefa', color: '#f5ebd6' }); localStorage.setItem(key, JSON.stringify(events)); renderCalendar(); }
+        function updateCalEvent(key, idx, val) { let events = JSON.parse(localStorage.getItem(key) || '[]'); events[idx].text = val; localStorage.setItem(key, JSON.stringify(events)); }
         function moveMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
-        
-        // Simples auth init
         auth.onAuthStateChanged(user => { if(user) { document.getElementById('login-screen').style.display = 'none'; document.getElementById('app-container').style.display = 'flex'; iniciarPlanner(); } });
         function fazerLogin() { auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-password').value); }
+        function showPage(id) { document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
     </script>
 </body>
 </html>
