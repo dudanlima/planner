@@ -8,19 +8,14 @@
     <meta name="theme-color" content="#fffdf5">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <style>
         :root { --bordo-personalidade: #800020; --ouro-destaque: #d4af37; --caixa-fundo: rgba(255, 255, 255, 0.95); --texto-principal: #333; --fundo-celestial: linear-gradient(135deg, #fffdf5 0%, #ffe0b2 25%, #f8bbd0 50%, #f48fb1 75%, #fffdf5 100%); --borda: #e1bee7; --nude-suave: #fffafb; --azul-agua: #80deea; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Montserrat', sans-serif; margin: 0; display: flex; height: 100vh; background: var(--fundo-celestial); color: var(--texto-principal); overflow: hidden; }
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--fundo-celestial); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .login-box { background: var(--caixa-fundo); padding: 50px; border-radius: 20px; box-shadow: 0 15px 40px rgba(128, 0, 32, 0.1); border: 2px solid var(--bordo-personalidade); text-align: center; width: 100%; max-width: 400px; margin: 20px; }
-        .login-box h1 { font-family: 'Playfair Display', serif; color: var(--bordo-personalidade); font-size: 2.5rem; margin-top: 0; margin-bottom: 30px; letter-spacing: -1px; }
-        .login-input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid var(--borda); border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 1rem; outline: none; transition: 0.3s; background: #fff; }
-        .login-btn { width: 100%; padding: 15px; background: var(--bordo-personalidade); color: var(--ouro-destaque); border: none; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        #app-container { display: none; width: 100%; height: 100%; flex-direction: row; }
+        
+        #app-container { display: flex; width: 100%; height: 100%; flex-direction: row; }
         .sidebar { width: 260px; background: rgba(255, 255, 255, 0.98); border-right: 1px solid var(--borda); display: flex; flex-direction: column; padding: 25px; flex-shrink: 0; position: relative; z-index: 100; }
         .menu-item { padding: 15px; margin-bottom: 10px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 1rem; color: #555; }
         .menu-item.active { background: rgba(128, 0, 32, 0.08); font-weight: 600; color: var(--bordo-personalidade); }
@@ -38,21 +33,10 @@
 </head>
 <body>
 
-    <div id="login-screen">
-        <div class="login-box">
-            <h1>Planner 2026</h1>
-            <input type="email" id="login-email" class="login-input" placeholder="E-mail">
-            <input type="password" id="login-password" class="login-input" placeholder="Senha">
-            <button class="login-btn" onclick="fazerLogin()">Entrar</button>
-            <p id="login-error">Credenciais invalidas.</p>
-        </div>
-    </div>
-
     <div id="app-container">
         <div class="sidebar" id="sidebar">
             <h1>Planner</h1>
             <div class="menu-item active" onclick="showPage('inicio', this)">Inicio</div>
-            <div class="menu-item" onclick="showPage('tarefas', this)">Tarefas</div>
         </div>
         <div class="main-content">
             <section id="inicio" class="page-section active">
@@ -66,19 +50,27 @@
         </div>
     </div>
 
-    <!-- Painel de confirmação de cor -->
     <div id="color-confirm-panel">
         <input type="color" id="native-color-picker">
         <button class="cal-btn" onclick="confirmColor()">Confirmar Cor</button>
     </div>
 
     <script>
+        // Inicialização básica do Firebase (apenas database)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBSM8qmzB-c8tzDK3D4F_WlroD49D6oi8g",
+            databaseURL: "https://planner-8eb0a-default-rtdb.firebaseio.com"
+        };
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        const auth = firebase.auth();
+        
         let currentDate = new Date();
         const realToday = new Date();
         let selectedDayKey = null;
         let selectedEventIdx = null;
+
+        // Inicia o planner automaticamente
+        iniciarPlanner();
 
         function iniciarPlanner() {
             renderCalendar();
@@ -146,10 +138,7 @@
         }
 
         function moveMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
-        
-        // Simples auth init
-        auth.onAuthStateChanged(user => { if(user) { document.getElementById('login-screen').style.display = 'none'; document.getElementById('app-container').style.display = 'flex'; iniciarPlanner(); } });
-        function fazerLogin() { auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-password').value); }
+        function showPage(id) { document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
     </script>
 </body>
 </html>
