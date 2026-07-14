@@ -160,6 +160,7 @@
         <input type="text" id="editor-title" placeholder="Titulo do resumo..." oninput="saveCurrentData()">
         
         <div class="toolbar">
+            <button onmousedown="event.preventDefault(); insertTable()" title="Inserir Tabela">📊 Tabela</button>
             <button onmousedown="event.preventDefault(); format('bold')" title="Negrito" style="font-weight: bold;">B</button>
             <button onmousedown="event.preventDefault(); format('italic')" title="Italico" style="font-style: italic;">I</button>
             <button onmousedown="event.preventDefault(); format('underline')" title="Sublinhado" style="text-decoration: underline;">U</button>
