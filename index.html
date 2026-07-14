@@ -1,92 +1,155 @@
-async function executarIAGlobal() {
-            let apiKey = localStorage.getItem('gemini-api-key');
-            if (!apiKey) {
-                alert("Configure a chave de API na aba de Estudos primeiro!");
-                return;
-            }
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Planner 2026</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#fffdf5">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bordo-personalidade: #800020; --ouro-destaque: #d4af37; --caixa-fundo: rgba(255, 255, 255, 0.95); --texto-principal: #333; --fundo-celestial: linear-gradient(135deg, #fffdf5 0%, #ffe0b2 25%, #f8bbd0 50%, #f48fb1 75%, #fffdf5 100%); --borda: #e1bee7; --nude-suave: #fffafb; --azul-agua: #80deea; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Montserrat', sans-serif; margin: 0; display: flex; height: 100vh; background: var(--fundo-celestial); color: var(--texto-principal); overflow: hidden; }
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--fundo-celestial); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .login-box { background: var(--caixa-fundo); padding: 50px; border-radius: 20px; box-shadow: 0 15px 40px rgba(128, 0, 32, 0.1); border: 2px solid var(--bordo-personalidade); text-align: center; width: 100%; max-width: 400px; margin: 20px; }
+        .login-box h1 { font-family: 'Playfair Display', serif; color: var(--bordo-personalidade); font-size: 2.5rem; margin-top: 0; margin-bottom: 30px; letter-spacing: -1px; }
+        .login-input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid var(--borda); border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 1rem; outline: none; transition: 0.3s; background: #fff; }
+        .login-btn { width: 100%; padding: 15px; background: var(--bordo-personalidade); color: var(--ouro-destaque); border: none; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        #app-container { display: none; width: 100%; height: 100%; flex-direction: row; }
+        .sidebar { width: 260px; background: rgba(255, 255, 255, 0.98); border-right: 1px solid var(--borda); display: flex; flex-direction: column; padding: 25px; flex-shrink: 0; position: relative; z-index: 100; }
+        .menu-item { padding: 15px; margin-bottom: 10px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 1rem; color: #555; }
+        .menu-item.active { background: rgba(128, 0, 32, 0.08); font-weight: 600; color: var(--bordo-personalidade); }
+        .main-content { flex-grow: 1; overflow-y: auto; padding: 40px; background: rgba(255, 255, 255, 0.95); margin: 20px; border-radius: 20px; box-shadow: 0 10px 40px rgba(128, 0, 32, 0.05); }
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+        .cal-btn { border: 1px solid var(--bordo-personalidade); background: var(--bordo-personalidade); color: var(--ouro-destaque); padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        .day-cell { border: 1px solid var(--borda); min-height: 110px; padding: 8px; border-radius: 12px; background: #fff; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .day-event-box { border-radius: 6px; padding: 4px 6px; margin-bottom: 3px; font-size: 0.7rem; display: flex; align-items: center; justify-content: space-between; }
+        .day-event-input { border: none; background: transparent; width: 90%; font-family: inherit; font-size: inherit; outline: none; font-weight: 600; }
+        #color-confirm-panel { position: fixed; z-index: 2000; background: white; padding: 15px; border-radius: 15px; border: 2px solid var(--bordo-personalidade); box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none; flex-direction: column; gap: 10px; align-items: center; }
+        #global-ai-btn { position: fixed; bottom: 30px; right: 30px; background: var(--bordo-personalidade); color: var(--ouro-destaque); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 1000; }
+    </style>
+</head>
+<body>
 
-            let promptText = document.getElementById('global-ai-prompt').value;
-            if (!promptText.trim()) return;
+    <div id="login-screen">
+        <div class="login-box">
+            <h1>Planner 2026</h1>
+            <input type="email" id="login-email" class="login-input" placeholder="E-mail">
+            <input type="password" id="login-password" class="login-input" placeholder="Senha">
+            <button class="login-btn" onclick="fazerLogin()">Entrar</button>
+            <p id="login-error">Credenciais invalidas.</p>
+        </div>
+    </div>
 
-            let btn = document.getElementById('btn-global-ai');
-            let status = document.getElementById('global-ai-status');
+    <div id="app-container">
+        <div class="sidebar" id="sidebar">
+            <h1>Planner</h1>
+            <div class="menu-item active" onclick="showPage('inicio', this)">Inicio</div>
+            <div class="menu-item" onclick="showPage('tarefas', this)">Tarefas</div>
+        </div>
+        <div class="main-content">
+            <section id="inicio" class="page-section active">
+                <div class="month-header-wrapper">
+                    <button class="cal-btn" onclick="moveMonth(-1)">Anterior</button>
+                    <h2 id="month-display">mes</h2>
+                    <button class="cal-btn" onclick="moveMonth(1)">Proximo</button>
+                </div>
+                <div class="calendar-grid" id="calendar-grid"></div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Painel de confirmação de cor -->
+    <div id="color-confirm-panel">
+        <input type="color" id="native-color-picker">
+        <button class="cal-btn" onclick="confirmColor()">Confirmar Cor</button>
+    </div>
+
+    <script>
+        const db = firebase.database();
+        const auth = firebase.auth();
+        let currentDate = new Date();
+        const realToday = new Date();
+        let selectedDayKey = null;
+        let selectedEventIdx = null;
+
+        function iniciarPlanner() {
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid'); grid.innerHTML = '';
+            const m = currentDate.getMonth(), y = currentDate.getFullYear();
+            document.getElementById('month-display').innerText = currentDate.toLocaleString('pt-br', { month: 'long' }) + ' ' + y;
+
+            const first = new Date(y, m, 1).getDay();
+            for(let i=0; i<first; i++) grid.appendChild(document.createElement('div'));
             
-            btn.disabled = true;
-            btn.style.opacity = '0.6';
-            status.style.display = 'block';
-            status.style.color = 'var(--bordo-personalidade)';
-            status.innerText = 'Processando seu comando...';
+            for(let d=1; d<=new Date(y, m+1, 0).getDate(); d++) {
+                let key = `cal-${y}-${m}-${d}`;
+                let cell = document.createElement('div'); cell.className = 'day-cell';
+                let events = JSON.parse(localStorage.getItem(key) || '[]');
 
-            let systemInstruction = `Você é o assistente virtual do planner. O usuário enviará comandos para ADICIONAR ou APAGAR itens.
-Retorne APENAS um objeto JSON válido, sem markdown. Estrutura:
-{
-  "actions": [
-    { "type": "todo", "dayOffset": 0, "text": "Nome", "action": "add" },
-    { "type": "wishlist", "category": "quero", "text": "Nome", "action": "add" },
-    { "type": "calendar", "year": 2026, "month": 6, "day": 15, "text": "Evento", "color": "#cfe7e5", "action": "add" },
-    { "type": "clear_schedule", "action": "delete" }
-  ]
-}
-Regras:
-- Se o usuário pedir para apagar matérias ou cronograma, use {"type": "clear_schedule", "action": "delete"}.
-- todo dayOffset: 0(Segunda) a 5(Sábado).
-- Se não houver itens, omita a ação. Retorne apenas o JSON. Hoje é: ` + new Date().toLocaleDateString('pt-BR');
-
-            try {
-                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: systemInstruction + "\nTexto: " + promptText }] }],
-                        generationConfig: { responseMimeType: "application/json" }
-                    })
+                let eventsHTML = `<div style="display:flex; flex-direction:column; gap:2px; margin-top:5px;">`;
+                events.forEach((ev, idx) => {
+                    eventsHTML += `
+                        <div class="day-event-box" style="background-color: ${ev.color || '#f0d0d6'};" oncontextmenu="openEventColorPicker(event, '${key}', ${idx})">
+                            <input type="text" class="day-event-input" value="${ev.text}" onblur="updateCalEvent('${key}', ${idx}, this.value)">
+                        </div>
+                    `;
                 });
-
-                let data = await response.json();
-                if (data.error) throw new Error(data.error.message);
-
-                let resultJSON = JSON.parse(data.candidates[0].content.parts[0].text);
-                
-                if (resultJSON.actions) {
-                    resultJSON.actions.forEach(acao => {
-                        if (acao.action === 'delete' && acao.type === 'clear_schedule') {
-                            localStorage.removeItem('study-data');
-                        } else if (acao.action === 'add') {
-                            if (acao.type === 'todo') {
-                                let tasks = JSON.parse(localStorage.getItem('todo-tasks')) || [];
-                                let d = new Date(getMondayDate(realToday));
-                                d.setDate(d.getDate() + acao.dayOffset);
-                                tasks.push({ text: acao.text, done: false, date: d.toISOString().split('T')[0], notes: '' });
-                                localStorage.setItem('todo-tasks', JSON.stringify(tasks));
-                            } else if (acao.type === 'wishlist') {
-                                let cat = acao.category || 'quero';
-                                let wishes = JSON.parse(localStorage.getItem(`wish-${cat}`)) || [];
-                                wishes.push({ text: acao.text, done: false });
-                                localStorage.setItem(`wish-${cat}`, JSON.stringify(wishes));
-                            } else if (acao.type === 'calendar') {
-                                let key = `cal-${acao.year}-${acao.month}-${acao.day}`;
-                                let events = JSON.parse(localStorage.getItem(key) || '[]');
-                                events.push({ text: acao.text, color: acao.color || '#cfe7e5' });
-                                localStorage.setItem(key, JSON.stringify(events));
-                            }
-                        }
-                    });
-                    
-                    atualizarTelas(); 
-                    renderTodoList();
-                    renderWishlist();
-                    loadStudies();
-                    status.innerText = 'Magia concluída!';
-                    status.style.color = '#2e7d32';
-                    document.getElementById('global-ai-prompt').value = '';
-                }
-            } catch (err) {
-                console.error(err);
-                status.style.color = '#c62828';
-                status.innerText = 'Erro ao processar.';
-            } finally {
-                btn.disabled = false;
-                btn.style.opacity = '1';
-                setTimeout(() => { status.style.display = 'none'; }, 2000);
+                eventsHTML += `</div><button style="background:none; border:none; color:var(--bordo-personalidade); cursor:pointer;" onclick="addCalEvent('${key}')">+</button>`;
+                cell.innerHTML = `<span>${d}</span>` + eventsHTML;
+                grid.appendChild(cell);
             }
         }
+
+        function openEventColorPicker(e, dayKey, eventIdx) {
+            e.preventDefault();
+            selectedDayKey = dayKey;
+            selectedEventIdx = eventIdx;
+            const panel = document.getElementById('color-confirm-panel');
+            panel.style.display = 'flex';
+            panel.style.left = e.pageX + 'px';
+            panel.style.top = e.pageY + 'px';
+        }
+
+        function confirmColor() {
+            const color = document.getElementById('native-color-picker').value;
+            let events = JSON.parse(localStorage.getItem(selectedDayKey)) || [];
+            if (selectedEventIdx !== null) {
+                events[selectedEventIdx].color = color;
+                localStorage.setItem(selectedDayKey, JSON.stringify(events));
+            }
+            document.getElementById('color-confirm-panel').style.display = 'none';
+            renderCalendar();
+        }
+
+        function addCalEvent(key) {
+            let events = JSON.parse(localStorage.getItem(key) || '[]');
+            events.push({ text: 'Nova tarefa', color: '#f5ebd6' });
+            localStorage.setItem(key, JSON.stringify(events));
+            renderCalendar();
+        }
+
+        function updateCalEvent(key, idx, val) {
+            let events = JSON.parse(localStorage.getItem(key) || '[]');
+            events[idx].text = val;
+            localStorage.setItem(key, JSON.stringify(events));
+        }
+
+        function moveMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
+        
+        // Simples auth init
+        auth.onAuthStateChanged(user => { if(user) { document.getElementById('login-screen').style.display = 'none'; document.getElementById('app-container').style.display = 'flex'; iniciarPlanner(); } });
+        function fazerLogin() { auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-password').value); }
+    </script>
+</body>
+</html>
