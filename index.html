@@ -495,6 +495,17 @@
 
             #global-ai-btn { bottom: 90px; right: 20px; width: 50px; height: 50px; font-size: 1.2rem; }
             #global-ai-modal { bottom: 150px; right: 10px; width: calc(100% - 20px); }
+            .main-content { max-width: 100%; overflow-x: hidden; height: 100dvh; padding-bottom: calc(95px + env(safe-area-inset-bottom)); }
+            .sidebar { height: calc(75px + env(safe-area-inset-bottom)); padding: 5px 4px calc(5px + env(safe-area-inset-bottom)); }
+            .menu-item { min-width: 0; overflow: hidden; }
+            .menu-text { display: block; max-width: 100%; font-size: 0.6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .calendar-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+            .day-cell { min-width: 0; overflow: hidden; }
+            .day-event-input { min-width: 0; width: 100%; }
+            .month-header-wrapper { flex-wrap: wrap; }
+            .todo-item input[type="text"], .wishlist-item input[type="text"], .subject-item-row input[type="text"], .todo-item-main input[type="text"] { min-width: 0; width: 100%; }
+            .dash-form input, .dash-form select { min-width: 0; max-width: 100%; }
+            input, textarea, select { max-width: 100%; }
         }
     </style>
 </head>
