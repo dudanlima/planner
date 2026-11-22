@@ -380,7 +380,56 @@
         .ai-header-title { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--terracota-escuro); margin: 0; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
         .ai-prompt-area { width: 100%; height: 80px; border-radius: 12px; border: 1px solid var(--borda); padding: 12px; font-family: 'Montserrat', sans-serif; margin-bottom: 10px; outline: none; resize: none; background: rgba(255, 255, 255, 0.92); color: var(--texto); font-size: 0.85rem; }
 
-        /* Estilos do Assistente Global */
+        /* Dashboard financeiro */
+.dash-head { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; justify-content: space-between; margin-bottom: 20px; }
+.dash-nav { display: flex; align-items: center; gap: 10px; }
+.dash-mes { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--terracota-escuro); text-transform: capitalize; min-width: 200px; text-align: center; }
+.dash-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin-bottom: 20px; }
+.dash-card, .dash-box { background: rgba(255, 245, 246, 0.94); border: 1px solid var(--borda); border-radius: 18px; padding: 20px; box-shadow: 0 5px 15px rgba(140, 74, 85, 0.06); }
+.dash-card h3, .dash-box h3 { font-family: 'Playfair Display', serif; font-size: 0.9rem; color: var(--marrom); text-transform: uppercase; letter-spacing: 1px; margin: 0 0 10px; font-weight: 600; }
+.dash-card p { font-size: 1.9rem; font-weight: 700; color: var(--terracota-escuro); margin: 0; }
+.dash-card small { color: var(--marrom); font-size: 0.75rem; }
+.dash-barra { height: 10px; background: var(--rosa); border-radius: 6px; margin-top: 10px; overflow: hidden; }
+.dash-barra span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--verde-claro), var(--verde)); border-radius: 6px; transition: 0.4s; }
+.dash-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+.dash-form { margin-top: 16px; }
+.dash-form-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.dash-form input[type="text"], .dash-form input[type="number"], .dash-form input[type="date"], .dash-form select { padding: 9px 10px; border: 1px solid var(--borda); border-radius: 10px; font-family: inherit; font-size: 0.8rem; background: #fff; color: var(--texto); flex: 1 1 130px; min-width: 0; }
+.dash-form label { font-size: 0.8rem; color: var(--marrom); display: flex; align-items: center; gap: 4px; }
+.dash-form input[type="checkbox"] { accent-color: var(--terracota); }
+.dash-limpar { background: transparent !important; color: var(--terracota-escuro) !important; border-style: dashed !important; }
+.dash-leg { display: flex; justify-content: space-between; gap: 8px; font-size: 0.8rem; padding: 6px 0; border-bottom: 1px dashed var(--borda); }
+.dash-leg i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+.dash-donut { position: relative; width: 180px; height: 180px; margin: 0 auto 12px; }
+.dash-donut svg { width: 100%; height: 100%; transform: rotate(-90deg); display: block; }
+.dash-donut-c { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--marrom); }
+.dash-donut-c b { font-size: 0.85rem; color: var(--terracota-escuro); }
+.dash-formulas p { font-size: 0.82rem; line-height: 1.5; margin: 0 0 10px; }
+.dash-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; margin-bottom: 6px; border-radius: 10px; background: rgba(247, 212, 216, 0.4); border: 1px solid var(--rosa); font-size: 0.8rem; }
+.dash-item input { accent-color: var(--terracota); cursor: pointer; }
+.dash-desc { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.dash-desc small { color: var(--marrom); font-size: 0.7rem; }
+.dash-item b { white-space: nowrap; }
+.v-rec { color: var(--verde); }
+.v-desp { color: var(--terracota-escuro); }
+.dash-x { cursor: pointer; opacity: 0.5; font-size: 0.7rem; }
+.dash-sub { font-family: 'Playfair Display', serif; font-size: 0.8rem; color: var(--terracota-escuro); text-transform: uppercase; letter-spacing: 1px; margin: 12px 0 8px; }
+.dash-vazio { font-size: 0.8rem; color: var(--marrom); font-style: italic; margin: 4px 0 8px; }
+#dash-linha svg { display: block; }
+@media (max-width: 768px) {
+    .dash-grid { grid-template-columns: 1fr; }
+    .dash-mes { min-width: 0; font-size: 1.2rem; }
+}
+@media print {
+    body { display: block; height: auto; overflow: visible; background: #fff; }
+    .main-content { margin: 0 !important; padding: 0 !important; box-shadow: none !important; overflow: visible !important; height: auto !important; background: #fff !important; }
+    body * { visibility: hidden; }
+    #dashboard, #dashboard * { visibility: visible; }
+    #dashboard { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; background: #fff; }
+    #dashboard .dash-form, #dashboard .dash-pdf, #dashboard .dash-nav .cal-btn, #dashboard .dash-x, #dashboard .dash-item input { display: none !important; }
+}
+
+/* Estilos do Assistente Global */
         #global-ai-btn { position: fixed; bottom: 30px; right: 30px; background: var(--terracota); color: var(--creme); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; box-shadow: 0 5px 15px rgba(140, 74, 85, 0.3); z-index: 1000; transition: 0.3s; }
         #global-ai-btn:hover { transform: scale(1.1); }
         #global-ai-modal { position: fixed; bottom: 100px; right: 30px; width: 320px; background: rgba(255, 250, 251, 0.98); border: 1px solid var(--dourado); border-radius: 18px; padding: 20px; box-shadow: 0 10px 30px rgba(140, 74, 85, 0.14); z-index: 1000; display: none; flex-direction: column; gap: 10px; }
@@ -461,6 +510,7 @@
             <div class="menu-item" onclick="showPage('habitos', this)"><span class="menu-icon">💧</span><span class="menu-text">Habitos</span></div>
             <div class="menu-item" onclick="showPage('treinos', this)"><span class="menu-icon">💪</span><span class="menu-text">Treinos</span></div>
             <div class="menu-item" onclick="showPage('estudos', this)"><span class="menu-icon">📚</span><span class="menu-text">Estudos</span></div>
+            <div class="menu-item" onclick="showPage('dashboard', this)"><span class="menu-icon">📊</span><span class="menu-text">Dashboard</span></div>
             <div class="sidebar-footer">
                 <a href="caderno.html" class="link-caderno">📓 Abrir caderno</a>
                 <button class="logout-btn" onclick="fazerLogout()">Sair (Bloquear App)</button>
@@ -576,6 +626,53 @@
                     <div class="stat-card"><h3>total mensal</h3><p id="month-count">0</p></div>
                 </div>
                 <div id="workout-container" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:15px;"></div>
+            </section>
+
+            <section id="dashboard" class="page-section">
+                <div class="dash-head">
+                    <h2 class="section-title" style="margin:0;">Dashboard financeiro</h2>
+                    <div class="dash-nav">
+                        <button class="cal-btn" onclick="dashMover(-1)">❮</button>
+                        <span id="dash-month-label" class="dash-mes"></span>
+                        <button class="cal-btn" onclick="dashMover(1)">❯</button>
+                    </div>
+                    <button class="cal-btn dash-pdf" onclick="gerarPdfMes()">Gerar PDF do mês</button>
+                </div>
+
+                <div class="dash-cards">
+                    <div class="dash-card"><h3>Receitas pagas</h3><p id="dash-receitas">R$ 0</p></div>
+                    <div class="dash-card"><h3>Despesas pagas</h3><p id="dash-despesas">R$ 0</p></div>
+                    <div class="dash-card"><h3>Lucro (saldo)</h3><p id="dash-lucro">R$ 0</p></div>
+                    <div class="dash-card"><h3>Meta do mês</h3><p id="dash-meta">sem meta</p><small id="dash-meta-txt"></small><div class="dash-barra"><span id="dash-meta-barra"></span></div></div>
+                </div>
+
+                <div class="dash-grid">
+                    <div class="dash-box"><h3>Saldo pago, últimos 12 meses</h3><div id="dash-linha"></div></div>
+                    <div class="dash-box"><h3>Despesas pagas por categoria</h3><div id="dash-rosca"></div></div>
+                </div>
+
+                <div class="dash-grid">
+                    <div class="dash-box dash-formulas"><h3>Fórmulas</h3><div id="dash-formulas"></div></div>
+                    <div class="dash-box"><h3>Lançamentos do mês</h3><div id="dash-lista"></div></div>
+                </div>
+
+                <div class="dash-box dash-form">
+                    <h3>Novo lançamento e meta</h3>
+                    <div class="dash-form-row">
+                        <select id="dash-f-tipo"><option value="despesa">Despesa</option><option value="receita">Receita</option></select>
+                        <input id="dash-f-desc" type="text" placeholder="Descrição">
+                        <input id="dash-f-valor" type="number" step="0.01" min="0" placeholder="Valor (R$)">
+                        <select id="dash-f-cat"><option>Moradia</option><option>Alimentação</option><option>Transporte</option><option>Lazer</option><option>Outros</option></select>
+                        <input id="dash-f-data" type="date">
+                        <label><input id="dash-f-pago" type="checkbox" checked> Pago</label>
+                        <button class="cal-btn" onclick="dashAdicionar()">+ Adicionar</button>
+                    </div>
+                    <div class="dash-form-row">
+                        <input id="dash-meta-input" type="number" step="0.01" min="0" placeholder="Meta de sobra do mês (R$)">
+                        <button class="cal-btn" onclick="dashSalvarMeta()">Salvar meta</button>
+                        <button class="cal-btn dash-limpar" onclick="dashLimpar()">Limpar exemplos</button>
+                    </div>
+                </div>
             </section>
 
             <section id="estudos" class="page-section">
@@ -715,6 +812,7 @@
             if(id === 'estudos') { loadStudies(); renderSubjectPostits(); }
             if(id === 'tarefas') renderTodoList();
             if(id === 'wishlist') renderWishlist();
+            if(id === 'dashboard') renderDashboard();
             window.scrollTo(0, 0);
         }
 
@@ -1194,7 +1292,220 @@ Texto do usuario: ${promptText}`;
             renderWishlist();
         }
 
-        let filterTodaySubjects = true;
+        /* ----- DASHBOARD FINANCEIRO ----- */
+const DASH_CATS = ['Moradia', 'Alimentação', 'Transporte', 'Lazer', 'Outros'];
+const DASH_COR = ['#c27a80', '#7f8c5e', '#d1a58f', '#e2a6ad', '#8c4a55'];
+let dashRef = new Date(realToday.getFullYear(), realToday.getMonth(), 1);
+
+function dashGet() {
+    let f = null;
+    try { f = JSON.parse(localStorage.getItem('finance-data')); } catch (e) { f = null; }
+    if (!f || !Array.isArray(f.lanc)) {
+        const y = realToday.getFullYear();
+        const m = String(realToday.getMonth() + 1).padStart(2, '0');
+        const d = n => `${y}-${m}-${String(n).padStart(2, '0')}`;
+        f = {
+            meta: { [`${y}-${m}`]: 1500 },
+            lanc: [
+                { id: 1, tipo: 'receita', desc: 'Salário', valor: 5800, cat: 'Receita', data: d(5), pago: true, exemplo: true },
+                { id: 2, tipo: 'receita', desc: 'Freela', valor: 400, cat: 'Receita', data: d(12), pago: true, exemplo: true },
+                { id: 3, tipo: 'despesa', desc: 'Aluguel', valor: 1800, cat: 'Moradia', data: d(5), pago: true, exemplo: true },
+                { id: 4, tipo: 'despesa', desc: 'Mercado', valor: 1150, cat: 'Alimentação', data: d(9), pago: true, exemplo: true },
+                { id: 5, tipo: 'despesa', desc: 'Combustível', valor: 420, cat: 'Transporte', data: d(10), pago: true, exemplo: true },
+                { id: 6, tipo: 'despesa', desc: 'Jantar e cinema', valor: 350, cat: 'Lazer', data: d(14), pago: true, exemplo: true },
+                { id: 7, tipo: 'despesa', desc: 'Plano de saúde', valor: 1300, cat: 'Outros', data: d(18), pago: true, exemplo: true },
+                { id: 8, tipo: 'despesa', desc: 'Cartão de crédito', valor: 610, cat: 'Outros', data: d(25), pago: false, exemplo: true }
+            ]
+        };
+        dashSave(f);
+    }
+    return f;
+}
+
+function dashSave(f) {
+    try { localStorage.setItem('finance-data', JSON.stringify(f)); } catch (e) {}
+}
+
+const dashYM = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+const dashBRL = v => 'R$ ' + Number(v || 0).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+const dashMesesAtras = n => new Date(dashRef.getFullYear(), dashRef.getMonth() - n, 1);
+
+function dashSoma(f, ym, tipo, cat) {
+    return f.lanc
+        .filter(l => l.pago && l.tipo === tipo && l.data.slice(0, 7) === ym && (!cat || l.cat === cat))
+        .reduce((s, l) => s + Number(l.valor || 0), 0);
+}
+
+function dashSaldo(f, ym) {
+    return dashSoma(f, ym, 'receita') - dashSoma(f, ym, 'despesa');
+}
+
+function dashMedia(f) {
+    let sobras = [];
+    for (let i = 0; i < 12 && sobras.length < 6; i++) {
+        const ym = dashYM(dashMesesAtras(i));
+        if (f.lanc.some(l => l.pago && l.data.slice(0, 7) === ym)) sobras.push(dashSaldo(f, ym));
+    }
+    return sobras.length ? sobras.reduce((a, b) => a + b, 0) / sobras.length : 0;
+}
+
+function dashProjecao(f, media) {
+    let acumulado = 0;
+    const ano = dashRef.getFullYear();
+    for (let m = 0; m <= dashRef.getMonth(); m++) {
+        acumulado += dashSaldo(f, `${ano}-${String(m + 1).padStart(2, '0')}`);
+    }
+    const restantes = 11 - dashRef.getMonth();
+    return { acumulado, restantes, total: acumulado + media * restantes };
+}
+
+function dashLinha(f) {
+    const vals = [], labs = [];
+    for (let i = 11; i >= 0; i--) {
+        const d = dashMesesAtras(i);
+        vals.push(dashSaldo(f, dashYM(d)));
+        labs.push(d.toLocaleString('pt-BR', { month: 'short' }).replace('.', ''));
+    }
+    const W = 600, H = 220, P = 34;
+    const max = Math.max(0, ...vals), min = Math.min(0, ...vals), range = (max - min) || 1;
+    const x = i => P + i * (W - 2 * P) / 11;
+    const y = v => H - P - (v - min) / range * (H - 2 * P);
+    const pts = vals.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+    let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Saldo dos últimos 12 meses">`;
+    s += `<line x1="${P}" x2="${W - P}" y1="${y(0)}" y2="${y(0)}" stroke="#ecd0d4" stroke-dasharray="4 4"/>`;
+    s += `<polyline points="${pts}" fill="none" stroke="#c27a80" stroke-width="3" stroke-linejoin="round"/>`;
+    vals.forEach((v, i) => {
+        s += `<circle cx="${x(i)}" cy="${y(v)}" r="4" fill="#8c4a55"><title>${labs[i]}: ${dashBRL(v)}</title></circle>`;
+        s += `<text x="${x(i)}" y="${H - 10}" text-anchor="middle" font-size="11" fill="#6e5559">${labs[i]}</text>`;
+    });
+    return s + '</svg>';
+}
+
+function dashRosca(f, ym) {
+    const tot = dashSoma(f, ym, 'despesa');
+    const C = 2 * Math.PI * 60;
+    let off = 0, arcos = '', leg = '';
+    DASH_CATS.forEach((cat, i) => {
+        const v = dashSoma(f, ym, 'despesa', cat);
+        const share = tot ? v / tot : 0;
+        const len = share * C;
+        if (len > 0) arcos += `<circle r="60" cx="90" cy="90" fill="none" stroke="${DASH_COR[i]}" stroke-width="26" stroke-dasharray="${len} ${C}" stroke-dashoffset="${-off}"/>`;
+        off += len;
+        leg += `<div class="dash-leg"><span><i style="background:${DASH_COR[i]}"></i>${cat}</span><b>${dashBRL(v)} · ${Math.round(share * 100)}%</b></div>`;
+    });
+    return `<div class="dash-donut"><svg viewBox="0 0 180 180"><circle r="60" cx="90" cy="90" fill="none" stroke="#f7d4d8" stroke-width="26"/>${arcos}</svg><div class="dash-donut-c"><span>despesas</span><b>${dashBRL(tot)}</b></div></div>${leg}`;
+}
+
+function dashLista(f, ym) {
+    const itens = f.lanc.filter(l => l.data.slice(0, 7) === ym).sort((a, b) => a.data.localeCompare(b.data));
+    if (!itens.length) return '<p class="dash-vazio">Nenhum lançamento neste mês.</p>';
+    const linha = l => `<div class="dash-item">
+        <input type="checkbox" ${l.pago ? 'checked' : ''} onchange="dashTogglePago(${l.id})" title="Marcar como pago">
+        <span class="dash-desc">${standaloneSanitize(l.desc)}<small>${l.data.split('-').reverse().join('/')} · ${l.cat}</small></span>
+        <b class="${l.tipo === 'receita' ? 'v-rec' : 'v-desp'}">${l.tipo === 'receita' ? '+' : '−'} ${dashBRL(l.valor)}</b>
+        <span class="dash-x" onclick="dashDel(${l.id})">✕</span>
+    </div>`;
+    const pagos = itens.filter(l => l.pago);
+    const pend = itens.filter(l => !l.pago);
+    return `<h4 class="dash-sub">Pagos (entram no saldo)</h4>${pagos.map(linha).join('') || '<p class="dash-vazio">Nenhum pago ainda.</p>'}
+        <h4 class="dash-sub">Pendentes (fora do saldo)</h4>${pend.map(linha).join('') || '<p class="dash-vazio">Nenhum pendente.</p>'}`;
+}
+
+function renderDashboard() {
+    const f = dashGet();
+    const ym = dashYM(dashRef);
+    const rec = dashSoma(f, ym, 'receita');
+    const desp = dashSoma(f, ym, 'despesa');
+    const sobra = rec - desp;
+    const meta = Number((f.meta || {})[ym] || 0);
+    const pct = meta > 0 ? Math.max(0, Math.min(100, Math.round(sobra / meta * 100))) : 0;
+    const media = dashMedia(f);
+    const proj = dashProjecao(f, media);
+
+    document.getElementById('dash-month-label').innerText = dashRef.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+    document.getElementById('dash-receitas').innerText = dashBRL(rec);
+    document.getElementById('dash-despesas').innerText = dashBRL(desp);
+    document.getElementById('dash-lucro').innerText = dashBRL(sobra);
+    document.getElementById('dash-meta').innerText = meta ? pct + '%' : 'sem meta';
+    document.getElementById('dash-meta-txt').innerText = meta ? dashBRL(sobra) + ' de ' + dashBRL(meta) : 'Defina a meta abaixo';
+    document.getElementById('dash-meta-barra').style.width = pct + '%';
+    document.getElementById('dash-meta-input').value = meta || '';
+    document.getElementById('dash-linha').innerHTML = dashLinha(f);
+    document.getElementById('dash-rosca').innerHTML = dashRosca(f, ym);
+    document.getElementById('dash-formulas').innerHTML =
+        `<p><b>Saldo do mês</b> = receitas pagas − despesas pagas = ${dashBRL(rec)} − ${dashBRL(desp)} = <b>${dashBRL(sobra)}</b></p>` +
+        `<p><b>% por categoria</b> = valor pago na categoria ÷ total de despesas pagas × 100 (veja no gráfico ao lado).</p>` +
+        `<p><b>Média mensal da sobra</b> = média dos saldos dos últimos 6 meses com lançamentos pagos = <b>${dashBRL(media)}</b></p>` +
+        `<p><b>Projeção de sobra até dezembro</b> = sobra acumulada no ano (${dashBRL(proj.acumulado)}) + média × ${proj.restantes} mês(es) restante(s) = <b>${dashBRL(proj.total)}</b></p>` +
+        `<p style="color:var(--marrom);font-size:0.75rem;">Só entra no saldo o que está marcado como pago.</p>`;
+    document.getElementById('dash-lista').innerHTML = dashLista(f, ym);
+
+    const dfData = document.getElementById('dash-f-data');
+    if (!dfData.value || dfData.value.slice(0, 7) !== ym) {
+        dfData.value = dashYM(realToday) === ym ? `${ym}-${String(realToday.getDate()).padStart(2, '0')}` : `${ym}-01`;
+    }
+}
+
+function dashMover(n) {
+    dashRef = new Date(dashRef.getFullYear(), dashRef.getMonth() + n, 1);
+    renderDashboard();
+}
+
+function dashAdicionar() {
+    const tipo = document.getElementById('dash-f-tipo').value;
+    const desc = document.getElementById('dash-f-desc').value.trim();
+    const valor = parseFloat(document.getElementById('dash-f-valor').value);
+    const cat = tipo === 'receita' ? 'Receita' : document.getElementById('dash-f-cat').value;
+    const data = document.getElementById('dash-f-data').value;
+    const pago = document.getElementById('dash-f-pago').checked;
+    if (!desc || !(valor > 0) || !data) { alert('Preencha descrição, valor e data.'); return; }
+    const f = dashGet();
+    f.lanc.push({ id: Date.now(), tipo, desc, valor, cat, data, pago });
+    dashSave(f);
+    const [ano, mes] = data.split('-');
+    dashRef = new Date(Number(ano), Number(mes) - 1, 1);
+    document.getElementById('dash-f-desc').value = '';
+    document.getElementById('dash-f-valor').value = '';
+    renderDashboard();
+}
+
+function dashTogglePago(id) {
+    const f = dashGet();
+    const l = f.lanc.find(x => x.id === id);
+    if (l) { l.pago = !l.pago; dashSave(f); renderDashboard(); }
+}
+
+function dashDel(id) {
+    const f = dashGet();
+    f.lanc = f.lanc.filter(x => x.id !== id);
+    dashSave(f);
+    renderDashboard();
+}
+
+function dashSalvarMeta() {
+    const v = parseFloat(document.getElementById('dash-meta-input').value);
+    const f = dashGet();
+    f.meta = f.meta || {};
+    f.meta[dashYM(dashRef)] = v > 0 ? v : 0;
+    dashSave(f);
+    renderDashboard();
+}
+
+function dashLimpar() {
+    if (!confirm('Apagar os lançamentos de exemplo e a meta de exemplo?')) return;
+    const f = dashGet();
+    f.lanc = f.lanc.filter(l => !l.exemplo);
+    f.meta = {};
+    dashSave(f);
+    renderDashboard();
+}
+
+function gerarPdfMes() {
+    renderDashboard();
+    window.print();
+}
+
+let filterTodaySubjects = true;
 
         function toggleSubjectFilter() {
             filterTodaySubjects = !filterTodaySubjects;
