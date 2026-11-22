@@ -1355,7 +1355,9 @@ Texto do usuario: ${promptText}`;
 const DASH_CATS = ['Moradia', 'Alimentação', 'Transporte', 'Saúde', 'Educação e estudos', 'Lazer', 'Investimento', 'Assinaturas', 'Vestuário', 'Cuidados pessoais', 'Impostos e taxas', 'Dívidas', 'Outros'];
 const DASH_COR = ['#c27a80', '#7f8c5e', '#d1a58f', '#e2a6ad', '#8c4a55', '#aeb88f', '#6e5559', '#f0b8a0', '#b5838d', '#9c7a4f', '#c9c1a0', '#a5566a', '#7b8a6a'];
 let dashRef = new Date(realToday.getFullYear(), realToday.getMonth(), 1);
-for (let n = 2; n <= 24; n++) document.getElementById('dash-f-parcelas').add(new Option(n + 'x', n));
+const selParcelas = document.getElementById('dash-f-parcelas');
+selParcelas.innerHTML = '';
+for (let n = 2; n <= 18; n++) selParcelas.add(new Option(n + 'x', n));
 
 function dashGet() {
     let f = null;
@@ -1523,6 +1525,41 @@ function dashMover(n) {
 }
 
 function dashAdicionar() {
+    try {
+        const tipo = document.getElementById('dash-f-tipo').value;
+        const desc = document.getElementById('dash-f-desc').value.trim();
+        const valor = parseFloat(String(document.getElementById('dash-f-valor').value).replace(',', '.'));
+        let data = document.getElementById('dash-f-data').value;
+        if (!data) data = `${dashYM(realToday)}-${String(realToday.getDate()).padStart(2, '0')}`;
+        if (!desc) { alert('Escreva a descrição do lançamento.'); return; }
+        if (!(valor > 0)) { alert('Digite um valor maior que zero.'); return; }
+        const cat = tipo === 'receita' ? 'Receita' : document.getElementById('dash-f-cat').value;
+        const pago = document.getElementById('dash-f-pago').checked;
+        const f = dashGet();
+        const natureza = document.getElementById('dash-f-natureza').value;
+        const forma = document.getElementById('dash-f-forma').value;
+        const cartao = document.getElementById('dash-f-cartao').value.trim();
+        const parcelado = tipo === 'despesa' && forma === 'parcelado';
+        const n = parcelado ? (Number(document.getElementById('dash-f-parcelas').value) || 2) : 1;
+        const parcela = Math.round(valor / n * 100) / 100;
+        const [ano0, mes0, dia0] = data.split('-').map(Number);
+        for (let i = 0; i < n; i++) {
+            const dt = new Date(ano0, mes0 - 1 + i, dia0);
+            const dataI = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+            f.lanc.push({ id: Date.now() + i, tipo, desc: parcelado ? `${desc} (${i + 1}/${n})` : desc, valor: parcelado ? parcela : valor, cat, data: dataI, pago: i === 0 ? pago : false, natureza, cartao: parcelado ? cartao : '', parcela: parcelado ? i + 1 : 0, total: parcelado ? n : 0 });
+        }
+        dashSave(f);
+        const [ano, mes] = data.split('-');
+        dashRef = new Date(Number(ano), Number(mes) - 1, 1);
+        document.getElementById('dash-f-desc').value = '';
+        document.getElementById('dash-f-valor').value = '';
+        renderDashboard();
+    } catch (e) {
+        alert('Não consegui salvar este lançamento. Tente de novo.');
+    }
+}
+
+function dashAdicionarAntigo() {
     const tipo = document.getElementById('dash-f-tipo').value;
     const desc = document.getElementById('dash-f-desc').value.trim();
     const valor = parseFloat(document.getElementById('dash-f-valor').value);
