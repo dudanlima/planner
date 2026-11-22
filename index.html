@@ -766,34 +766,78 @@
             document.getElementById('app-container').style.display = 'none';
         }
 
+        function renderizarTudo() {
+            processTaskRollover();
+            atualizarTelas();
+            initHabits();
+            loadStudies();
+            renderTodoList();
+            renderWishlist();
+            renderSubjectPostits();
+        }
+
         function iniciarPlanner() {
-            const originalSetItem = localStorage.setItem;
-            localStorage.setItem = function(key, value) {
-                originalSetItem.apply(this, arguments);
-                db.ref('plannerData/' + key).set(value);
+            const SYNC_TS = 'sync-ts-';
+            const setOriginal = localStorage.setItem;
+            let pronto = false;
+
+            const lerTs = key => Number(localStorage.getItem(SYNC_TS + key)) || 0;
+            const gravarTs = (key, t) => setOriginal.call(localStorage, SYNC_TS + key, String(t));
+            const enviarNuvem = (key, value, t) => {
+                try {
+                    db.ref('plannerData/' + key).set(value);
+                    db.ref('plannerTs/' + key).set(t);
+                } catch (e) {}
             };
 
-            db.ref('plannerData').once('value').then((snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    for (let key in data) {
-                        originalSetItem.call(localStorage, key, data[key]);
-                    }
-                } else {
-                    for (let i = 0; i < localStorage.length; i++) {
-                        let key = localStorage.key(i);
-                        db.ref('plannerData/' + key).set(localStorage.getItem(key));
-                    }
-                }
+            localStorage.setItem = function(key, value) {
+                setOriginal.apply(this, arguments);
+                if (key.indexOf(SYNC_TS) === 0 || !pronto) return;
+                const t = Date.now();
+                gravarTs(key, t);
+                enviarNuvem(key, value, t);
+            };
 
-                processTaskRollover();
-                atualizarTelas();
-                initHabits();
-                loadStudies();
-                renderTodoList();
-                renderWishlist();
-                renderSubjectPostits();
-            });
+            renderizarTudo();
+
+            Promise.all([
+                db.ref('plannerData').once('value'),
+                db.ref('plannerTs').once('value')
+            ]).then(([dadosSnap, tsSnap]) => {
+                pronto = true;
+                const dados = dadosSnap.val() || {};
+                const tss = tsSnap.val() || {};
+                const temRemoto = k => Object.prototype.hasOwnProperty.call(dados, k);
+
+                Object.keys(dados).forEach(key => {
+                    const rv = dados[key];
+                    const rt = Number(tss[key]) || 0;
+                    const lv = localStorage.getItem(key);
+                    const lt = lerTs(key);
+                    if (lv === null) {
+                        setOriginal.call(localStorage, key, rv);
+                        gravarTs(key, rt);
+                    } else if (rt > lt) {
+                        if (rv !== lv) setOriginal.call(localStorage, key, rv);
+                        gravarTs(key, rt);
+                    } else if (lv !== rv) {
+                        const t = lt || Date.now();
+                        gravarTs(key, t);
+                        enviarNuvem(key, lv, t);
+                    }
+                });
+
+                const chaves = [];
+                for (let i = 0; i < localStorage.length; i++) chaves.push(localStorage.key(i));
+                chaves.forEach(key => {
+                    if (key.indexOf(SYNC_TS) === 0 || temRemoto(key)) return;
+                    const t = lerTs(key) || Date.now();
+                    gravarTs(key, t);
+                    enviarNuvem(key, localStorage.getItem(key), t);
+                });
+
+                renderizarTudo();
+            }).catch(() => {});
         }
 
         function atualizarTelas() {
