@@ -653,7 +653,7 @@
                 <div class="dash-cards">
                     <div class="dash-card"><h3>Receitas pagas</h3><p id="dash-receitas">R$ 0</p></div>
                     <div class="dash-card"><h3>Despesas pagas</h3><p id="dash-despesas">R$ 0</p></div>
-                    <div class="dash-card"><h3>Lucro (saldo)</h3><p id="dash-lucro">R$ 0</p></div>
+                    <div class="dash-card"><h3>Saldo</h3><p id="dash-lucro">R$ 0</p></div>
                     <div class="dash-card"><h3>Meta do mês</h3><p id="dash-meta">sem meta</p><small id="dash-meta-txt"></small><div class="dash-barra"><span id="dash-meta-barra"></span></div></div>
                 </div>
 
@@ -670,12 +670,16 @@
                 <div class="dash-box dash-form">
                     <h3>Novo lançamento e meta</h3>
                     <div class="dash-form-row">
-                        <select id="dash-f-tipo"><option value="despesa">Despesa</option><option value="receita">Receita</option></select>
+                        <select id="dash-f-tipo" onchange="dashForma()"><option value="despesa">Despesa</option><option value="receita">Receita</option></select>
                         <input id="dash-f-desc" type="text" placeholder="Descrição">
                         <input id="dash-f-valor" type="number" step="0.01" min="0" placeholder="Valor (R$)">
-                        <select id="dash-f-cat"><option>Moradia</option><option>Alimentação</option><option>Transporte</option><option>Lazer</option><option>Outros</option></select>
+                        <select id="dash-f-cat"><option>Moradia</option><option>Alimentação</option><option>Transporte</option><option>Saúde</option><option>Educação e estudos</option><option>Lazer</option><option>Investimento</option><option>Assinaturas</option><option>Vestuário</option><option>Cuidados pessoais</option><option>Impostos e taxas</option><option>Dívidas</option><option>Outros</option></select>
                         <input id="dash-f-data" type="date">
-                        <label><input id="dash-f-pago" type="checkbox" checked> Pago</label>
+                        <select id="dash-f-natureza"><option value="fixa">Despesa fixa</option><option value="compra">Compra</option></select>
+<select id="dash-f-forma" onchange="dashForma()"><option value="avista">À vista</option><option value="parcelado">Parcelado</option></select>
+<input id="dash-f-cartao" type="text" placeholder="Cartão ou conta (ex.: Nubank)" style="display:none">
+<select id="dash-f-parcelas" style="display:none"></select>
+<label><input id="dash-f-pago" type="checkbox" checked> Pago</label>
                         <button class="cal-btn" onclick="dashAdicionar()">+ Adicionar</button>
                     </div>
                     <div class="dash-form-row">
@@ -1348,9 +1352,10 @@ Texto do usuario: ${promptText}`;
         }
 
         /* ----- DASHBOARD FINANCEIRO ----- */
-const DASH_CATS = ['Moradia', 'Alimentação', 'Transporte', 'Lazer', 'Outros'];
-const DASH_COR = ['#c27a80', '#7f8c5e', '#d1a58f', '#e2a6ad', '#8c4a55'];
+const DASH_CATS = ['Moradia', 'Alimentação', 'Transporte', 'Saúde', 'Educação e estudos', 'Lazer', 'Investimento', 'Assinaturas', 'Vestuário', 'Cuidados pessoais', 'Impostos e taxas', 'Dívidas', 'Outros'];
+const DASH_COR = ['#c27a80', '#7f8c5e', '#d1a58f', '#e2a6ad', '#8c4a55', '#aeb88f', '#6e5559', '#f0b8a0', '#b5838d', '#9c7a4f', '#c9c1a0', '#a5566a', '#7b8a6a'];
 let dashRef = new Date(realToday.getFullYear(), realToday.getMonth(), 1);
+for (let n = 2; n <= 24; n++) document.getElementById('dash-f-parcelas').add(new Option(n + 'x', n));
 
 function dashGet() {
     let f = null;
@@ -1363,7 +1368,7 @@ function dashGet() {
             meta: { [`${y}-${m}`]: 1500 },
             lanc: [
                 { id: 1, tipo: 'receita', desc: 'Salário', valor: 5800, cat: 'Receita', data: d(5), pago: true, exemplo: true },
-                { id: 2, tipo: 'receita', desc: 'Freela', valor: 400, cat: 'Receita', data: d(12), pago: true, exemplo: true },
+                { id: 2, tipo: 'receita', desc: 'Outras receitas', valor: 400, cat: 'Receita', data: d(12), pago: true, exemplo: true },
                 { id: 3, tipo: 'despesa', desc: 'Aluguel', valor: 1800, cat: 'Moradia', data: d(5), pago: true, exemplo: true },
                 { id: 4, tipo: 'despesa', desc: 'Mercado', valor: 1150, cat: 'Alimentação', data: d(9), pago: true, exemplo: true },
                 { id: 5, tipo: 'despesa', desc: 'Combustível', valor: 420, cat: 'Transporte', data: d(10), pago: true, exemplo: true },
@@ -1456,7 +1461,7 @@ function dashLista(f, ym) {
     if (!itens.length) return '<p class="dash-vazio">Nenhum lançamento neste mês.</p>';
     const linha = l => `<div class="dash-item">
         <input type="checkbox" ${l.pago ? 'checked' : ''} onchange="dashTogglePago(${l.id})" title="Marcar como pago">
-        <span class="dash-desc">${standaloneSanitize(l.desc)}<small>${l.data.split('-').reverse().join('/')} · ${l.cat}</small></span>
+        <span class="dash-desc">${standaloneSanitize(l.desc)}<small>${l.data.split('-').reverse().join('/')} · ${l.cat}${l.natureza ? ' · ' + (l.natureza === 'fixa' ? 'Despesa fixa' : 'Compra') : ''}${l.cartao ? ' · ' + standaloneSanitize(l.cartao) : ''}${l.parcela ? ' · parcela ' + l.parcela + '/' + l.total : ''}</small></span>
         <b class="${l.tipo === 'receita' ? 'v-rec' : 'v-desp'}">${l.tipo === 'receita' ? '+' : '−'} ${dashBRL(l.valor)}</b>
         <span class="dash-x" onclick="dashDel(${l.id})">✕</span>
     </div>`;
@@ -1501,6 +1506,17 @@ function renderDashboard() {
     }
 }
 
+function dashForma() {
+    const p = document.getElementById('dash-f-forma').value === 'parcelado' && document.getElementById('dash-f-tipo').value === 'despesa';
+    document.getElementById('dash-f-cartao').style.display = p ? '' : 'none';
+    document.getElementById('dash-f-parcelas').style.display = p ? '' : 'none';
+    document.getElementById('dash-f-valor').placeholder = p ? 'Valor total (R$)' : 'Valor (R$)';
+    const ehDespesa = document.getElementById('dash-f-tipo').value === 'despesa';
+    document.getElementById('dash-f-cat').style.display = ehDespesa ? '' : 'none';
+    document.getElementById('dash-f-natureza').style.display = ehDespesa ? '' : 'none';
+    document.getElementById('dash-f-forma').style.display = ehDespesa ? '' : 'none';
+}
+
 function dashMover(n) {
     dashRef = new Date(dashRef.getFullYear(), dashRef.getMonth() + n, 1);
     renderDashboard();
@@ -1515,7 +1531,18 @@ function dashAdicionar() {
     const pago = document.getElementById('dash-f-pago').checked;
     if (!desc || !(valor > 0) || !data) { alert('Preencha descrição, valor e data.'); return; }
     const f = dashGet();
-    f.lanc.push({ id: Date.now(), tipo, desc, valor, cat, data, pago });
+    const natureza = document.getElementById('dash-f-natureza').value;
+    const forma = document.getElementById('dash-f-forma').value;
+    const cartao = document.getElementById('dash-f-cartao').value.trim();
+    const parcelado = tipo === 'despesa' && forma === 'parcelado';
+    const n = parcelado ? (Number(document.getElementById('dash-f-parcelas').value) || 2) : 1;
+    const parcela = Math.round(valor / n * 100) / 100;
+    const [ano0, mes0, dia0] = data.split('-').map(Number);
+    for (let i = 0; i < n; i++) {
+        const dt = new Date(ano0, mes0 - 1 + i, dia0);
+        const dataI = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+        f.lanc.push({ id: Date.now() + i, tipo, desc: parcelado ? `${desc} (${i + 1}/${n})` : desc, valor: parcelado ? parcela : valor, cat, data: dataI, pago: i === 0 ? pago : false, natureza, cartao: parcelado ? cartao : '', parcela: parcelado ? i + 1 : 0, total: parcelado ? n : 0 });
+    }
     dashSave(f);
     const [ano, mes] = data.split('-');
     dashRef = new Date(Number(ano), Number(mes) - 1, 1);
