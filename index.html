@@ -301,6 +301,11 @@
         .wishlist-item input[type="text"] { border: none; outline: none; flex-grow: 1; font-family: inherit; font-size: 0.85rem; background: transparent; color: var(--texto); }
         .wishlist-item input[type="text"]::placeholder { color: #c4a9ae; }
         .wishlist-item input[type="text"].completed { text-decoration: line-through; color: #9a8084; text-decoration-color: var(--terracota); }
+        .wishlist-item { flex-direction: column; align-items: stretch; gap: 6px; }
+        .wish-linha { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
+        .wish-linha input[type="number"] { width: 95px; padding: 6px 8px; border: 1px solid var(--borda); border-radius: 8px; font-family: inherit; font-size: 0.8rem; background: #fff; color: var(--texto); }
+        .wish-linha input[type="url"] { flex: 1 1 120px; min-width: 0; padding: 6px 8px; border: 1px solid var(--borda); border-radius: 8px; font-family: inherit; font-size: 0.8rem; background: #fff; color: var(--texto); }
+        .wish-abrir { font-size: 0.75rem; color: var(--terracota-escuro); font-weight: 600; text-decoration: none; border: 1px solid var(--terracota); border-radius: 8px; padding: 5px 8px; }
         .apartamento-block .wishlist-block-header { border-bottom-color: var(--terracota); }
         .quero-block { border-top: 4px solid var(--rosa-antigo); }
         .preciso-block { border-top: 4px solid var(--dourado); }
@@ -1298,11 +1303,19 @@ Texto do usuario: ${promptText}`;
                 tasks.forEach((task, idx) => {
                     const div = document.createElement('div');
                     div.className = 'wishlist-item';
+                    const linkOk = task.link && /^https?:\/\//i.test(task.link);
                     div.innerHTML = `
-                        <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleWish('${type}', ${idx})">
-                        <input type="text" placeholder="Item..." class="${task.done ? 'completed' : ''}" value="${task.text}"
-                               onblur="updateWishText('${type}', ${idx}, this.value)">
-                        <span style="cursor:pointer; font-size:0.6rem; color:currentColor; opacity:0.3" onclick="deleteWish('${type}', ${idx})">✕</span>
+                        <div class="wish-linha">
+                            <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleWish('${type}', ${idx})">
+                            <input type="text" placeholder="Item..." class="${task.done ? 'completed' : ''}" value="${task.text}" style="flex:1; min-width:0; border:none; outline:none; font-family:inherit; font-size:0.85rem; background:transparent; color:var(--texto);"
+                                   onblur="updateWishText('${type}', ${idx}, this.value)">
+                            <span style="cursor:pointer; font-size:0.6rem; color:currentColor; opacity:0.3" onclick="deleteWish('${type}', ${idx})">✕</span>
+                        </div>
+                        <div class="wish-linha">
+                            <input type="number" step="0.01" min="0" placeholder="Valor R$" value="${task.valor || ''}" onblur="updateWishCampo('${type}', ${idx}, 'valor', this.value)">
+                            <input type="url" placeholder="Link do item" value="${task.link || ''}" onblur="updateWishCampo('${type}', ${idx}, 'link', this.value)">
+                            ${linkOk ? `<a class="wish-abrir" href="${encodeURI(task.link)}" target="_blank" rel="noopener">abrir</a>` : ''}
+                        </div>
                     `;
                     listDiv.appendChild(div);
                 });
@@ -1335,6 +1348,16 @@ Texto do usuario: ${promptText}`;
                     colors: ['#fbf6ec', '#c8a262', '#b06f58']
                 });
             }
+        }
+
+        function updateWishCampo(type, idx, campo, val) {
+            let tasks = JSON.parse(localStorage.getItem(`wish-${type}`)) || [];
+            let v = String(val).trim();
+            if (campo === 'valor') v = parseFloat(v.replace(',', '.')) || 0;
+            if (campo === 'link' && v && !/^https?:\/\//i.test(v)) v = 'https://' + v;
+            tasks[idx][campo] = v;
+            localStorage.setItem(`wish-${type}`, JSON.stringify(tasks));
+            renderWishlist();
         }
 
         function updateWishText(type, idx, val) {
